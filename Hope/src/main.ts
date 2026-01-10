@@ -46,4 +46,8 @@ class App {
 
 // アプリケーション起動
 const app = new App()
-app.init()
+try {
+	await app.init()
+} catch (err) {
+	console.error("App init failed:", err)
+}

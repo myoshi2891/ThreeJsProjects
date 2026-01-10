@@ -24,16 +24,18 @@ export class AssetLoader {
 
 					this.scene.environment = texture
 					this.scene.background = texture
-					;(this.scene as any).backgroundBlurriness = 0
-					;(this.scene as any).backgroundIntensity = 1
-					;(this.scene as any).environmentIntensity = 1
+					this.scene.backgroundBlurriness = 0
+					this.scene.backgroundIntensity = 1
+					this.scene.environmentIntensity = 1
 
 					callbacks?.onComplete?.()
 					resolve()
 				},
 				progress => {
 					const percentComplete =
-						(progress.loaded / progress.total) * 100
+						progress.total > 0
+							? (progress.loaded / progress.total) * 100
+							: 0
 					callbacks?.onProgress?.(percentComplete)
 				},
 				error => {
@@ -45,11 +47,12 @@ export class AssetLoader {
 			)
 		})
 	}
+
 	public updateEnvironmentIntensity(intensity: number): void {
-		;(this.scene as any).environmentIntensity = intensity
+		this.scene.environmentIntensity = intensity
 	}
 
 	public updateBackgroundBlur(blur: number): void {
-		;(this.scene as any).backgroundBlurriness = blur
+		this.scene.backgroundBlurriness = blur
 	}
 }

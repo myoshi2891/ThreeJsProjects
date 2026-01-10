@@ -46,11 +46,10 @@ export class HopeAnimation {
 	}
 
 	private updateScene(): void {
+		// waterのhopeFactor更新のみ（rain/pierはSceneManager.update()で処理）
 		this.water.updateHopeFactor(this.params.hopeFactor)
-		this.rain.update(this.params.hopeFactor)
-		this.pier.updateHopeFactor(this.params.hopeFactor)
 
-		// Bloomエフェクトの更新（strength と threshold の両方を指定）
+		// Bloomエフェクトの更新
 		const bloomStrength = THREE.MathUtils.lerp(
 			0.2,
 			1.2,
@@ -63,10 +62,12 @@ export class HopeAnimation {
 		)
 		this.postProcessing.updateBloom(bloomStrength, bloomThreshold)
 
+		// 環境光の更新
 		this.assetLoader.updateEnvironmentIntensity(
 			THREE.MathUtils.lerp(0.1, 1, this.params.hopeFactor)
 		)
 
+		// 背景のぼかし更新
 		this.assetLoader.updateBackgroundBlur(
 			THREE.MathUtils.lerp(0.3, 0, this.params.hopeFactor)
 		)
