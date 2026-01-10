@@ -1,7 +1,9 @@
 import { gsap } from "gsap"
+import * as THREE from "three"
 import type { SceneParams } from "../types"
 import type { Water } from "../scene/objects/Water"
 import type { Rain } from "../scene/objects/Rain"
+import type { Pier } from "../scene/objects/Pier"
 import type { PostProcessing } from "../effects/PostProcessing"
 import type { AssetLoader } from "../loaders/AssetLoader"
 
@@ -9,6 +11,7 @@ export class HopeAnimation {
 	private readonly params: SceneParams
 	private readonly water: Water
 	private readonly rain: Rain
+	private readonly pier: Pier
 	private readonly postProcessing: PostProcessing
 	private readonly assetLoader: AssetLoader
 	private readonly renderer: THREE.WebGLRenderer
@@ -17,6 +20,7 @@ export class HopeAnimation {
 		params: SceneParams,
 		water: Water,
 		rain: Rain,
+		pier: Pier,
 		postProcessing: PostProcessing,
 		assetLoader: AssetLoader,
 		renderer: THREE.WebGLRenderer
@@ -24,6 +28,7 @@ export class HopeAnimation {
 		this.params = params
 		this.water = water
 		this.rain = rain
+		this.pier = pier
 		this.postProcessing = postProcessing
 		this.assetLoader = assetLoader
 		this.renderer = renderer
@@ -41,27 +46,29 @@ export class HopeAnimation {
 	}
 
 	private updateScene(): void {
-		const { hopeFactor } = this.params
+		this.water.updateHopeFactor(this.params.hopeFactor)
+		this.rain.update(this.params.hopeFactor)
+		this.pier.updateHopeFactor(this.params.hopeFactor)
 
-		// 水のシェーダー更新
-		this.water.updateHopeFactor(hopeFactor)
-
-		// 環境マップの更新
-		const envIntensity = 0.1 + hopeFactor * 1.5
-		this.assetLoader.updateEnvironmentIntensity(envIntensity)
-
-		const blur = 0.5 * (1 - hopeFactor)
-		this.assetLoader.updateBackgroundBlur(blur)
-
-		// Bloom効果の更新
-		const bloomStrength = 0.2 + hopeFactor * 1.5
-		const bloomThreshold = 0.2 + hopeFactor * 0.3
+		// Bloomエフェクトの更新（strength と threshold の両方を指定）
+		const bloomStrength = THREE.MathUtils.lerp(
+			0.2,
+			1.2,
+			this.params.hopeFactor
+		)
+		const bloomThreshold = THREE.MathUtils.lerp(
+			0.2,
+			0.1,
+			this.params.hopeFactor
+		)
 		this.postProcessing.updateBloom(bloomStrength, bloomThreshold)
 
-		// トーンマッピング露出の更新
-		this.renderer.toneMappingExposure = 0.5 + hopeFactor * 0.5
+		this.assetLoader.updateEnvironmentIntensity(
+			THREE.MathUtils.lerp(0.1, 1, this.params.hopeFactor)
+		)
 
-		// 雨の透明度更新
-		this.rain.setOpacity(1 - hopeFactor)
+		this.assetLoader.updateBackgroundBlur(
+			THREE.MathUtils.lerp(0.3, 0, this.params.hopeFactor)
+		)
 	}
 }

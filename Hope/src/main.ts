@@ -17,10 +17,9 @@ class App {
 		) as HTMLButtonElement
 
 		this.sceneManager = new SceneManager(container)
-		this.init()
 	}
 
-	private async init(): Promise<void> {
+	public async init(): Promise<void> {
 		await this.sceneManager.loadAssets(() => {
 			this.hideLoading()
 		})
@@ -46,4 +45,5 @@ class App {
 }
 
 // アプリケーション起動
-new App()
+const app = new App()
+app.init()
