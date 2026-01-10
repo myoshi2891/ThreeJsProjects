@@ -18,3 +18,10 @@ export interface LoadingCallbacks {
 	onComplete?: () => void
 	onError?: (error: Error) => void
 }
+
+// Three.jsのScene型を拡張
+declare module "three" {
+	interface Scene {
+		environmentIntensity?: number
+	}
+}

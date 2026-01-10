@@ -1,41 +1,34 @@
 import * as THREE from "three"
 
 export class Pier {
-	private readonly group: THREE.Group
+	private readonly mesh: THREE.Mesh
+	private readonly material: THREE.MeshStandardMaterial
 
 	constructor() {
-		this.group = new THREE.Group()
-		this.createPier()
-	}
-
-	private createPier(): void {
 		const geometry = new THREE.BoxGeometry(2, 0.2, 20)
-		const material = new THREE.MeshStandardMaterial({
-			color: 0x332211,
+		this.material = new THREE.MeshStandardMaterial({
+			color: 0x8b4513,
 			roughness: 0.8,
+			metalness: 0.2,
 		})
-
-		const pier = new THREE.Mesh(geometry, material)
-		pier.position.set(0, 0, 0)
-		this.group.add(pier)
-
-		this.createPoles(material)
+		this.mesh = new THREE.Mesh(geometry, this.material)
+		this.mesh.position.set(0, 0.1, 0)
+		this.mesh.castShadow = true
+		this.mesh.receiveShadow = true
 	}
 
-	private createPoles(material: THREE.MeshStandardMaterial): void {
-		for (let i = 0; i < 5; i++) {
-			const poleGeo = new THREE.CylinderGeometry(0.1, 0.1, 4)
-			const poleLeft = new THREE.Mesh(poleGeo, material)
-			const poleRight = new THREE.Mesh(poleGeo, material)
+	public updateHopeFactor(factor: number): void {
+		// 橋の色を暗い茶色から明るい木の色へ
+		const darkColor = new THREE.Color(0x4a2511)
+		const lightColor = new THREE.Color(0xdaa520)
+		this.material.color.lerpColors(darkColor, lightColor, factor)
 
-			poleLeft.position.set(-0.8, -2, -8 + i * 4)
-			poleRight.position.set(0.8, -2, -8 + i * 4)
-
-			this.group.add(poleLeft, poleRight)
-		}
+		// 橋の質感を改善
+		this.material.roughness = THREE.MathUtils.lerp(0.9, 0.4, factor)
+		this.material.metalness = THREE.MathUtils.lerp(0.1, 0.3, factor)
 	}
 
-	public getObject(): THREE.Group {
-		return this.group
+	public getObject(): THREE.Mesh {
+		return this.mesh
 	}
 }

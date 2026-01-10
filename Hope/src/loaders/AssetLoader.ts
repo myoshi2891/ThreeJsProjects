@@ -1,11 +1,10 @@
+import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js"
 import * as THREE from "three"
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js"
 import type { LoadingCallbacks } from "../types"
 
 export class AssetLoader {
 	private readonly scene: THREE.Scene
-	private readonly hdriUrl =
-		"https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr"
+	private readonly hdriUrl = "/textures/clear_puresky.exr"
 
 	constructor(scene: THREE.Scene) {
 		this.scene = scene
@@ -13,16 +12,21 @@ export class AssetLoader {
 
 	public async loadHDRI(callbacks?: LoadingCallbacks): Promise<void> {
 		return new Promise((resolve, reject) => {
-			new RGBELoader().load(
+			new EXRLoader().load(
 				this.hdriUrl,
 				texture => {
 					texture.mapping = THREE.EquirectangularReflectionMapping
+
+					// ✅ テクスチャの品質設定を追加
+					texture.minFilter = THREE.LinearFilter
+					texture.magFilter = THREE.LinearFilter
+					texture.generateMipmaps = false
+
 					this.scene.environment = texture
 					this.scene.background = texture
-
-					this.scene.backgroundBlurriness = 0.5
-					this.scene.backgroundIntensity = 0.1
-					this.scene.environmentIntensity = 0.1
+					;(this.scene as any).backgroundBlurriness = 0
+					;(this.scene as any).backgroundIntensity = 1
+					;(this.scene as any).environmentIntensity = 1
 
 					callbacks?.onComplete?.()
 					resolve()
@@ -33,32 +37,19 @@ export class AssetLoader {
 					callbacks?.onProgress?.(percentComplete)
 				},
 				error => {
-					console.error("HDRi loading error:", error)
+					console.error("EXR loading error:", error)
 					callbacks?.onError?.(error as Error)
-					// HDRiが読み込めなくても続行
 					callbacks?.onComplete?.()
 					resolve()
 				}
 			)
 		})
 	}
-
 	public updateEnvironmentIntensity(intensity: number): void {
-		if (
-			this.scene.background &&
-			(this.scene.background as THREE.Texture).isTexture
-		) {
-			this.scene.backgroundIntensity = intensity
-			this.scene.environmentIntensity = intensity
-		}
+		;(this.scene as any).environmentIntensity = intensity
 	}
 
 	public updateBackgroundBlur(blur: number): void {
-		if (
-			this.scene.background &&
-			(this.scene.background as THREE.Texture).isTexture
-		) {
-			this.scene.backgroundBlurriness = blur
-		}
+		;(this.scene as any).backgroundBlurriness = blur
 	}
 }

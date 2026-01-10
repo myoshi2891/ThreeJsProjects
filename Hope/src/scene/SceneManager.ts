@@ -1,10 +1,10 @@
 import * as THREE from "three"
 import { Rain } from "./objects/Rain"
-import { Water } from "./objects/Water"
-import { PostProcessing } from "../effects/PostProcessing"
 import { Pier } from "./objects/Pier"
-import { HopeAnimation } from "../animation/HopeAnimation"
+import { Water } from "./objects/Water"
 import { AssetLoader } from "../loaders/AssetLoader"
+import { HopeAnimation } from "../animation/HopeAnimation"
+import { PostProcessing } from "../effects/PostProcessing"
 import type { SceneParams } from "../types"
 
 export class SceneManager {
@@ -54,6 +54,7 @@ export class SceneManager {
 			this.params,
 			this.water,
 			this.rain,
+			this.pier,
 			this.postProcessing,
 			this.assetLoader,
 			this.renderer
@@ -70,22 +71,25 @@ export class SceneManager {
 
 	private createCamera(): THREE.PerspectiveCamera {
 		const camera = new THREE.PerspectiveCamera(
-			45,
+			75,
 			window.innerWidth / window.innerHeight,
 			0.1,
 			1000
 		)
-		camera.position.set(0, 3, 15)
-		camera.lookAt(0, 1, 0)
+		camera.position.set(0, 3, 10)
 		return camera
 	}
 
 	private createRenderer(container: HTMLElement): THREE.WebGLRenderer {
-		const renderer = new THREE.WebGLRenderer({ antialias: false })
+		const renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			alpha: true,
+			powerPreference: "high-performance",
+		})
 		renderer.setSize(window.innerWidth, window.innerHeight)
-		renderer.setPixelRatio(window.devicePixelRatio)
+		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 		renderer.toneMapping = THREE.ACESFilmicToneMapping
-		renderer.toneMappingExposure = 0.5
+		renderer.toneMappingExposure = 1
 		container.appendChild(renderer.domElement)
 		return renderer
 	}
@@ -103,9 +107,7 @@ export class SceneManager {
 
 	public async loadAssets(onComplete?: () => void): Promise<void> {
 		await this.assetLoader.loadHDRI({
-			onComplete: () => {
-				onComplete?.()
-			},
+			onComplete,
 		})
 	}
 
@@ -118,9 +120,15 @@ export class SceneManager {
 
 		this.water.update(time)
 		this.rain.update(this.params.hopeFactor)
+		this.pier.updateHopeFactor(this.params.hopeFactor)
 
-		// カメラの微妙な揺れ
-		this.camera.position.y = 3 + Math.sin(time * 0.3) * 0.2
+		// カメラの微妙な揺れ（希望が増すにつれて安定）
+		const cameraShake = THREE.MathUtils.lerp(
+			0.2,
+			0.05,
+			this.params.hopeFactor
+		)
+		this.camera.position.y = 3 + Math.sin(time * 0.3) * cameraShake
 
 		this.postProcessing.render()
 	}
