@@ -3,79 +3,149 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Hope - 静寂の水面に、希望の光が宿る。インタラクティブ3D体験で嵐から希望への旅を体感してください。"
+		/>
+		<meta
+			name="keywords"
+			content="hope, interactive, 3D, experience, Three.js"
+		/>
+		<meta name="author" content="Hope Experience" />
+
+		<!-- Open Graph -->
+		<meta property="og:title" content="Hope: Full Experience" />
+		<meta
+			property="og:description"
+			content="静寂の水面に、希望の光が宿る。インタラクティブ3D体験。"
+		/>
+		<meta property="og:type" content="website" />
+
 		<title>Hope: Full Experience</title>
-		<style>
-			body {
-				margin: 0;
-				overflow: hidden;
-				background-color: #000;
-				font-family: sans-serif;
-			}
-			#canvas-container {
-				width: 100vw;
-				height: 100vh;
-			}
 
-			#loading {
-				position: fixed;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				color: white;
-				font-size: 24px;
-				z-index: 100;
-				transition: opacity 1s ease;
-			}
-
-			#ui-layer {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				pointer-events: none;
-				z-index: 10;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-
-			button {
-				pointer-events: auto;
-				padding: 20px 40px;
-				font-size: 18px;
-				color: white;
-				background: rgba(0, 136, 255, 0.3);
-				border: 2px solid rgba(255, 255, 255, 0.5);
-				border-radius: 10px;
-				font-weight: 600;
-				letter-spacing: 2px;
-				cursor: pointer;
-				transition: all 0.5s ease;
-				text-transform: uppercase;
-				-webkit-backdrop-filter: blur(10px);
-				backdrop-filter: blur(10px);
-				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-			}
-
-			button:hover {
-				background: rgba(0, 136, 255, 0.5);
-				border-color: rgba(255, 255, 255, 0.8);
-				transform: scale(1.05);
-				box-shadow: 0 6px 12px rgba(0, 136, 255, 0.4);
-			}
-
-			button.hidden {
-				opacity: 0;
-				pointer-events: none;
-			}
-		</style>
+		<link rel="stylesheet" href="/src/styles.css" />
 	</head>
 	<body>
-		<div id="loading">Loading Assets...</div>
-		<div id="ui-layer">
-			<button id="hope-btn" class="hidden">Find Hope</button>
+		<!-- Loading Screen -->
+		<div id="loading">
+			<div class="loading-spinner"></div>
+			<p class="loading-text">Loading Experience</p>
+			<div class="loading-progress">
+				<div class="loading-progress-bar" id="progress-bar"></div>
+			</div>
 		</div>
+
+		<!-- Background Layer (2D Photo) -->
+		<div class="background-layer">
+			<img
+				src="/images/Hope_threejs.jpg"
+				alt="Serene lake with wooden pier and dramatic sky"
+				class="background-image"
+				id="bg-image"
+			/>
+			<div class="background-overlay"></div>
+			<div class="background-image-mask"></div>
+		</div>
+
+		<!-- Navigation -->
+		<nav class="nav" id="nav">
+			<a href="#" class="nav-logo">
+				<span class="nav-logo-icon">✧</span>
+				<span>HOPE</span>
+			</a>
+			<ul class="nav-links">
+				<li><a href="#story" class="nav-link">ストーリー</a></li>
+				<li><a href="#experience" class="nav-link">体験</a></li>
+				<li><a href="#about" class="nav-link">About</a></li>
+			</ul>
+		</nav>
+
+		<!-- Hero Section -->
+		<section class="hero" id="hero">
+			<div class="hero-content">
+				<div class="hero-badge">
+					<span class="hero-badge-icon">✦</span>
+					<span>Interactive 3D Experience</span>
+				</div>
+				<h1 class="hero-title">HOPE</h1>
+				<p class="hero-subtitle">
+					静寂の水面に、希望の光が宿る<br />
+					嵐の先に待つ光を、体感してください
+				</p>
+				<button class="hero-cta" id="start-btn">
+					<span>体験を始める</span>
+					<span class="hero-cta-icon">→</span>
+				</button>
+			</div>
+
+			<div class="scroll-indicator">
+				<span class="scroll-indicator-text">Scroll to Explore</span>
+				<div class="scroll-indicator-icon"></div>
+			</div>
+		</section>
+
+		<!-- Story Section 1: Storm -->
+		<section class="story-section" id="story">
+			<div class="story-content" data-story="storm">
+				<span class="story-number">01</span>
+				<h2 class="story-title">嵐</h2>
+				<p class="story-description">
+					暗い雲が空を覆い、激しい雨が水面を叩く。<br />
+					不安と混乱の中、私たちは立ち尽くす。<br />
+					しかし、嵐は永遠には続かない。
+				</p>
+			</div>
+		</section>
+
+		<!-- Story Section 2: Change -->
+		<section class="story-section">
+			<div class="story-content" data-story="change">
+				<span class="story-number">02</span>
+				<h2 class="story-title">変化</h2>
+				<p class="story-description">
+					雨が弱まり、雲が切れ始める。<br />
+					微かな光が、水平線の向こうに見える。<br />
+					変化は、いつも静かに訪れる。
+				</p>
+			</div>
+		</section>
+
+		<!-- Story Section 3: Hope -->
+		<section class="story-section">
+			<div class="story-content" data-story="hope">
+				<span class="story-number">03</span>
+				<h2 class="story-title">希望</h2>
+				<p class="story-description">
+					雲間から差し込む光が、世界を照らす。<br />
+					静かな水面に映る光は、新しい始まりの象徴。<br />
+					希望は、いつもそこにある。
+				</p>
+			</div>
+		</section>
+
+		<!-- Experience Section -->
+		<section class="experience-section" id="experience">
+			<div class="experience-content">
+				<button class="experience-btn" id="hope-btn">
+					希望を見つける
+				</button>
+			</div>
+		</section>
+
+		<!-- About Section -->
+		<section class="story-section" id="about">
+			<div class="story-content" data-story="about">
+				<span class="story-number">∞</span>
+				<h2 class="story-title">About</h2>
+				<p class="story-description">
+					このインタラクティブ体験は、Three.jsを使用した<br />
+					没入型3Dウェブアプリケーションです。<br />
+					静寂と希望をテーマに、視覚的な物語を紡ぎます。
+				</p>
+			</div>
+		</section>
+
+		<!-- 3D Canvas Container -->
 		<div id="canvas-container"></div>
 
 		<script type="module" src="/src/main.ts"></script>

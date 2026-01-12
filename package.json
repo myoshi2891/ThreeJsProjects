@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "eslint": "^9.39.2",
+    "install": "^0.13.0"
+  }
+}
