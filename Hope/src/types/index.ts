@@ -6,13 +6,6 @@ export interface SceneParams {
 	envIntensity: number
 }
 
-export interface WaterUniforms {
-	uTime: { value: number }
-	uHopeFactor: { value: number }
-	uStormColor: { value: THREE.Color }
-	uHopeColor: { value: THREE.Color }
-}
-
 export interface LoadingCallbacks {
 	onProgress?: (progress: number) => void
 	onComplete?: () => void

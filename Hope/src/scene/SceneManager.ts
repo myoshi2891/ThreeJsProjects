@@ -1,7 +1,5 @@
 import * as THREE from "three"
 import { Rain } from "./objects/Rain"
-import { Pier } from "./objects/Pier"
-import { Water } from "./objects/Water"
 import { Fog } from "./objects/Fog"
 import { LightParticles } from "./objects/LightParticles"
 import { AssetLoader } from "../loaders/AssetLoader"
@@ -16,8 +14,6 @@ export class SceneManager {
 	private readonly renderer: THREE.WebGLRenderer
 	private readonly clock: THREE.Clock
 
-	private readonly pier: Pier
-	private readonly water: Water
 	private readonly rain: Rain
 	private readonly fog: Fog
 	private readonly lightParticles: LightParticles
@@ -49,12 +45,6 @@ export class SceneManager {
 		this.assetLoader = new AssetLoader(this.scene)
 
 		// Create scene objects
-		this.pier = new Pier()
-		this.scene.add(this.pier.getObject())
-
-		this.water = new Water()
-		this.scene.add(this.water.getObject())
-
 		this.rain = new Rain()
 		this.scene.add(this.rain.getObject())
 
@@ -70,9 +60,7 @@ export class SceneManager {
 		// Setup hope animation
 		this.hopeAnimation = new HopeAnimation(
 			this.params,
-			this.water,
 			this.rain,
-			this.pier,
 			this.postProcessing,
 			this.assetLoader,
 			this.renderer,
@@ -157,7 +145,6 @@ export class SceneManager {
 
 	private updateEnvironmentFromScroll(scrollHope: number): void {
 		// Gradual environmental changes based on scroll
-		this.water.updateHopeFactor(scrollHope)
 		this.fog.update(this.clock.getElapsedTime(), 1 - scrollHope * 2)
 	}
 
@@ -175,9 +162,7 @@ export class SceneManager {
 		const time = this.clock.getElapsedTime()
 
 		// Update all scene objects
-		this.water.update(time)
 		this.rain.update(this.params.hopeFactor)
-		this.pier.updateHopeFactor(this.params.hopeFactor)
 		this.fog.update(time, this.params.hopeFactor)
 		this.lightParticles.update(time, this.params.hopeFactor)
 		this.godRays.update(time, this.params.hopeFactor)

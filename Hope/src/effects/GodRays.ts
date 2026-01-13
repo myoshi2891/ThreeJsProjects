@@ -102,8 +102,8 @@ export class GodRays {
 					// Combine fades
 					float alpha = rayOpacity * centerFade;
 
-					// Animated shimmer effect
-					float shimmer = sin(vUv.y * 20.0 - uTime * 2.0) * 0.1 + 0.9;
+					// Animated shimmer effect (slower and subtler)
+					float shimmer = sin(vUv.y * 10.0 - uTime * 0.5) * 0.05 + 0.95;
 					alpha *= shimmer;
 
 					// Apply hope factor - rays only visible when hope increases

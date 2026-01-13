@@ -1,9 +1,7 @@
 import { gsap } from "gsap"
 import * as THREE from "three"
 import type { SceneParams } from "../types"
-import type { Water } from "../scene/objects/Water"
 import type { Rain } from "../scene/objects/Rain"
-import type { Pier } from "../scene/objects/Pier"
 import type { Fog } from "../scene/objects/Fog"
 import type { LightParticles } from "../scene/objects/LightParticles"
 import type { GodRays } from "../effects/GodRays"
@@ -12,9 +10,7 @@ import type { AssetLoader } from "../loaders/AssetLoader"
 
 export class HopeAnimation {
 	private readonly params: SceneParams
-	private readonly water: Water
 	private readonly rain: Rain
-	private readonly pier: Pier
 	private readonly fog: Fog
 	private readonly lightParticles: LightParticles
 	private readonly godRays: GodRays
@@ -25,9 +21,7 @@ export class HopeAnimation {
 
 	constructor(
 		params: SceneParams,
-		water: Water,
 		rain: Rain,
-		pier: Pier,
 		postProcessing: PostProcessing,
 		assetLoader: AssetLoader,
 		renderer: THREE.WebGLRenderer,
@@ -36,9 +30,7 @@ export class HopeAnimation {
 		godRays: GodRays
 	) {
 		this.params = params
-		this.water = water
 		this.rain = rain
-		this.pier = pier
 		this.postProcessing = postProcessing
 		this.assetLoader = assetLoader
 		this.renderer = renderer
@@ -96,9 +88,6 @@ export class HopeAnimation {
 
 	private updateScene(): void {
 		const hopeFactor = this.params.hopeFactor
-
-		// Water calmness
-		this.water.updateHopeFactor(hopeFactor)
 
 		// Rain fading
 		const rainOpacity = THREE.MathUtils.lerp(1, 0, hopeFactor)
