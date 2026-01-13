@@ -96,8 +96,8 @@ export class LightParticles {
 					gl_PointSize = uSize * aScale * uPixelRatio;
 					gl_PointSize *= (1.0 / -viewPosition.z);
 					
-					// Only visible when hope factor is high
-					vAlpha = uHopeFactor * (0.6 + sin(uTime * 2.0 + aRandom * 8.0) * 0.4);
+					// Only visible when hope factor is high (smoother animation)
+					vAlpha = uHopeFactor * (0.8 + sin(uTime * 0.5 + aRandom * 8.0) * 0.2);
 					vRandom = aRandom;
 				}
 			`,

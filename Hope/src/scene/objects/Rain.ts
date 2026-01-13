@@ -43,7 +43,7 @@ export class Rain {
 			.array as Float32Array
 
 		for (let i = 1; i < this.rainCount * 3; i += 3) {
-			positions[i] -= 0.5
+			positions[i] -= 0.2 // Slower rain speed
 			if (positions[i] < -10) {
 				positions[i] = 20
 			}
