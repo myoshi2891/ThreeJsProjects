@@ -4,7 +4,7 @@ export class LightParticles {
 	private readonly particles: THREE.Points
 	private readonly geometry: THREE.BufferGeometry
 	private readonly material: THREE.ShaderMaterial
-	private readonly particleCount = 200
+	private readonly particleCount = 80 // Reduced from 200
 	private readonly basePositions: Float32Array
 
 	constructor() {
@@ -37,8 +37,8 @@ export class LightParticles {
 			this.basePositions[i3 + 1] = positions[i3 + 1]
 			this.basePositions[i3 + 2] = positions[i3 + 2]
 
-			// Scale - small glowing particles
-			scales[i] = Math.random() * 0.5 + 0.2
+			// Scale - very small glowing particles
+			scales[i] = Math.random() * 0.3 + 0.1
 
 			// Random offset for animation
 			randoms[i] = Math.random() * Math.PI * 2
@@ -59,7 +59,7 @@ export class LightParticles {
 			uniforms: {
 				uTime: { value: 0 },
 				uHopeFactor: { value: 0 },
-				uSize: { value: 60 },
+				uSize: { value: 25 }, // Reduced from 60
 				uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
 				uColor: { value: new THREE.Color(0xf5d98a) },
 			},
@@ -96,8 +96,8 @@ export class LightParticles {
 					gl_PointSize = uSize * aScale * uPixelRatio;
 					gl_PointSize *= (1.0 / -viewPosition.z);
 					
-					// Only visible when hope factor is high (smoother animation)
-					vAlpha = uHopeFactor * (0.8 + sin(uTime * 0.5 + aRandom * 8.0) * 0.2);
+					// Only visible when hope factor is high (no pulsing)
+					vAlpha = uHopeFactor * 0.8;
 					vRandom = aRandom;
 				}
 			`,

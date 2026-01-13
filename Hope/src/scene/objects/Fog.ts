@@ -4,7 +4,7 @@ export class Fog {
 	private readonly particles: THREE.Points
 	private readonly geometry: THREE.BufferGeometry
 	private readonly material: THREE.ShaderMaterial
-	private readonly particleCount = 100 // Reduced from 500 to prevent large visible squares
+	private readonly particleCount = 50 // Minimal fog particles
 	private readonly velocities: Float32Array
 
 	constructor() {
@@ -23,18 +23,18 @@ export class Fog {
 		for (let i = 0; i < this.particleCount; i++) {
 			const i3 = i * 3
 
-			// Position - spread around the scene
-			positions[i3] = (Math.random() - 0.5) * 80
-			positions[i3 + 1] = Math.random() * 8 - 2
-			positions[i3 + 2] = (Math.random() - 0.5) * 60 - 10
+			// Position - spread far from camera to avoid large squares
+			positions[i3] = (Math.random() - 0.5) * 100
+			positions[i3 + 1] = Math.random() * 10 - 5
+			positions[i3 + 2] = -30 - Math.random() * 50 // Place far behind camera
 
 			// Velocity - slow drifting motion
 			this.velocities[i3] = (Math.random() - 0.5) * 0.02
 			this.velocities[i3 + 1] = (Math.random() - 0.5) * 0.01
 			this.velocities[i3 + 2] = (Math.random() - 0.5) * 0.02
 
-			// Scale variation - much smaller to avoid large squares
-			scales[i] = Math.random() * 0.8 + 0.3
+			// Scale variation - very small
+			scales[i] = Math.random() * 0.3 + 0.1
 
 			// Random offset for animation
 			randoms[i] = Math.random()
@@ -55,7 +55,7 @@ export class Fog {
 			uniforms: {
 				uTime: { value: 0 },
 				uHopeFactor: { value: 0 },
-				uSize: { value: 30 }, // Reduced from 100
+				uSize: { value: 15 }, // Very small fog particles
 				uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
 			},
 			vertexShader: `
@@ -89,9 +89,9 @@ export class Fog {
 					gl_PointSize *= (1.0 / -viewPosition.z);
 					
 					// Alpha based on distance and hope factor
-					// Fog is more visible in storm, less in hope (reduced opacity)
-					float stormAlpha = 0.15;
-					float hopeAlpha = 0.05;
+					// Fog is more visible in storm, less in hope (very subtle)
+					float stormAlpha = 0.08;
+					float hopeAlpha = 0.02;
 					vAlpha = mix(stormAlpha, hopeAlpha, uHopeFactor);
 					vRandom = aRandom;
 				}
@@ -116,8 +116,8 @@ export class Fog {
 					vec3 hopeColor = vec3(0.8, 0.75, 0.7);
 					vec3 color = mix(stormColor, hopeColor, uHopeFactor);
 					
-					// Subtle pulsing (slower and less intense)
-					alpha *= 0.9 + sin(uTime * 0.3 + vRandom * 10.0) * 0.1;
+					// No pulsing animation - constant alpha
+					// alpha *= 0.9 + sin(uTime * 0.3 + vRandom * 10.0) * 0.1;
 					
 					gl_FragColor = vec4(color, alpha);
 				}

@@ -18,6 +18,7 @@ export class HopeAnimation {
 	private readonly assetLoader: AssetLoader
 	private readonly renderer: THREE.WebGLRenderer
 	private readonly bgImage: HTMLElement | null
+	private lastHopeFactor = 0 // For throttling updates
 
 	constructor(
 		params: SceneParams,
@@ -88,6 +89,12 @@ export class HopeAnimation {
 
 	private updateScene(): void {
 		const hopeFactor = this.params.hopeFactor
+
+		// Skip update if change is too small (reduces flickering)
+		if (Math.abs(hopeFactor - this.lastHopeFactor) < 0.01) {
+			return
+		}
+		this.lastHopeFactor = hopeFactor
 
 		// Rain fading
 		const rainOpacity = THREE.MathUtils.lerp(1, 0, hopeFactor)
