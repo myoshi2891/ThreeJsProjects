@@ -117,8 +117,11 @@ body {
 	object-position: center;
 	transform: translate(-50%, -50%);
 	filter: brightness(0.4) saturate(0.8);
-	transition: filter 2s ease, transform 0.1s ease;
-	will-change: transform, filter;
+	/* Removed conflicting CSS transitions - GSAP handles animations */
+	will-change: transform;
+	/* Use GPU acceleration for smoother rendering */
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
 }
 
 .background-overlay {
@@ -430,7 +433,7 @@ body {
 	gap: var(--space-xl);
 	background: var(--color-bg-dark);
 	z-index: var(--z-modal);
-	transition: opacity 1s ease;
+	transition: opacity 0.5s ease; /* Faster fade out */
 }
 
 .loading-spinner {
@@ -488,7 +491,7 @@ body {
 	text-align: center;
 	opacity: 0;
 	transform: translateY(50px);
-	transition: opacity 0.8s ease, transform 0.8s ease;
+	transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .story-content.visible {
@@ -540,7 +543,7 @@ body {
 	text-align: center;
 	opacity: 0;
 	transform: translateY(30px);
-	transition: opacity 0.8s ease, transform 0.8s ease;
+	transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .experience-content.visible {

@@ -167,13 +167,9 @@ export class SceneManager {
 		this.lightParticles.update(time, this.params.hopeFactor)
 		this.godRays.update(time, this.params.hopeFactor)
 
-		// Camera breathing effect (subtler with hope)
-		const cameraShake = THREE.MathUtils.lerp(
-			0.15,
-			0.03,
-			this.params.hopeFactor
-		)
-		this.camera.position.y += Math.sin(time * 0.3) * cameraShake * 0.1
+		// Camera breathing effect removed - caused flickering
+		// const cameraShake = THREE.MathUtils.lerp(0.15, 0.03, this.params.hopeFactor)
+		// this.camera.position.y += Math.sin(time * 0.3) * cameraShake * 0.1
 
 		this.postProcessing.render()
 	}

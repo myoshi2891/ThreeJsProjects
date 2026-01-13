@@ -4,7 +4,7 @@ export class Rain {
 	private readonly points: THREE.Points
 	private readonly geometry: THREE.BufferGeometry
 	private readonly material: THREE.PointsMaterial
-	private readonly rainCount = 10000
+	private readonly rainCount = 3000 // Reduced from 10000
 
 	constructor() {
 		this.geometry = this.createGeometry()
@@ -30,9 +30,9 @@ export class Rain {
 	private createMaterial(): THREE.PointsMaterial {
 		return new THREE.PointsMaterial({
 			color: 0xaaaaaa,
-			size: 0.1,
+			size: 0.05, // Smaller rain drops
 			transparent: true,
-			opacity: 1,
+			opacity: 0.7,
 		})
 	}
 

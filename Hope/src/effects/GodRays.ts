@@ -102,9 +102,9 @@ export class GodRays {
 					// Combine fades
 					float alpha = rayOpacity * centerFade;
 
-					// Animated shimmer effect (slower and subtler)
-					float shimmer = sin(vUv.y * 10.0 - uTime * 0.5) * 0.05 + 0.95;
-					alpha *= shimmer;
+					// Shimmer effect disabled - causes flickering
+					// float shimmer = sin(vUv.y * 10.0 - uTime * 0.5) * 0.05 + 0.95;
+					// alpha *= shimmer;
 
 					// Apply hope factor - rays only visible when hope increases
 					alpha *= uHopeFactor * 0.6;
@@ -120,7 +120,7 @@ export class GodRays {
 			`,
 			transparent: true,
 			blending: THREE.AdditiveBlending,
-			side: THREE.DoubleSide,
+			side: THREE.FrontSide, // Changed from DoubleSide to reduce flickering
 			depthWrite: false,
 		})
 	}
@@ -129,8 +129,8 @@ export class GodRays {
 		this.material.uniforms.uTime.value = time
 		this.material.uniforms.uHopeFactor.value = hopeFactor
 
-		// Subtle rotation animation
-		this.mesh.rotation.y = Math.sin(time * 0.1) * 0.05
+		// Rotation animation disabled - causes flickering
+		// this.mesh.rotation.y = Math.sin(time * 0.1) * 0.05
 	}
 
 	public getObject(): THREE.Mesh {

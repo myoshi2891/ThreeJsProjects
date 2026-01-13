@@ -14,6 +14,9 @@ export class ScrollAnimation {
 	private readonly callbacks: ScrollAnimationCallbacks
 	private readonly bgImage: HTMLElement | null
 	private isInitialized = false
+	private lastBrightness = 0
+	private lastSaturation = 0
+	private storyVisibilityState: Map<Element, boolean> = new Map()
 
 	constructor(callbacks: ScrollAnimationCallbacks = {}) {
 		this.callbacks = callbacks
@@ -57,7 +60,7 @@ export class ScrollAnimation {
 				trigger: "body",
 				start: "top top",
 				end: "bottom bottom",
-				scrub: 1,
+				scrub: 3, // Synchronized with filter scrub
 			},
 		})
 
@@ -66,14 +69,32 @@ export class ScrollAnimation {
 			trigger: "body",
 			start: "top top",
 			end: "bottom bottom",
-			scrub: 1,
+			scrub: 3, // Higher scrub for even smoother updates
 			onUpdate: self => {
 				const progress = self.progress
 				const brightness = 0.4 + progress * 0.4
 				const saturation = 0.8 + progress * 0.3
 
+				// Only update if change is significant (threshold 0.02)
+				const brightnessDiff = Math.abs(
+					brightness - this.lastBrightness
+				)
+				const saturationDiff = Math.abs(
+					saturation - this.lastSaturation
+				)
+
+				if (brightnessDiff < 0.02 && saturationDiff < 0.02) {
+					this.callbacks.onScrollProgress?.(progress)
+					return
+				}
+
+				this.lastBrightness = brightness
+				this.lastSaturation = saturation
+
 				if (this.bgImage) {
-					this.bgImage.style.filter = `brightness(${brightness}) saturate(${saturation})`
+					this.bgImage.style.filter = `brightness(${brightness.toFixed(
+						2
+					)}) saturate(${saturation.toFixed(2)})`
 				}
 
 				this.callbacks.onScrollProgress?.(progress)
@@ -87,39 +108,33 @@ export class ScrollAnimation {
 		storyContents.forEach((content, index) => {
 			const storyType = content.getAttribute("data-story")
 
+			// Initialize visibility state
+			this.storyVisibilityState.set(content, false)
+
 			ScrollTrigger.create({
 				trigger: content,
 				start: "top 80%",
 				end: "bottom 20%",
-				onEnter: () => {
-					content.classList.add("visible")
-				},
-				onLeave: () => {
-					content.classList.remove("visible")
-				},
-				onEnterBack: () => {
-					content.classList.add("visible")
-				},
-				onLeaveBack: () => {
-					content.classList.remove("visible")
-				},
-				onUpdate: self => {
-					const progress = self.progress
-
-					switch (storyType) {
-						case "storm":
-							this.callbacks.onStormSection?.(progress)
-							break
-						case "change":
-							this.callbacks.onChangeSection?.(progress)
-							break
-						case "hope":
-							this.callbacks.onHopeSection?.(progress)
-							break
-					}
-				},
+				onEnter: () => this.setStoryVisible(content, true),
+				onLeave: () => this.setStoryVisible(content, false),
+				onEnterBack: () => this.setStoryVisible(content, true),
+				onLeaveBack: () => this.setStoryVisible(content, false),
+				// Removed onUpdate to reduce callback frequency
 			})
 		})
+	}
+
+	// Debounced visibility setter to prevent rapid toggles
+	private setStoryVisible(content: Element, visible: boolean): void {
+		const currentState = this.storyVisibilityState.get(content)
+		if (currentState === visible) return // Skip if no change
+
+		this.storyVisibilityState.set(content, visible)
+		if (visible) {
+			content.classList.add("visible")
+		} else {
+			content.classList.remove("visible")
+		}
 	}
 
 	private setupExperienceSection(): void {
