@@ -880,6 +880,83 @@ body.hope-mode .hero-badge {
 }
 
 /* =====================================================
+   Fullscreen YouTube Video Overlay
+   ===================================================== */
+.video-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.95);
+	z-index: var(--z-modal);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--transition-slow);
+}
+
+.video-overlay.visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.video-overlay.hidden {
+	display: none;
+}
+
+.video-fullscreen-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-width: 100vw;
+	max-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.video-fullscreen-wrapper iframe {
+	width: 100%;
+	height: 100%;
+	max-width: 100vw;
+	max-height: 100vh;
+}
+
+.video-close-btn {
+	position: fixed;
+	top: var(--space-xl);
+	right: var(--space-xl);
+	width: 48px;
+	height: 48px;
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+	color: #ffffff;
+	font-size: 1.5rem;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all var(--transition-base);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: calc(var(--z-modal) + 1);
+}
+
+.video-close-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.5);
+	transform: scale(1.1) rotate(90deg);
+}
+
+.video-close-btn:active {
+	transform: scale(0.95);
+}
+
+/* =====================================================
    Utility Classes
    ===================================================== */
 .visually-hidden {

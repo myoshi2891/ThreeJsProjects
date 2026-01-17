@@ -9,6 +9,9 @@ class App {
 	private readonly progressBar: HTMLElement
 	private readonly startButton: HTMLButtonElement
 	private readonly hopeButton: HTMLButtonElement
+	private readonly videoOverlay: HTMLElement
+	private readonly youtubePlayer: HTMLIFrameElement
+	private readonly videoCloseButton: HTMLButtonElement
 
 	constructor() {
 		const container = document.getElementById("canvas-container")
@@ -25,6 +28,15 @@ class App {
 		) as HTMLButtonElement
 		this.hopeButton = document.getElementById(
 			"hope-btn"
+		) as HTMLButtonElement
+		this.videoOverlay = document.getElementById(
+			"video-overlay"
+		) as HTMLElement
+		this.youtubePlayer = document.getElementById(
+			"youtube-player"
+		) as HTMLIFrameElement
+		this.videoCloseButton = document.getElementById(
+			"video-close"
 		) as HTMLButtonElement
 
 		this.sceneManager = new SceneManager(container)
@@ -67,17 +79,51 @@ class App {
 			}
 		})
 
-		// Experience button - start the hope animation
+		// Experience button - start the hope animation (no scroll)
 		this.hopeButton.addEventListener("click", () => {
 			this.hopeButton.classList.add("hidden")
 			this.sceneManager.startHopeAnimation()
 
-			// Scroll to top to fully experience the animation
-			window.scrollTo({
-				top: 0,
-				behavior: "smooth",
-			})
+			// Show video after animation completes (12 seconds)
+			setTimeout(() => {
+				this.showVideoPlayer()
+			}, 12000)
 		})
+
+		// Video close button
+		this.videoCloseButton.addEventListener("click", () => {
+			this.hideVideoPlayer()
+		})
+
+		// Close video on Escape key
+		document.addEventListener("keydown", e => {
+			if (
+				e.key === "Escape" &&
+				this.videoOverlay.classList.contains("visible")
+			) {
+				this.hideVideoPlayer()
+			}
+		})
+	}
+
+	private showVideoPlayer(): void {
+		// Set YouTube embed URL with autoplay
+		// Video ID: x7BEDUGk6NI
+		this.youtubePlayer.src =
+			"https://www.youtube.com/embed/x7BEDUGk6NI?autoplay=1&rel=0&modestbranding=1"
+
+		this.videoOverlay.classList.remove("hidden")
+		requestAnimationFrame(() => {
+			this.videoOverlay.classList.add("visible")
+		})
+	}
+
+	private hideVideoPlayer(): void {
+		this.videoOverlay.classList.remove("visible")
+		setTimeout(() => {
+			this.videoOverlay.classList.add("hidden")
+			this.youtubePlayer.src = "" // Stop video
+		}, 500)
 	}
 }
 

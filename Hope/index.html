@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 	<head>
 		<meta charset="UTF-8" />
@@ -131,6 +131,35 @@
 				</button>
 			</div>
 		</section>
+
+		<!-- Fullscreen YouTube Video Container (hidden initially) -->
+		<div class="video-overlay hidden" id="video-overlay">
+			<div class="video-fullscreen-wrapper">
+				<iframe
+					id="youtube-player"
+					src=""
+					title="Hope Video"
+					frameborder="0"
+					allow="
+						accelerometer;
+						autoplay;
+						clipboard-write;
+						encrypted-media;
+						gyroscope;
+						picture-in-picture;
+						web-share;
+					"
+					allowfullscreen
+				></iframe>
+			</div>
+			<button
+				class="video-close-btn"
+				id="video-close"
+				aria-label="Close video"
+			>
+				<span>✕</span>
+			</button>
+		</div>
 
 		<!-- About Section -->
 		<section class="story-section" id="about">
