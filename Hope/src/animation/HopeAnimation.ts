@@ -42,6 +42,9 @@ export class HopeAnimation {
 	}
 
 	public start(): void {
+		// Add hope-mode class to enable light text colors
+		document.body.classList.add("hope-mode")
+
 		// Main hope animation timeline
 		const timeline = gsap.timeline()
 
