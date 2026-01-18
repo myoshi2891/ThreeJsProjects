@@ -644,16 +644,17 @@ body {
 body.hope-mode .hero-subtitle,
 body.hope-mode .story-description,
 body.hope-mode .scroll-indicator-text {
-	color: var(--color-text-secondary-light);
-	text-shadow:
-		0 1px 2px rgba(255, 255, 255, 1),
-		0 0 30px rgba(255, 255, 255, 0.9),
-		0 0 60px rgba(255, 255, 255, 0.6);
-	background: rgba(255, 255, 255, 0.4);
-	padding: 0.5em 1em;
-	border-radius: var(--radius-lg);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	color: #0a1628;
+	font-weight: 500;
+	text-shadow: none;
+	background: rgba(255, 255, 255, 0.85);
+	padding: 0.75em 1.5em;
+	border-radius: var(--radius-xl);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow:
+		0 4px 20px rgba(0, 0, 0, 0.1),
+		0 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 body.hope-mode .story-title {
