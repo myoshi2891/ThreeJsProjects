@@ -2,7 +2,7 @@ import "./styles.css"
 import { SceneManager } from "./scene/SceneManager"
 import { ScrollAnimation } from "./animation/ScrollAnimation"
 
-const YOUTUBE_VIDEO_ID = "x7BEDUGk6NI"
+const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
 class App {
 	private readonly sceneManager: SceneManager
