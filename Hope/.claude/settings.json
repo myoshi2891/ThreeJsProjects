@@ -1,0 +1,18 @@
+{
+	"$schema": "https://api.claude.com/.claude/settings.schema.json",
+	"permissions": {
+		"allow": [
+			"Bash(bun:*)",
+			"Bash(npm:*)",
+			"Bash(git:*)",
+			"Bash(cat:*)",
+			"Bash(ls:*)",
+			"Read(*)",
+			"Write(Hope/**)"
+		],
+		"deny": ["Bash(rm -rf:*)"]
+	},
+	"skills": {
+		"directories": ["skills"]
+	}
+}
