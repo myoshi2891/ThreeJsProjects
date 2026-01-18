@@ -31,9 +31,9 @@
 	--glass-shadow: rgba(0, 0, 0, 0.35);
 
 	/* Colors - Hope Mode (Light Background) - ボタン押下後 */
-	--color-text-primary-light: #1a1a2e;
-	--color-text-secondary-light: #2d3a4f;
-	--color-text-muted-light: #4a5568;
+	--color-text-primary-light: #0f172a;
+	--color-text-secondary-light: #1e293b;
+	--color-text-muted-light: #334155;
 
 	/* Hope Mode - Accent (Deep Teal/Emerald for contrast) */
 	--color-accent-light: #0d9488;
@@ -646,15 +646,21 @@ body.hope-mode .story-description,
 body.hope-mode .scroll-indicator-text {
 	color: var(--color-text-secondary-light);
 	text-shadow:
-		0 1px 4px rgba(255, 255, 255, 0.9),
-		0 0 20px rgba(255, 255, 255, 0.5);
+		0 1px 2px rgba(255, 255, 255, 1),
+		0 0 30px rgba(255, 255, 255, 0.9),
+		0 0 60px rgba(255, 255, 255, 0.6);
+	background: rgba(255, 255, 255, 0.4);
+	padding: 0.5em 1em;
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 body.hope-mode .story-title {
 	color: var(--color-text-primary-light);
 	text-shadow:
-		0 2px 6px rgba(255, 255, 255, 0.8),
-		0 0 30px rgba(255, 255, 255, 0.4);
+		0 1px 2px rgba(255, 255, 255, 1),
+		0 0 40px rgba(255, 255, 255, 0.8);
 }
 
 body.hope-mode .story-number {
@@ -954,6 +960,87 @@ body.hope-mode .hero-badge {
 
 .video-close-btn:active {
 	transform: scale(0.95);
+}
+
+/* =====================================================
+   Thumbnail Video Player (in-page)
+   ===================================================== */
+.video-thumbnail {
+	opacity: 0;
+	transform: scale(0.9);
+	transition: all var(--transition-slow);
+}
+
+.video-thumbnail.visible {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.video-thumbnail.hidden {
+	display: none;
+}
+
+.video-thumbnail-wrapper {
+	position: relative;
+	width: 800px;
+	max-width: 90vw;
+	aspect-ratio: 16 / 9;
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow:
+		0 8px 40px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.25);
+	background: #000;
+}
+
+.video-thumbnail-wrapper iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.video-expand-btn {
+	position: absolute;
+	top: var(--space-sm);
+	right: var(--space-sm);
+	width: 36px;
+	height: 36px;
+	background: rgba(0, 0, 0, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: var(--radius-md);
+	color: #ffffff;
+	font-size: 1.25rem;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all var(--transition-base);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	z-index: 10;
+}
+
+.video-thumbnail-wrapper:hover .video-expand-btn {
+	opacity: 1;
+}
+
+.video-expand-btn:hover {
+	background: var(--color-accent-light);
+	border-color: var(--color-accent-light-bright);
+	transform: scale(1.1);
+}
+
+.video-expand-btn:active {
+	transform: scale(0.95);
+}
+
+/* Hope Mode adjustments for thumbnail */
+body.hope-mode .video-thumbnail-wrapper {
+	box-shadow:
+		0 8px 40px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.3),
+		0 0 0 2px var(--color-accent-light);
 }
 
 /* =====================================================

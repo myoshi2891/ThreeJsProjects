@@ -2,6 +2,8 @@ import "./styles.css"
 import { SceneManager } from "./scene/SceneManager"
 import { ScrollAnimation } from "./animation/ScrollAnimation"
 
+const YOUTUBE_VIDEO_ID = "x7BEDUGk6NI"
+
 class App {
 	private readonly sceneManager: SceneManager
 	private readonly scrollAnimation: ScrollAnimation
@@ -12,6 +14,9 @@ class App {
 	private readonly videoOverlay: HTMLElement
 	private readonly youtubePlayer: HTMLIFrameElement
 	private readonly videoCloseButton: HTMLButtonElement
+	private readonly videoThumbnail: HTMLElement
+	private readonly youtubeThumbnailPlayer: HTMLIFrameElement
+	private readonly videoExpandButton: HTMLButtonElement
 
 	constructor() {
 		const container = document.getElementById("canvas-container")
@@ -37,6 +42,15 @@ class App {
 		) as HTMLIFrameElement
 		this.videoCloseButton = document.getElementById(
 			"video-close"
+		) as HTMLButtonElement
+		this.videoThumbnail = document.getElementById(
+			"video-thumbnail"
+		) as HTMLElement
+		this.youtubeThumbnailPlayer = document.getElementById(
+			"youtube-thumbnail-player"
+		) as HTMLIFrameElement
+		this.videoExpandButton = document.getElementById(
+			"video-expand"
 		) as HTMLButtonElement
 
 		this.sceneManager = new SceneManager(container)
@@ -90,9 +104,14 @@ class App {
 			}, 12000)
 		})
 
-		// Video close button
+		// Video close button - closes fullscreen and shows thumbnail
 		this.videoCloseButton.addEventListener("click", () => {
 			this.hideVideoPlayer()
+		})
+
+		// Expand button - opens fullscreen from thumbnail
+		this.videoExpandButton.addEventListener("click", () => {
+			this.expandToFullscreen()
 		})
 
 		// Close video on Escape key
@@ -108,9 +127,7 @@ class App {
 
 	private showVideoPlayer(): void {
 		// Set YouTube embed URL with autoplay
-		// Video ID: x7BEDUGk6NI
-		this.youtubePlayer.src =
-			"https://www.youtube.com/embed/x7BEDUGk6NI?autoplay=1&rel=0&modestbranding=1"
+		this.youtubePlayer.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`
 
 		this.videoOverlay.classList.remove("hidden")
 		requestAnimationFrame(() => {
@@ -122,8 +139,33 @@ class App {
 		this.videoOverlay.classList.remove("visible")
 		setTimeout(() => {
 			this.videoOverlay.classList.add("hidden")
-			this.youtubePlayer.src = "" // Stop video
+			this.youtubePlayer.src = "" // Stop fullscreen video
+
+			// Show thumbnail video player
+			this.showThumbnailPlayer()
 		}, 500)
+	}
+
+	private showThumbnailPlayer(): void {
+		// Set YouTube embed URL (no autoplay for thumbnail)
+		this.youtubeThumbnailPlayer.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?rel=0&modestbranding=1`
+
+		this.videoThumbnail.classList.remove("hidden")
+		requestAnimationFrame(() => {
+			this.videoThumbnail.classList.add("visible")
+		})
+	}
+
+	private expandToFullscreen(): void {
+		// Hide thumbnail
+		this.videoThumbnail.classList.remove("visible")
+		setTimeout(() => {
+			this.videoThumbnail.classList.add("hidden")
+			this.youtubeThumbnailPlayer.src = "" // Stop thumbnail video
+
+			// Show fullscreen player
+			this.showVideoPlayer()
+		}, 300)
 	}
 }
 
