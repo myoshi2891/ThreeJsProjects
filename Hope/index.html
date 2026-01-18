@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 	<head>
 		<meta charset="UTF-8" />
@@ -129,8 +129,66 @@
 				<button class="experience-btn" id="hope-btn">
 					希望を見つける
 				</button>
+
+				<!-- Thumbnail Video Player (shown after fullscreen closes) -->
+				<div class="video-thumbnail hidden" id="video-thumbnail">
+					<div class="video-thumbnail-wrapper">
+						<iframe
+							id="youtube-thumbnail-player"
+							src=""
+							title="Hope Video"
+							frameborder="0"
+							allow="
+								accelerometer;
+								autoplay;
+								clipboard-write;
+								encrypted-media;
+								gyroscope;
+								picture-in-picture;
+								web-share;
+							"
+							allowfullscreen
+						></iframe>
+						<button
+							class="video-expand-btn"
+							id="video-expand"
+							aria-label="Expand to fullscreen"
+						>
+							<span>⛶</span>
+						</button>
+					</div>
+				</div>
 			</div>
 		</section>
+
+		<!-- Fullscreen YouTube Video Container (hidden initially) -->
+		<div class="video-overlay hidden" id="video-overlay">
+			<div class="video-fullscreen-wrapper">
+				<iframe
+					id="youtube-player"
+					src=""
+					title="Hope Video"
+					frameborder="0"
+					allow="
+						accelerometer;
+						autoplay;
+						clipboard-write;
+						encrypted-media;
+						gyroscope;
+						picture-in-picture;
+						web-share;
+					"
+					allowfullscreen
+				></iframe>
+			</div>
+			<button
+				class="video-close-btn"
+				id="video-close"
+				aria-label="Close video"
+			>
+				<span>✕</span>
+			</button>
+		</div>
 
 		<!-- About Section -->
 		<section class="story-section" id="about">

@@ -14,20 +14,36 @@
 	--color-bg-mid: #1a2535;
 	--color-bg-light: #2a3a5a;
 
-	/* Colors - Hope (Light) */
-	--color-accent: #e8c06a;
-	--color-accent-bright: #f5d98a;
-	--color-accent-dim: #c9a050;
+	/* Colors - Accent (Premium Amber/Gold) */
+	--color-accent: #f4a261;
+	--color-accent-bright: #ffb87a;
+	--color-accent-dim: #e76f51;
+	--color-accent-glow: rgba(244, 162, 97, 0.5);
 
-	/* Text Colors */
+	/* Text Colors - 暗い背景用（ボタン押下前） */
 	--color-text-primary: #ffffff;
-	--color-text-secondary: #a0b0c0;
-	--color-text-muted: #6a7a8a;
+	--color-text-secondary: #e0e8f0;
+	--color-text-muted: #9aaab8;
 
 	/* Glass Effect */
-	--glass-bg: rgba(10, 15, 26, 0.6);
-	--glass-border: rgba(255, 255, 255, 0.1);
-	--glass-shadow: rgba(0, 0, 0, 0.3);
+	--glass-bg: rgba(10, 15, 26, 0.65);
+	--glass-border: rgba(255, 255, 255, 0.15);
+	--glass-shadow: rgba(0, 0, 0, 0.35);
+
+	/* Colors - Hope Mode (Light Background) - ボタン押下後 */
+	--color-text-primary-light: #0f172a;
+	--color-text-secondary-light: #1e293b;
+	--color-text-muted-light: #334155;
+
+	/* Hope Mode - Accent (Deep Teal/Emerald for contrast) */
+	--color-accent-light: #0d9488;
+	--color-accent-light-bright: #14b8a6;
+	--color-accent-light-dim: #0f766e;
+	--color-accent-light-glow: rgba(13, 148, 136, 0.4);
+
+	/* Glass for Hope Mode */
+	--glass-bg-light: rgba(255, 255, 255, 0.85);
+	--glass-border-light: rgba(13, 148, 136, 0.3);
 
 	/* Typography */
 	--font-primary: "Outfit", "Noto Sans JP", sans-serif;
@@ -117,9 +133,7 @@ body {
 	object-position: center;
 	transform: translate(-50%, -50%);
 	filter: brightness(0.4) saturate(0.8);
-	/* Removed conflicting CSS transitions - GSAP handles animations */
 	will-change: transform;
-	/* Use GPU acceleration for smoother rendering */
 	backface-visibility: hidden;
 	-webkit-backface-visibility: hidden;
 }
@@ -140,7 +154,6 @@ body {
 	pointer-events: none;
 }
 
-/* Hide star watermark in bottom right */
 .background-image-mask {
 	position: absolute;
 	bottom: 0;
@@ -168,7 +181,8 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	z-index: var(--z-nav);
-	transition: background-color var(--transition-slow),
+	transition:
+		background-color var(--transition-slow),
 		backdrop-filter var(--transition-slow);
 }
 
@@ -188,7 +202,7 @@ body {
 	letter-spacing: 0.1em;
 	color: var(--color-text-primary);
 	text-decoration: none;
-	transition: color var(--transition-base);
+	transition: color 2s ease;
 }
 
 .nav-logo:hover {
@@ -198,6 +212,7 @@ body {
 .nav-logo-icon {
 	font-size: 1.5rem;
 	color: var(--color-accent);
+	transition: color 2s ease;
 }
 
 .nav-links {
@@ -214,7 +229,7 @@ body {
 	font-weight: var(--font-weight-medium);
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
-	transition: color var(--transition-base);
+	transition: color 2s ease;
 	position: relative;
 }
 
@@ -306,6 +321,9 @@ body {
 	letter-spacing: 0.1em;
 	margin-bottom: var(--space-3xl);
 	line-height: 1.8;
+	transition:
+		color 2s ease,
+		text-shadow 2s ease;
 }
 
 .hero-cta {
@@ -316,7 +334,7 @@ body {
 	background: linear-gradient(
 		135deg,
 		var(--color-accent-dim) 0%,
-		var(--color-accent) 50%,
+		var(--color-accent) 40%,
 		var(--color-accent-bright) 100%
 	);
 	background-size: 200% 200%;
@@ -324,21 +342,28 @@ body {
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
 	font-size: 1rem;
-	font-weight: var(--font-weight-semibold);
-	letter-spacing: 0.15em;
+	font-weight: var(--font-weight-bold);
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: var(--color-bg-dark);
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	cursor: pointer;
-	transition: transform var(--transition-base),
-		box-shadow var(--transition-base);
-	box-shadow: 0 4px 20px rgba(232, 192, 106, 0.3),
-		0 8px 40px rgba(232, 192, 106, 0.2);
+	transition:
+		transform var(--transition-base),
+		box-shadow var(--transition-base),
+		background var(--transition-base);
+	box-shadow:
+		0 4px 20px var(--color-accent-glow),
+		0 8px 40px rgba(231, 111, 81, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .hero-cta:hover {
 	transform: translateY(-3px) scale(1.02);
-	box-shadow: 0 8px 30px rgba(232, 192, 106, 0.4),
-		0 16px 60px rgba(232, 192, 106, 0.25);
+	box-shadow:
+		0 8px 35px var(--color-accent-glow),
+		0 16px 60px rgba(231, 111, 81, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25);
 	animation: ctaGlow 2s ease-in-out infinite;
 }
 
@@ -377,6 +402,7 @@ body {
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	color: var(--color-text-muted);
+	transition: color 2s ease;
 }
 
 .scroll-indicator-icon {
@@ -385,6 +411,7 @@ body {
 	border: 2px solid var(--color-text-muted);
 	border-radius: var(--radius-full);
 	position: relative;
+	transition: border-color 2s ease;
 }
 
 .scroll-indicator-icon::before {
@@ -433,7 +460,7 @@ body {
 	gap: var(--space-xl);
 	background: var(--color-bg-dark);
 	z-index: var(--z-modal);
-	transition: opacity 0.5s ease; /* Faster fade out */
+	transition: opacity 0.5s ease;
 }
 
 .loading-spinner {
@@ -491,7 +518,9 @@ body {
 	text-align: center;
 	opacity: 0;
 	transform: translateY(50px);
-	transition: opacity 0.3s ease, transform 0.3s ease;
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
 }
 
 .story-content.visible {
@@ -509,6 +538,9 @@ body {
 	padding: var(--space-sm) var(--space-lg);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius-full);
+	transition:
+		color 2s ease,
+		border-color 2s ease;
 }
 
 .story-title {
@@ -517,6 +549,9 @@ body {
 	letter-spacing: 0.1em;
 	margin-bottom: var(--space-lg);
 	color: var(--color-text-primary);
+	transition:
+		color 2s ease,
+		text-shadow 2s ease;
 }
 
 .story-description {
@@ -524,6 +559,9 @@ body {
 	font-weight: var(--font-weight-light);
 	line-height: 2;
 	color: var(--color-text-secondary);
+	transition:
+		color 2s ease,
+		text-shadow 2s ease;
 }
 
 /* =====================================================
@@ -543,7 +581,9 @@ body {
 	text-align: center;
 	opacity: 0;
 	transform: translateY(30px);
-	transition: opacity 0.3s ease, transform 0.3s ease;
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
 }
 
 .experience-content.visible {
@@ -553,33 +593,162 @@ body {
 
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
-	background: var(--glass-bg);
+	background: linear-gradient(
+		135deg,
+		rgba(10, 15, 26, 0.8) 0%,
+		rgba(26, 37, 53, 0.9) 100%
+	);
 	border: 2px solid var(--color-accent);
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
 	font-size: 1.125rem;
-	font-weight: var(--font-weight-semibold);
-	letter-spacing: 0.15em;
+	font-weight: var(--font-weight-bold);
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: var(--color-accent);
+	color: var(--color-accent-bright);
 	cursor: pointer;
 	backdrop-filter: blur(20px);
 	-webkit-backdrop-filter: blur(20px);
 	transition: all var(--transition-base);
-	box-shadow: 0 4px 30px rgba(232, 192, 106, 0.1);
+	box-shadow:
+		0 4px 30px var(--color-accent-glow),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .experience-btn:hover {
-	background: var(--color-accent);
-	color: var(--color-bg-dark);
+	background: linear-gradient(
+		135deg,
+		var(--color-accent-dim) 0%,
+		var(--color-accent) 50%,
+		var(--color-accent-bright) 100%
+	);
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	border-color: var(--color-accent-bright);
 	transform: scale(1.05);
-	box-shadow: 0 8px 40px rgba(232, 192, 106, 0.3);
+	box-shadow:
+		0 8px 40px var(--color-accent-glow),
+		0 16px 60px rgba(231, 111, 81, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .experience-btn.hidden {
 	opacity: 0;
 	pointer-events: none;
 	transform: scale(0.9);
+}
+
+/* =====================================================
+   Hope Mode - Light Background Styles（ボタン押下後）
+   ===================================================== */
+body.hope-mode .hero-subtitle,
+body.hope-mode .story-description,
+body.hope-mode .scroll-indicator-text {
+	color: var(--color-text-secondary-light);
+	text-shadow:
+		0 1px 2px rgba(255, 255, 255, 1),
+		0 0 30px rgba(255, 255, 255, 0.9),
+		0 0 60px rgba(255, 255, 255, 0.6);
+	background: rgba(255, 255, 255, 0.4);
+	padding: 0.5em 1em;
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+body.hope-mode .story-title {
+	color: var(--color-text-primary-light);
+	text-shadow:
+		0 1px 2px rgba(255, 255, 255, 1),
+		0 0 40px rgba(255, 255, 255, 0.8);
+}
+
+body.hope-mode .story-number {
+	color: var(--color-accent-light);
+	border-color: var(--color-accent-light);
+	background: rgba(255, 255, 255, 0.3);
+}
+
+body.hope-mode .nav-link {
+	color: var(--color-text-secondary-light);
+	text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+body.hope-mode .nav-link:hover {
+	color: var(--color-text-primary-light);
+}
+
+body.hope-mode .nav-logo {
+	color: var(--color-text-primary-light);
+	text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+body.hope-mode .nav-logo-icon {
+	color: var(--color-accent-light);
+}
+
+body.hope-mode .scroll-indicator-icon {
+	border-color: var(--color-text-muted-light);
+}
+
+body.hope-mode .experience-btn {
+	background: linear-gradient(
+		135deg,
+		var(--color-accent-light-dim) 0%,
+		var(--color-accent-light) 50%,
+		var(--color-accent-light-bright) 100%
+	);
+	border: none;
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	box-shadow:
+		0 4px 25px var(--color-accent-light-glow),
+		0 8px 40px rgba(13, 148, 136, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+body.hope-mode .experience-btn:hover {
+	background: linear-gradient(
+		135deg,
+		var(--color-accent-light) 0%,
+		var(--color-accent-light-bright) 50%,
+		#2dd4bf 100%
+	);
+	color: #ffffff;
+	box-shadow:
+		0 8px 35px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+body.hope-mode .hero-cta {
+	background: linear-gradient(
+		135deg,
+		var(--color-accent-light-dim) 0%,
+		var(--color-accent-light) 40%,
+		var(--color-accent-light-bright) 100%
+	);
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	border: none;
+	box-shadow:
+		0 4px 25px var(--color-accent-light-glow),
+		0 8px 40px rgba(13, 148, 136, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+body.hope-mode .hero-cta:hover {
+	box-shadow:
+		0 8px 35px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+body.hope-mode .hero-badge {
+	background: var(--glass-bg-light);
+	border-color: var(--glass-border-light);
+	color: var(--color-accent-light);
+	box-shadow: 0 2px 15px rgba(13, 148, 136, 0.15);
 }
 
 /* =====================================================
@@ -714,6 +883,164 @@ body {
 	.hero-subtitle {
 		font-size: 0.875rem;
 	}
+}
+
+/* =====================================================
+   Fullscreen YouTube Video Overlay
+   ===================================================== */
+.video-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.95);
+	z-index: var(--z-modal);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--transition-slow);
+}
+
+.video-overlay.visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.video-overlay.hidden {
+	display: none;
+}
+
+.video-fullscreen-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-width: 100vw;
+	max-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.video-fullscreen-wrapper iframe {
+	width: 100%;
+	height: 100%;
+	max-width: 100vw;
+	max-height: 100vh;
+}
+
+.video-close-btn {
+	position: fixed;
+	top: var(--space-xl);
+	right: var(--space-xl);
+	width: 48px;
+	height: 48px;
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+	color: #ffffff;
+	font-size: 1.5rem;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all var(--transition-base);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: calc(var(--z-modal) + 1);
+}
+
+.video-close-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.5);
+	transform: scale(1.1) rotate(90deg);
+}
+
+.video-close-btn:active {
+	transform: scale(0.95);
+}
+
+/* =====================================================
+   Thumbnail Video Player (in-page)
+   ===================================================== */
+.video-thumbnail {
+	opacity: 0;
+	transform: scale(0.9);
+	transition: all var(--transition-slow);
+}
+
+.video-thumbnail.visible {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.video-thumbnail.hidden {
+	display: none;
+}
+
+.video-thumbnail-wrapper {
+	position: relative;
+	width: 800px;
+	max-width: 90vw;
+	aspect-ratio: 16 / 9;
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow:
+		0 8px 40px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.25);
+	background: #000;
+}
+
+.video-thumbnail-wrapper iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.video-expand-btn {
+	position: absolute;
+	top: var(--space-sm);
+	right: var(--space-sm);
+	width: 36px;
+	height: 36px;
+	background: rgba(0, 0, 0, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: var(--radius-md);
+	color: #ffffff;
+	font-size: 1.25rem;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all var(--transition-base);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	z-index: 10;
+}
+
+.video-thumbnail-wrapper:hover .video-expand-btn {
+	opacity: 1;
+}
+
+.video-expand-btn:hover {
+	background: var(--color-accent-light);
+	border-color: var(--color-accent-light-bright);
+	transform: scale(1.1);
+}
+
+.video-expand-btn:active {
+	transform: scale(0.95);
+}
+
+/* Hope Mode adjustments for thumbnail */
+body.hope-mode .video-thumbnail-wrapper {
+	box-shadow:
+		0 8px 40px var(--color-accent-light-glow),
+		0 16px 60px rgba(13, 148, 136, 0.3),
+		0 0 0 2px var(--color-accent-light);
 }
 
 /* =====================================================
