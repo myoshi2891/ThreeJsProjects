@@ -5,6 +5,15 @@ import { useSceneStore } from "../../store/sceneStore"
 
 const PARTICLE_COUNT = 80
 
+/**
+ * Render an animated field of glowing particles whose brightness is modulated by the scene's `hopeFactor`.
+ *
+ * The component creates a buffer geometry with per-particle position, scale, and random attributes, and a custom
+ * ShaderMaterial that animates particle positions over time and renders soft glowing point sprites. The material
+ * exposes uniforms for time, hope factor, particle size, pixel ratio, and base color which are driven each frame.
+ *
+ * @returns A React <points> element containing the configured THREE.BufferGeometry and THREE.ShaderMaterial
+ */
 export function LightParticlesEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
 	const hopeFactor = useSceneStore(state => state.hopeFactor)

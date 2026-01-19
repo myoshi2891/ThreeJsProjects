@@ -6,6 +6,13 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js"
 import { useSceneStore } from "../../store/sceneStore"
 
+/**
+ * Configures the WebGL renderer and a post-processing chain, then updates bloom and exposure each frame based on the scene's `hopeFactor`.
+ *
+ * This component sets tone mapping and clear color on the renderer, creates an EffectComposer with a RenderPass and UnrealBloomPass, keeps those references for dynamic updates, and disposes the composer on unmount. On every frame it lerps bloom strength/threshold and tone-mapping exposure according to `hopeFactor` and renders the composer.
+ *
+ * @returns `null` (the component does not render any JSX)
+ */
 export function SceneSetup() {
 	const { gl, scene, camera, size } = useThree()
 	const composerRef = useRef<EffectComposer | null>(null)

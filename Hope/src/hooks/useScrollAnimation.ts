@@ -5,6 +5,14 @@ import { useSceneStore } from "../store/sceneStore"
 
 gsap.registerPlugin(ScrollTrigger)
 
+/**
+ * Initializes GSAP ScrollTrigger-based scroll interactions and visual updates for the page.
+ *
+ * Sets up: toggling a "scrolled" class on #nav during scroll, a parallax transform and dynamic brightness/saturation filter on #bg-image (and updates scroll progress in the scene store), visibility toggles for elements with .story-content and .experience-content, and a cleanup that kills all ScrollTriggers.
+ *
+ * @remarks
+ * The hook guards against multiple initializations and resets that guard when cleaned up. Only meaningful parameters are stored via the scene store; no parameters are required.
+ */
 export function useScrollAnimation() {
 	const setScrollProgress = useSceneStore(state => state.setScrollProgress)
 	const isInitialized = useRef(false)

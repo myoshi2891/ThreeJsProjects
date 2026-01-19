@@ -3,6 +3,13 @@ import { useAppStore } from "../store/appStore"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
+/**
+ * Renders a fullscreen YouTube video overlay controlled by application state.
+ *
+ * The overlay appears when the app state's video overlay flag is true, and can be closed with the close button or the Escape key; closing hides the overlay and, after a 500ms delay, shows the video thumbnail.
+ *
+ * @returns The overlay JSX element when visible, or `null` when not visible.
+ */
 export function VideoOverlay() {
 	const isVideoOverlayVisible = useAppStore(
 		state => state.isVideoOverlayVisible
