@@ -1,0 +1,52 @@
+import { useRef, useMemo } from "react"
+import { useFrame } from "@react-three/fiber"
+import * as THREE from "three"
+import { useSceneStore } from "../../store/sceneStore"
+
+const RAIN_COUNT = 3000
+
+export function RainEffect() {
+	const pointsRef = useRef<THREE.Points>(null)
+	const hopeFactor = useSceneStore(state => state.hopeFactor)
+
+	const geometry = useMemo(() => {
+		const geo = new THREE.BufferGeometry()
+		const positions = new Float32Array(RAIN_COUNT * 3)
+
+		for (let i = 0; i < RAIN_COUNT * 3; i++) {
+			positions[i] = (Math.random() - 0.5) * 60
+		}
+
+		geo.setAttribute("position", new THREE.BufferAttribute(positions, 3))
+		return geo
+	}, [])
+
+	useFrame(() => {
+		if (!pointsRef.current || hopeFactor >= 0.99) return
+
+		const positions = pointsRef.current.geometry.attributes.position
+			.array as Float32Array
+
+		for (let i = 1; i < RAIN_COUNT * 3; i += 3) {
+			positions[i] -= 0.2 // Rain falling speed
+			if (positions[i] < -10) {
+				positions[i] = 20
+			}
+		}
+
+		pointsRef.current.geometry.attributes.position.needsUpdate = true
+	})
+
+	const opacity = THREE.MathUtils.lerp(1, 0, hopeFactor)
+
+	return (
+		<points ref={pointsRef} geometry={geometry}>
+			<pointsMaterial
+				color={0xaaaaaa}
+				size={0.05}
+				transparent
+				opacity={opacity}
+			/>
+		</points>
+	)
+}
