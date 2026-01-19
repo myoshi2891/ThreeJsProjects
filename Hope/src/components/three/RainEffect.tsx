@@ -5,6 +5,15 @@ import { useSceneStore } from "../../store/sceneStore"
 
 const RAIN_COUNT = 3000
 
+/**
+ * Renders a Three.js Points-based rain particle system that fades as the scene's hope factor increases.
+ *
+ * The component creates a static buffer geometry of RAIN_COUNT particles with randomized positions,
+ * animates their downward movement each frame (recycling particles that fall below a threshold),
+ * and updates the geometry in-place. Opacity is linearly interpolated from 1 to 0 using the scene's `hopeFactor`.
+ *
+ * @returns A React element containing a <points> object with a <pointsMaterial> configured for the rain effect.
+ */
 export function RainEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
 	const hopeFactor = useSceneStore(state => state.hopeFactor)

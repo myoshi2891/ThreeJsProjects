@@ -6,6 +6,11 @@ import { GodRaysEffect } from "./three/GodRaysEffect"
 import { SceneSetup } from "./three/SceneSetup"
 import { MouseParallax } from "./three/MouseParallax"
 
+/**
+ * Renders a configured Three.js Canvas with scene setup and layered visual effects.
+ *
+ * @returns The JSX element containing a Canvas (camera and WebGL configured) wrapped in a div with id "canvas-container", including SceneSetup, MouseParallax, RainEffect, FogEffect, LightParticlesEffect, and GodRaysEffect.
+ */
 export function ThreeCanvas() {
 	return (
 		<div id="canvas-container">
