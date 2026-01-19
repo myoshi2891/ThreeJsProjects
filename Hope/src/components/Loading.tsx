@@ -1,5 +1,12 @@
 import { useAppStore } from "../store/appStore"
 
+/**
+ * Renders a loading UI that reflects application loading progress.
+ *
+ * Displays a spinner, the static label "Loading Experience", and a progress bar whose width is driven by the app store's `loadingProgress` value (expressed as a percentage).
+ *
+ * @returns A JSX element containing the loading spinner, label, and progress bar.
+ */
 export function Loading() {
 	const loadingProgress = useAppStore(state => state.loadingProgress)
 

@@ -1,3 +1,10 @@
+/**
+ * Renders the page hero section containing a badge, title, subtitle, call-to-action button, and scroll indicator.
+ *
+ * The call-to-action button with id "start-btn" scrolls the element with id "experience" into view using smooth scrolling when clicked.
+ *
+ * @returns The hero section as a JSX element.
+ */
 export function Hero() {
 	const handleStartClick = () => {
 		const experienceSection = document.getElementById("experience")

@@ -3,6 +3,15 @@ import { useAppStore } from "../store/appStore"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
+/**
+ * Renders a YouTube video thumbnail that fades in on mount and provides an expand control.
+ *
+ * The component embeds the video specified by the `VITE_YOUTUBE_VIDEO_ID` environment variable,
+ * applies a visible CSS state on mount, and exposes an expand button that fades the thumbnail out
+ * then calls the app store actions to hide the thumbnail and show the video overlay.
+ *
+ * @returns The React element for the video thumbnail and expand control.
+ */
 export function VideoThumbnail() {
 	const [isVisible, setIsVisible] = useState(false)
 	const showVideoOverlay = useAppStore(state => state.showVideoOverlay)

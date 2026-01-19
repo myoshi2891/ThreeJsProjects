@@ -13,6 +13,13 @@ import { ThreeCanvas } from "../components/ThreeCanvas"
 import { useScrollAnimation } from "../hooks/useScrollAnimation"
 import { useHopeAnimation } from "../hooks/useHopeAnimation"
 
+/**
+ * Root application component that composes the UI and coordinates initial loading and hope-mode animation.
+ *
+ * Simulates loading progress on mount and hides the loading UI after completion. When hope mode becomes active, triggers a one-time hope animation.
+ *
+ * @returns The App component's JSX tree
+ */
 export function App() {
 	const isLoading = useAppStore(state => state.isLoading)
 	const setLoading = useAppStore(state => state.setLoading)

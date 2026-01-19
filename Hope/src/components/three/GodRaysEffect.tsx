@@ -5,6 +5,13 @@ import { useSceneStore } from "../../store/sceneStore"
 
 const RAY_COUNT = 8
 
+/**
+ * Renders an animated god-rays light effect composed of multiple additive-blended ray quads.
+ *
+ * The effect animates over time and modulates ray opacity with the scene's `hopeFactor` state.
+ *
+ * @returns A React element containing the mesh that draws the god-ray quads with a custom shader.
+ */
 export function GodRaysEffect() {
 	const hopeFactor = useSceneStore(state => state.hopeFactor)
 

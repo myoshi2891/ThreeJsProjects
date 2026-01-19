@@ -1,3 +1,8 @@
+/**
+ * Renders a decorative background layer containing a full-width image, an overlay, and an image mask.
+ *
+ * @returns A JSX element containing the background image (`/images/Hope_threejs.jpg`), a `.background-overlay` element, and a `.background-image-mask` element
+ */
 export function BackgroundLayer() {
 	return (
 		<div className="background-layer">

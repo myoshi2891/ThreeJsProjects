@@ -1,3 +1,8 @@
+/**
+ * Render the site's top navigation bar containing a logo and primary section links.
+ *
+ * @returns A JSX element: a <nav> with a logo anchor and links to `#story`, `#experience`, and `#about`.
+ */
 export function Navigation() {
 	return (
 		<nav className="nav" id="nav">

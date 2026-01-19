@@ -3,6 +3,14 @@ import { gsap } from "gsap"
 import { useSceneStore } from "../store/sceneStore"
 import { useAppStore } from "../store/appStore"
 
+/**
+ * Provides a hook that exposes a function to run a staged "hope" animation sequence.
+ *
+ * The returned `startAnimation` sets hope mode active, animates the scene's `hopeFactor`
+ * through a series of easing phases, and triggers the video overlay when the animation completes.
+ *
+ * @returns An object with `startAnimation` — a function that begins the staged hope animation and returns the created GSAP `Timeline`.
+ */
 export function useHopeAnimation() {
 	const setHopeFactor = useSceneStore(state => state.setHopeFactor)
 	const setHopeMode = useAppStore(state => state.setHopeMode)

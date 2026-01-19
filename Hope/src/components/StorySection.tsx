@@ -57,6 +57,12 @@ const storyContent = {
 	},
 }
 
+/**
+ * Renders a story section (number, title, and description) for the given section type.
+ *
+ * @param type - The section variant to render: "storm", "change", "hope", or "about"
+ * @returns A <section> element containing the configured number, title, and description for the specified type
+ */
 export function StorySection({ type }: StorySectionProps) {
 	const content = storyContent[type]
 	const sectionId =

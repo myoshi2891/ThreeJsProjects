@@ -5,6 +5,15 @@ import { useSceneStore } from "../../store/sceneStore"
 
 const FOG_COUNT = 50
 
+/**
+ * Renders a drifting, particle-based fog effect using Three.js shaders that blends between stormy and hopeful visuals.
+ *
+ * The component creates a BufferGeometry and ShaderMaterial with per-particle attributes (position, scale, random seed),
+ * updates particle positions each frame with lightweight velocities and wrapping, and drives visual blending via the scene's
+ * `hopeFactor`.
+ *
+ * @returns A React element containing a THREE.Points mesh that displays the animated fog field.
+ */
 export function FogEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
 	const hopeFactor = useSceneStore(state => state.hopeFactor)
