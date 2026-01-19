@@ -1,8 +1,8 @@
-# Hope - Interactive 3D Web Experience
+# Hope - Interactive 3D Web Experience (React 19)
 
 ## Overview
 
-希望（Hope）をテーマにした没入型3D Webエクスペリエンス。Three.jsとGSAPを使用したインタラクティブなパーティクルアニメーションと、ストーリーテリング体験を提供します。
+希望（Hope）をテーマにした没入型3D Webエクスペリエンス。React 19, React Three Fiber, Zustandを使用したモダンなアーキテクチャで構築されています。
 
 ## Quick Start
 
@@ -16,75 +16,70 @@ bun dev
 
 ```
 Hope/
-├── index.html          # Main HTML with all UI elements
-├── package.json        # Dependencies: three, gsap, vite, typescript
+├── index.html            # React root
+├── package.json          # Deps: React 19, R3F, Zustand, Vitest
 ├── src/
-│   ├── main.ts         # Entry point, App class
-│   ├── styles.css      # All styles (1000+ lines)
-│   ├── scene/          # Three.js scene management
-│   │   ├── SceneManager.ts    # Main scene controller
-│   │   ├── Camera.ts          # Camera setup
-│   │   ├── Lights.ts          # Lighting configuration
-│   │   └── Particles.ts       # Particle system
-│   ├── animation/      # Animation logic
-│   │   ├── ScrollAnimation.ts # Scroll-based animations
-│   │   └── HopeAnimation.ts   # Hope button sequence
-│   ├── effects/        # Visual effects
-│   │   ├── PostProcessing.ts  # Post-processing effects
-│   │   └── Bloom.ts           # Bloom effect
-│   ├── loaders/        # Asset loading
-│   │   └── AssetLoader.ts     # Asset management
-│   └── types/          # TypeScript types
-│       └── index.ts    # Type definitions
-└── public/             # Static assets
+│   ├── main.tsx          # React Entry point
+│   ├── components/       # UI & 3D Components
+│   │   ├── App.tsx       # Main Application Component
+│   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
+│   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
+│   │   └── [UI Components] # Hero, Navigation, etc.
+│   ├── store/            # Global State Management (Zustand)
+│   │   ├── appStore.ts   # UI State
+│   │   └── sceneStore.ts # 3D Scene State
+│   ├── hooks/            # Custom Hooks
+│   │   ├── useHopeAnimation.ts # GSAP Timeline
+│   │   └── useScrollAnimation.ts # ScrollTrigger
+│   └── styles.css        # Global Styles
+└── public/               # Static assets
 ```
 
 ## Key Components
 
-### App Class (`main.ts`)
-- Entry point managing all UI interactions
-- Controls video player (fullscreen + thumbnail)
-- Handles button events and navigation
+### App (`components/App.tsx`)
+- アプリケーションのメインコンポーネント
+- UIレイヤーと3Dキャンバス(`ThreeCanvas`)を合成
+- アニメーションフックの初期化
 
-### SceneManager (`scene/SceneManager.ts`)
-- Core Three.js scene orchestration
-- Particle system management
-- Hope animation trigger
+### ThreeCanvas (`components/ThreeCanvas.tsx`)
+- React Three Fiber (`Canvas`) の設定
+- シーンエフェクト(`RainEffect`, `FogEffect`, `GodRaysEffect`等)の配置
 
-### Styles (`styles.css`)
-- CSS custom properties for theming
-- `hope-mode` class for light/dark theme switching
-- Responsive design breakpoints
-
-## State Management
-
-The app uses class-based state with DOM classes:
-- `body.hope-mode`: Light theme after hope animation
-- `.hidden` / `.visible`: Element visibility
-- Animation states via GSAP timelines
+### Stores (`src/store/`)
+- **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
+- **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
 
 ## Key Behaviors
 
-1. **Loading**: Progress bar animation → hide on complete
-2. **Start Button**: Scrolls to experience section
-3. **Hope Button**: 
-   - Triggers 12-second particle animation
-   - Shows fullscreen YouTube video
-   - Activates `hope-mode` (light theme)
-4. **Video**: Fullscreen with thumbnail fallback
+1. **Loading**: Zustandストアで進捗管理 → 完了後に非表示
+2. **Start Button**: 体験セクションへスクロール
+3. **Hope Animation**: 
+   - `useHopeAnimation`フックがGSAPタイムラインを実行
+   - Zustandの`hopeFactor`を更新し、UIと3Dシーンが同期して変化
+   - 完了後にビデオオーバーレイを表示
+4. **Video**: フルスクリーン再生 → 閉じた後に右下サムネイル表示（フェードイン）
 
 ## Development Commands
 
 ```bash
 bun dev           # Start dev server (localhost:5173)
+bun run test      # Run tests (Vitest)
 bun run build     # Production build
 bun run preview   # Preview production build
 ```
 
 ## Tech Stack
 
-- **Three.js** (0.160.0): 3D rendering
+- **React** (19.0.0): UI Library
+- **React Three Fiber** (9.0.0): 3D Rendering Integration
+- **Zustand** (5.0.0): State Management
+- **Three.js** (0.172.0): 3D Core
 - **GSAP** (3.12.5): Animations
-- **TypeScript** (5.3.3): Type safety
-- **Vite** (5.0.0): Build tool
-- **Bun**: Package manager and runtime
+- **Vitest**: Testing Framework
+- **Vite**: Build Tool
+- **Bun**: Package Manager & Runtime
+
+## Agent Rules
+
+- **Commit Location**: Always run git commands from the root directory (`/Users/mitsuruyoshizumi/Workspace/BasicFrontEnd/ThreeJsProjects`). Do not run git commands inside the `Hope` subdirectory.
