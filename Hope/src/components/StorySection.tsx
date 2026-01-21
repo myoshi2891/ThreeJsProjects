@@ -1,3 +1,6 @@
+import { useState } from "react"
+import { ImageModal } from "./ImageModal"
+
 interface StorySectionProps {
 	type: "storm" | "change" | "hope" | "about"
 }
@@ -5,55 +8,49 @@ interface StorySectionProps {
 const storyContent = {
 	storm: {
 		number: "01",
-		title: "嵐",
+		title: "Hope",
 		description: (
 			<>
-				暗い雲が空を覆い、激しい雨が水面を叩く。
-				<br />
-				不安と混乱の中、私たちは立ち尽くす。
-				<br />
-				しかし、嵐は永遠には続かない。
+				"Hope is the pillar that holds up the world."
+				<br />- Pliny the Elder (Roman Author)
 			</>
 		),
+		image: "/images/Hope is the pillar that holds up the world.png",
 	},
 	change: {
 		number: "02",
-		title: "変化",
+		title: "Life",
 		description: (
 			<>
-				雨が弱まり、雲が切れ始める。
+				"Live as if you were to die tomorrow.
 				<br />
-				微かな光が、水平線の向こうに見える。
-				<br />
-				変化は、いつも静かに訪れる。
+				Learn as if you were to live forever."
+				<br />- Mahatma Gandhi (Indian Lawyer & Ethicist)
 			</>
 		),
+		image: "/images/Live as if you were to die tomorrow. Learn as if you were to live forever.png",
 	},
 	hope: {
 		number: "03",
-		title: "希望",
+		title: "Possibility",
 		description: (
 			<>
-				雲間から差し込む光が、世界を照らす。
-				<br />
-				静かな水面に映る光は、新しい始まりの象徴。
-				<br />
-				希望は、いつもそこにある。
+				"It is never too late to be what you might have been."
+				<br />- George Eliot (English Novelist)
 			</>
 		),
+		image: "/images/It is never too late to be what you might have been.png",
 	},
 	about: {
 		number: "∞",
-		title: "About",
+		title: "Light",
 		description: (
 			<>
-				このインタラクティブ体験は、Three.jsを使用した
-				<br />
-				没入型3Dウェブアプリケーションです。
-				<br />
-				静寂と希望をテーマに、視覚的な物語を紡ぎます。
+				"Better to light a candle than to curse the darkness."
+				<br />- Chinese Proverb (Asian Wisdom)
 			</>
 		),
+		image: "/images/Better to light a candle than to curse the darkness.png",
 	},
 }
 
@@ -64,17 +61,49 @@ const storyContent = {
  * @returns A <section> element containing the configured number, title, and description for the specified type
  */
 export function StorySection({ type }: StorySectionProps) {
+	const [isModalOpen, setIsModalOpen] = useState(false)
 	const content = storyContent[type]
 	const sectionId =
 		type === "storm" ? "story" : type === "about" ? "about" : undefined
 
+	const handleImageClick = () => {
+		setIsModalOpen(true)
+	}
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false)
+	}
+
 	return (
-		<section className="story-section" id={sectionId}>
-			<div className="story-content" data-story={type}>
-				<span className="story-number">{content.number}</span>
-				<h2 className="story-title">{content.title}</h2>
-				<p className="story-description">{content.description}</p>
-			</div>
-		</section>
+		<>
+			<section className="story-section" id={sectionId}>
+				<div className="story-content" data-story={type}>
+					<span className="story-number">{content.number}</span>
+					<h2 className="story-title">{content.title}</h2>
+					<p className="story-description">{content.description}</p>
+					<div className="story-thumbnail">
+						<img
+							src={content.image}
+							alt={content.title}
+							className="story-thumbnail-image"
+							onClick={handleImageClick}
+							role="button"
+							tabIndex={0}
+							onKeyDown={e => {
+								if (e.key === "Enter" || e.key === " ") {
+									handleImageClick()
+								}
+							}}
+						/>
+					</div>
+				</div>
+			</section>
+			<ImageModal
+				isOpen={isModalOpen}
+				imageSrc={content.image}
+				imageAlt={content.title}
+				onClose={handleCloseModal}
+			/>
+		</>
 	)
 }

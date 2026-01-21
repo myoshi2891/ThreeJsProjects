@@ -564,6 +564,48 @@ body {
 		text-shadow 2s ease;
 }
 
+.story-thumbnail {
+	margin-top: var(--space-2xl);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.story-thumbnail-image {
+	width: 100%;
+	max-width: 400px;
+	height: auto;
+	border-radius: var(--radius-xl);
+	object-fit: cover;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.3),
+		0 16px 48px rgba(0, 0, 0, 0.2);
+	transition:
+		transform var(--transition-base),
+		box-shadow var(--transition-base);
+	cursor: pointer;
+}
+
+.story-thumbnail-image:hover {
+	transform: scale(1.03);
+	box-shadow:
+		0 12px 40px rgba(0, 0, 0, 0.35),
+		0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* Hope mode thumbnail styles */
+body.hope-mode .story-thumbnail-image {
+	box-shadow:
+		0 8px 32px rgba(13, 148, 136, 0.2),
+		0 16px 48px rgba(255, 255, 255, 0.3);
+}
+
+body.hope-mode .story-thumbnail-image:hover {
+	box-shadow:
+		0 12px 40px rgba(13, 148, 136, 0.3),
+		0 20px 60px rgba(255, 255, 255, 0.4);
+}
+
 /* =====================================================
    Experience Section
    ===================================================== */
@@ -884,6 +926,112 @@ body.hope-mode .hero-badge {
 	.hero-subtitle {
 		font-size: 0.875rem;
 	}
+
+	.story-thumbnail-image {
+		max-width: 100%;
+	}
+
+	.video-thumbnail-wrapper {
+		width: 100%;
+		max-width: 95vw;
+	}
+}
+
+/* =====================================================
+   Tablet Responsive Design
+   ===================================================== */
+@media (max-width: 1024px) and (min-width: 481px) {
+	.story-thumbnail-image {
+		max-width: 350px;
+	}
+
+	.video-thumbnail-wrapper {
+		width: 90vw;
+		max-width: 800px;
+	}
+}
+
+/* =====================================================
+   Image Modal
+   ===================================================== */
+.image-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: var(--z-modal);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: fadeIn 0.4s ease;
+	transition:
+		opacity 0.4s ease,
+		background 0.4s ease;
+}
+
+.image-modal-overlay.closing {
+	opacity: 0;
+	background: rgba(0, 0, 0, 0);
+}
+
+.image-modal-content {
+	max-width: 90vw;
+	max-height: 90vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.image-modal-img {
+	max-width: 100%;
+	max-height: 90vh;
+	object-fit: contain;
+	border-radius: var(--radius-xl);
+	box-shadow:
+		0 20px 60px rgba(0, 0, 0, 0.5),
+		0 40px 100px rgba(0, 0, 0, 0.3);
+	animation: fadeInUp 0.4s ease;
+	transition:
+		opacity 0.4s ease,
+		transform 0.4s ease;
+}
+
+.image-modal-img.closing {
+	opacity: 0;
+	transform: translateY(30px) scale(0.95);
+}
+
+.image-modal-close {
+	position: fixed;
+	top: var(--space-xl);
+	right: var(--space-xl);
+	width: 48px;
+	height: 48px;
+	background: rgba(255, 255, 255, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: 50%;
+	color: #ffffff;
+	font-size: 1.5rem;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all var(--transition-base);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: calc(var(--z-modal) + 1);
+}
+
+.image-modal-close:hover {
+	background: rgba(255, 255, 255, 0.25);
+	border-color: rgba(255, 255, 255, 0.6);
+	transform: scale(1.1) rotate(90deg);
+}
+
+.image-modal-close:active {
+	transform: scale(0.95);
 }
 
 /* =====================================================
@@ -983,7 +1131,7 @@ body.hope-mode .hero-badge {
 
 .video-thumbnail-wrapper {
 	position: relative;
-	width: 800px;
+	width: 1200px;
 	max-width: 90vw;
 	aspect-ratio: 16 / 9;
 	border-radius: var(--radius-xl);
