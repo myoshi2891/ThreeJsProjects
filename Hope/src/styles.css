@@ -876,8 +876,22 @@ body.hope-mode .hero-badge {
 }
 
 /* =====================================================
-   Responsive Design
+   Responsive Design (Desktop → Tablet → Mobile)
    ===================================================== */
+
+/* Tablet: 769px - 1024px */
+@media (max-width: 1024px) {
+	.story-thumbnail-image {
+		max-width: 350px;
+	}
+
+	.video-thumbnail-wrapper {
+		width: 90vw;
+		max-width: 800px;
+	}
+}
+
+/* Small Tablet / Large Mobile: 481px - 768px */
 @media (max-width: 768px) {
 	.nav {
 		padding: var(--space-md) var(--space-lg);
@@ -909,6 +923,7 @@ body.hope-mode .hero-badge {
 	}
 }
 
+/* Mobile: ~480px */
 @media (max-width: 480px) {
 	.nav-logo {
 		font-size: 1rem;
@@ -934,20 +949,6 @@ body.hope-mode .hero-badge {
 	.video-thumbnail-wrapper {
 		width: 100%;
 		max-width: 95vw;
-	}
-}
-
-/* =====================================================
-   Tablet Responsive Design
-   ===================================================== */
-@media (max-width: 1024px) and (min-width: 481px) {
-	.story-thumbnail-image {
-		max-width: 350px;
-	}
-
-	.video-thumbnail-wrapper {
-		width: 90vw;
-		max-width: 800px;
 	}
 }
 
