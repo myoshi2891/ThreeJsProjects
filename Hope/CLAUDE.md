@@ -23,6 +23,8 @@ Hope/
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
+│   │   ├── StorySection.tsx # Story sections with quotes & thumbnails
+│   │   ├── ImageModal.tsx # Fullscreen image modal viewer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
 │   │   └── [UI Components] # Hero, Navigation, etc.
 │   ├── store/            # Global State Management (Zustand)
@@ -32,7 +34,8 @@ Hope/
 │   │   ├── useHopeAnimation.ts # GSAP Timeline
 │   │   └── useScrollAnimation.ts # ScrollTrigger
 │   └── styles.css        # Global Styles
-└── public/               # Static assets
+└── public/
+    └── images/           # Story section thumbnail images
 ```
 
 ## Key Components
@@ -46,6 +49,17 @@ Hope/
 - React Three Fiber (`Canvas`) の設定
 - シーンエフェクト(`RainEffect`, `FogEffect`, `GodRaysEffect`等)の配置
 
+### StorySection (`components/StorySection.tsx`)
+- 4つのストーリーセクション（Hope, Life, Possibility, Light）
+- 各セクションに名言とサムネイル画像を表示
+- クリックでImageModalによる拡大表示
+
+### ImageModal (`components/ImageModal.tsx`)
+- フルスクリーン画像モーダル
+- 半透明オーバーレイ（雨アニメーションが見える）
+- キーボードアクセシビリティ（Escで閉じる）
+- スムーズな開閉アニメーション
+
 ### Stores (`src/store/`)
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
@@ -54,11 +68,12 @@ Hope/
 
 1. **Loading**: Zustandストアで進捗管理 → 完了後に非表示
 2. **Start Button**: 体験セクションへスクロール
-3. **Hope Animation**: 
+3. **Story Sections**: 名言とサムネイル画像を表示、クリックでモーダル拡大
+4. **Hope Animation**: 
    - `useHopeAnimation`フックがGSAPタイムラインを実行
    - Zustandの`hopeFactor`を更新し、UIと3Dシーンが同期して変化
    - 完了後にビデオオーバーレイを表示
-4. **Video**: フルスクリーン再生 → 閉じた後に右下サムネイル表示（フェードイン）
+5. **Video**: フルスクリーン再生 → 閉じた後に右下サムネイル表示（フェードイン）
 
 ## Development Commands
 
@@ -82,4 +97,5 @@ bun run preview   # Preview production build
 
 ## Agent Rules
 
-- **Commit Location**: Always run git commands from the root directory (`/Users/mitsuruyoshizumi/Workspace/BasicFrontEnd/ThreeJsProjects`). Do not run git commands inside the `Hope` subdirectory.
+- **Commit Location**: Always run git commands from the root directory (`/Users/mitsuruyoshizumi/Workspace/BasicFrontEnd/ThreeJsProjects`). The Hope subdirectory is now part of the parent repository (no separate .git).
+
