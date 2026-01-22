@@ -898,7 +898,7 @@ body.hope-mode .hero-badge {
    Responsive Design (Desktop → Tablet → Mobile)
    ===================================================== */
 
-/* Tablet: 769px - 1024px */
+/* Tablet: max-width 1024px (0-1024px, overridden by smaller breakpoints) */
 @media (max-width: 1024px) {
 	.story-thumbnail-image {
 		max-width: 350px;
