@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
-import { useAppStore } from "../store/appStore"
 import {
+	BackgroundLayer,
+	ExperienceSection,
+	Hero,
 	Loading,
 	Navigation,
-	Hero,
 	StorySection,
-	ExperienceSection,
 	VideoOverlay,
-	BackgroundLayer,
 } from "../components"
 import { ThreeCanvas } from "../components/ThreeCanvas"
-import { useScrollAnimation } from "../hooks/useScrollAnimation"
 import { useHopeAnimation } from "../hooks/useHopeAnimation"
+import { useScrollAnimation } from "../hooks/useScrollAnimation"
+import { useAppStore } from "../store/appStore"
 
 /**
  * Root application component that composes the UI and coordinates initial loading and hope-mode animation.
@@ -21,10 +21,10 @@ import { useHopeAnimation } from "../hooks/useHopeAnimation"
  * @returns The App component's JSX tree
  */
 export function App() {
-	const isLoading = useAppStore(state => state.isLoading)
-	const setLoading = useAppStore(state => state.setLoading)
-	const setLoadingProgress = useAppStore(state => state.setLoadingProgress)
-	const isHopeMode = useAppStore(state => state.isHopeMode)
+	const isLoading = useAppStore((state) => state.isLoading)
+	const setLoading = useAppStore((state) => state.setLoading)
+	const setLoadingProgress = useAppStore((state) => state.setLoadingProgress)
+	const isHopeMode = useAppStore((state) => state.isHopeMode)
 	const [isHopeButtonClicked, setIsHopeButtonClicked] = useState(false)
 
 	const { startAnimation } = useHopeAnimation()

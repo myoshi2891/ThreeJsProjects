@@ -1,10 +1,10 @@
 import { Canvas } from "@react-three/fiber"
-import { RainEffect } from "./three/RainEffect"
 import { FogEffect } from "./three/FogEffect"
-import { LightParticlesEffect } from "./three/LightParticlesEffect"
 import { GodRaysEffect } from "./three/GodRaysEffect"
-import { SceneSetup } from "./three/SceneSetup"
+import { LightParticlesEffect } from "./three/LightParticlesEffect"
 import { MouseParallax } from "./three/MouseParallax"
+import { RainEffect } from "./three/RainEffect"
+import { SceneSetup } from "./three/SceneSetup"
 
 /**
  * Renders a configured Three.js Canvas with scene setup and layered visual effects.

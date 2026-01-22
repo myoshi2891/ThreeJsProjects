@@ -1,5 +1,5 @@
-import { useMemo } from "react"
 import { useFrame } from "@react-three/fiber"
+import { useMemo } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
 
@@ -13,7 +13,7 @@ const RAY_COUNT = 8
  * @returns A React element containing the mesh that draws the god-ray quads with a custom shader.
  */
 export function GodRaysEffect() {
-	const hopeFactor = useSceneStore(state => state.hopeFactor)
+	const hopeFactor = useSceneStore((state) => state.hopeFactor)
 
 	const { geometry, material } = useMemo(() => {
 		const geo = new THREE.BufferGeometry()
@@ -35,16 +35,8 @@ export function GodRaysEffect() {
 
 			positions.push(x1, 0, z1)
 			positions.push(x2, 0, z2)
-			positions.push(
-				x1 + Math.sin(angle) * 5,
-				-length,
-				z1 + Math.cos(angle) * 5
-			)
-			positions.push(
-				x2 + Math.sin(angle) * 5,
-				-length,
-				z2 + Math.cos(angle) * 5
-			)
+			positions.push(x1 + Math.sin(angle) * 5, -length, z1 + Math.cos(angle) * 5)
+			positions.push(x2 + Math.sin(angle) * 5, -length, z2 + Math.cos(angle) * 5)
 
 			uvs.push(0, 0)
 			uvs.push(1, 0)
@@ -55,10 +47,7 @@ export function GodRaysEffect() {
 			indices.push(baseIndex + 1, baseIndex + 3, baseIndex + 2)
 		}
 
-		geo.setAttribute(
-			"position",
-			new THREE.Float32BufferAttribute(positions, 3)
-		)
+		geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3))
 		geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2))
 		geo.setIndex(indices)
 

@@ -26,11 +26,7 @@ export function Hero() {
 					<br />
 					嵐の先に待つ光を、体感してください
 				</p>
-				<button
-					className="hero-cta"
-					id="start-btn"
-					onClick={handleStartClick}
-				>
+				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
 					<span>体験を始める</span>
 					<span className="hero-cta-icon">→</span>
 				</button>
@@ -38,7 +34,7 @@ export function Hero() {
 
 			<div className="scroll-indicator">
 				<span className="scroll-indicator-text">Scroll to Explore</span>
-				<div className="scroll-indicator-icon"></div>
+				<div className="scroll-indicator-icon" />
 			</div>
 		</section>
 	)

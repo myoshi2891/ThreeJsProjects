@@ -6,7 +6,7 @@
 export function Navigation() {
 	return (
 		<nav className="nav" id="nav">
-			<a href="#" className="nav-logo">
+			<a href="#hero" className="nav-logo">
 				<span className="nav-logo-icon">✧</span>
 				<span>HOPE</span>
 			</a>

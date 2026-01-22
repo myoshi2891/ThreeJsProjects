@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 interface ImageModalProps {
 	isOpen: boolean
@@ -11,12 +11,7 @@ interface ImageModalProps {
  * A fullscreen modal overlay for displaying images.
  * Closes on click outside the image, Escape key, or close button.
  */
-export function ImageModal({
-	isOpen,
-	imageSrc,
-	imageAlt,
-	onClose,
-}: ImageModalProps) {
+export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalProps) {
 	const [isClosing, setIsClosing] = useState(false)
 
 	const handleClose = useCallback(() => {
@@ -33,7 +28,7 @@ export function ImageModal({
 				handleClose()
 			}
 		},
-		[handleClose]
+		[handleClose],
 	)
 
 	useEffect(() => {
@@ -50,10 +45,15 @@ export function ImageModal({
 	if (!isOpen) return null
 
 	return (
-		<div
+		<dialog
+			open
 			className={`image-modal-overlay ${isClosing ? "closing" : ""}`}
 			onClick={handleClose}
-			role="dialog"
+			onKeyDown={(e) => {
+				if (e.key === "Escape") {
+					handleClose()
+				}
+			}}
 			aria-modal="true"
 			aria-label="Image viewer"
 		>
@@ -67,8 +67,8 @@ export function ImageModal({
 			</button>
 			<div
 				className="image-modal-content"
-				onClick={e => e.stopPropagation()}
-				role="presentation"
+				onClick={(e) => e.stopPropagation()}
+				onKeyDown={(e) => e.stopPropagation()}
 			>
 				<img
 					src={imageSrc}
@@ -76,6 +76,6 @@ export function ImageModal({
 					className={`image-modal-img ${isClosing ? "closing" : ""}`}
 				/>
 			</div>
-		</div>
+		</dialog>
 	)
 }

@@ -1,5 +1,5 @@
-import { useRef, useMemo } from "react"
 import { useFrame } from "@react-three/fiber"
+import { useMemo, useRef } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
 
@@ -16,7 +16,7 @@ const FOG_COUNT = 50
  */
 export function FogEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
-	const hopeFactor = useSceneStore(state => state.hopeFactor)
+	const hopeFactor = useSceneStore((state) => state.hopeFactor)
 	const velocities = useRef<Float32Array>(new Float32Array(FOG_COUNT * 3))
 
 	const { geometry, material } = useMemo(() => {
@@ -119,8 +119,7 @@ export function FogEffect() {
 		material.uniforms.uTime.value = time
 		material.uniforms.uHopeFactor.value = hopeFactor
 
-		const positions = pointsRef.current.geometry.attributes.position
-			.array as Float32Array
+		const positions = pointsRef.current.geometry.attributes.position.array as Float32Array
 
 		for (let i = 0; i < FOG_COUNT; i++) {
 			const i3 = i * 3

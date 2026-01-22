@@ -39,7 +39,7 @@ export class ScrollAnimation {
 
 		ScrollTrigger.create({
 			start: "top -80",
-			onUpdate: self => {
+			onUpdate: (self) => {
 				if (self.direction === 1 && self.progress > 0) {
 					nav.classList.add("scrolled")
 				} else if (self.progress === 0) {
@@ -70,18 +70,14 @@ export class ScrollAnimation {
 			start: "top top",
 			end: "bottom bottom",
 			scrub: 3, // Higher scrub for even smoother updates
-			onUpdate: self => {
+			onUpdate: (self) => {
 				const progress = self.progress
 				const brightness = 0.4 + progress * 0.4
 				const saturation = 0.8 + progress * 0.3
 
 				// Only update if change is significant (threshold 0.02)
-				const brightnessDiff = Math.abs(
-					brightness - this.lastBrightness
-				)
-				const saturationDiff = Math.abs(
-					saturation - this.lastSaturation
-				)
+				const brightnessDiff = Math.abs(brightness - this.lastBrightness)
+				const saturationDiff = Math.abs(saturation - this.lastSaturation)
 
 				if (brightnessDiff < 0.02 && saturationDiff < 0.02) {
 					this.callbacks.onScrollProgress?.(progress)
@@ -93,7 +89,7 @@ export class ScrollAnimation {
 
 				if (this.bgImage) {
 					this.bgImage.style.filter = `brightness(${brightness.toFixed(
-						2
+						2,
 					)}) saturate(${saturation.toFixed(2)})`
 				}
 
@@ -105,8 +101,8 @@ export class ScrollAnimation {
 	private setupStoryAnimations(): void {
 		const storyContents = document.querySelectorAll(".story-content")
 
-		storyContents.forEach((content, index) => {
-			const storyType = content.getAttribute("data-story")
+		for (const content of storyContents) {
+			// data-story attribute reserved for future use
 
 			// Initialize visibility state
 			this.storyVisibilityState.set(content, false)
@@ -121,7 +117,7 @@ export class ScrollAnimation {
 				onLeaveBack: () => this.setStoryVisible(content, false),
 				// Removed onUpdate to reduce callback frequency
 			})
-		})
+		}
 	}
 
 	// Debounced visibility setter to prevent rapid toggles
@@ -155,7 +151,9 @@ export class ScrollAnimation {
 	}
 
 	public destroy(): void {
-		ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+		for (const trigger of ScrollTrigger.getAll()) {
+			trigger.kill()
+		}
 		this.isInitialized = false
 	}
 }

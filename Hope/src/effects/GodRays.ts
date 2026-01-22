@@ -35,16 +35,8 @@ export class GodRays {
 			positions.push(x1, 0, z1)
 			positions.push(x2, 0, z2)
 			// Bottom vertices (extending down)
-			positions.push(
-				x1 + Math.sin(angle) * 5,
-				-length,
-				z1 + Math.cos(angle) * 5
-			)
-			positions.push(
-				x2 + Math.sin(angle) * 5,
-				-length,
-				z2 + Math.cos(angle) * 5
-			)
+			positions.push(x1 + Math.sin(angle) * 5, -length, z1 + Math.cos(angle) * 5)
+			positions.push(x2 + Math.sin(angle) * 5, -length, z2 + Math.cos(angle) * 5)
 
 			uvs.push(0, 0)
 			uvs.push(1, 0)
@@ -55,10 +47,7 @@ export class GodRays {
 			indices.push(baseIndex + 1, baseIndex + 3, baseIndex + 2)
 		}
 
-		geometry.setAttribute(
-			"position",
-			new THREE.Float32BufferAttribute(positions, 3)
-		)
+		geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3))
 		geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2))
 		geometry.setIndex(indices)
 

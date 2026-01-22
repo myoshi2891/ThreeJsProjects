@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
-import { Loading } from "../Loading"
+import { beforeEach, describe, expect, it } from "vitest"
 import { useAppStore } from "../../store/appStore"
+import { Loading } from "../Loading"
 
 describe("Loading", () => {
 	beforeEach(() => {

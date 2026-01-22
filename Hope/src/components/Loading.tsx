@@ -8,14 +8,11 @@ import { useAppStore } from "../store/appStore"
  * @returns A JSX element containing the loading spinner, label, and progress bar.
  */
 export function Loading() {
-	const loadingProgress = useAppStore(state => state.loadingProgress)
+	const loadingProgress = useAppStore((state) => state.loadingProgress)
 
 	return (
 		<div id="loading">
-			<div
-				className="loading-spinner"
-				data-testid="loading-spinner"
-			></div>
+			<div className="loading-spinner" data-testid="loading-spinner" />
 			<p className="loading-text">Loading Experience</p>
 			<div className="loading-progress">
 				<div
@@ -23,7 +20,7 @@ export function Loading() {
 					id="progress-bar"
 					data-testid="progress-bar"
 					style={{ width: `${loadingProgress}%` }}
-				></div>
+				/>
 			</div>
 		</div>
 	)
