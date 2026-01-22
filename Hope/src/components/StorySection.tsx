@@ -15,7 +15,7 @@ const storyContent = {
 				<br />- Pliny the Elder (Roman Author)
 			</>
 		),
-		image: "/images/Hope is the pillar that holds up the world.webp",
+		image: "/images/hope-pillar.webp",
 	},
 	change: {
 		number: "02",
@@ -28,7 +28,7 @@ const storyContent = {
 				<br />- Mahatma Gandhi (Indian Lawyer & Ethicist)
 			</>
 		),
-		image: "/images/Live as if you were to die tomorrow. Learn as if you were to live forever.webp",
+		image: "/images/live-learn-forever.webp",
 	},
 	hope: {
 		number: "03",
@@ -39,7 +39,7 @@ const storyContent = {
 				<br />- George Eliot (English Novelist)
 			</>
 		),
-		image: "/images/It is never too late to be what you might have been.webp",
+		image: "/images/never-too-late.webp",
 	},
 	about: {
 		number: "∞",
@@ -50,7 +50,7 @@ const storyContent = {
 				<br />- Chinese Proverb (Asian Wisdom)
 			</>
 		),
-		image: "/images/Better to light a candle than to curse the darkness.webp",
+		image: "/images/light-a-candle.webp",
 	},
 }
 
@@ -82,19 +82,18 @@ export function StorySection({ type }: StorySectionProps) {
 					<h2 className="story-title">{content.title}</h2>
 					<p className="story-description">{content.description}</p>
 					<div className="story-thumbnail">
-						<img
-							src={content.image}
-							alt={content.title}
-							className="story-thumbnail-image"
+						<button
+							type="button"
+							className="story-thumbnail-btn"
 							onClick={handleImageClick}
-							role="button"
-							tabIndex={0}
-							onKeyDown={e => {
-								if (e.key === "Enter" || e.key === " ") {
-									handleImageClick()
-								}
-							}}
-						/>
+							aria-label={`View ${content.title} image`}
+						>
+							<img
+								src={content.image}
+								alt={content.title}
+								className="story-thumbnail-image"
+							/>
+						</button>
 					</div>
 				</div>
 			</section>
