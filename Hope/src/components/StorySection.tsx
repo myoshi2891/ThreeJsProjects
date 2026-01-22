@@ -15,7 +15,7 @@ const storyContent = {
 				<br />- Pliny the Elder (Roman Author)
 			</>
 		),
-		image: "/images/Hope is the pillar that holds up the world.png",
+		image: "/images/Hope is the pillar that holds up the world.webp",
 	},
 	change: {
 		number: "02",
@@ -28,7 +28,7 @@ const storyContent = {
 				<br />- Mahatma Gandhi (Indian Lawyer & Ethicist)
 			</>
 		),
-		image: "/images/Live as if you were to die tomorrow. Learn as if you were to live forever.png",
+		image: "/images/Live as if you were to die tomorrow. Learn as if you were to live forever.webp",
 	},
 	hope: {
 		number: "03",
@@ -39,7 +39,7 @@ const storyContent = {
 				<br />- George Eliot (English Novelist)
 			</>
 		),
-		image: "/images/It is never too late to be what you might have been.png",
+		image: "/images/It is never too late to be what you might have been.webp",
 	},
 	about: {
 		number: "∞",
@@ -50,7 +50,7 @@ const storyContent = {
 				<br />- Chinese Proverb (Asian Wisdom)
 			</>
 		),
-		image: "/images/Better to light a candle than to curse the darkness.png",
+		image: "/images/Better to light a candle than to curse the darkness.webp",
 	},
 }
 
