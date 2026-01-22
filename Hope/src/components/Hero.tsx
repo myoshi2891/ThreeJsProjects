@@ -18,16 +18,23 @@ export function Hero() {
 			<div className="hero-content">
 				<div className="hero-badge">
 					<span className="hero-badge-icon">✦</span>
-					<span>Interactive 3D Experience</span>
+					<span>Design the Future</span>
 				</div>
-				<h1 className="hero-title">HOPE</h1>
+				<h1 className="hero-title">Hope Lights the Way</h1>
 				<p className="hero-subtitle">
-					静寂の水面に、希望の光が宿る
+					Even in the darkest night, a single spark can guide us to a
+					better tomorrow.
 					<br />
-					嵐の先に待つ光を、体感してください
+					After the rain comes the sun. Find your strength to rise
+					again.
 				</p>
-				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
-					<span>体験を始める</span>
+				<button
+					type="button"
+					className="hero-cta"
+					id="start-btn"
+					onClick={handleStartClick}
+				>
+					<span>Learn More</span>
 					<span className="hero-cta-icon">→</span>
 				</button>
 			</div>
