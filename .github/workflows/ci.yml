@@ -53,7 +53,7 @@ jobs:
         run: bun run build
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist-${{ github.sha }}
           path: ./Hope/dist
