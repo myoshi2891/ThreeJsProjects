@@ -8,9 +8,13 @@
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage"
+		"test:coverage": "vitest --coverage",
+		"lint": "biome check ./src",
+		"lint:fix": "biome check --write ./src",
+		"format": "biome format --write ./src"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
 		"@testing-library/jest-dom": "^6.6.0",
 		"@testing-library/react": "^16.0.0",
 		"@types/react": "^19.0.0",
