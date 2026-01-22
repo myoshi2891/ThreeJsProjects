@@ -20,10 +20,7 @@ export class Rain {
 			positions[i] = (Math.random() - 0.5) * 60
 		}
 
-		geometry.setAttribute(
-			"position",
-			new THREE.BufferAttribute(positions, 3)
-		)
+		geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3))
 		return geometry
 	}
 
@@ -39,8 +36,7 @@ export class Rain {
 	public update(hopeFactor: number): void {
 		if (hopeFactor >= 0.99) return
 
-		const positions = this.geometry.attributes.position
-			.array as Float32Array
+		const positions = this.geometry.attributes.position.array as Float32Array
 
 		for (let i = 1; i < this.rainCount * 3; i += 3) {
 			positions[i] -= 0.2 // Slower rain speed

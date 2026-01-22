@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useEffect, useRef } from "react"
 import { useSceneStore } from "../store/sceneStore"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger)
  * The hook guards against multiple initializations and resets that guard when cleaned up. Only meaningful parameters are stored via the scene store; no parameters are required.
  */
 export function useScrollAnimation() {
-	const setScrollProgress = useSceneStore(state => state.setScrollProgress)
+	const setScrollProgress = useSceneStore((state) => state.setScrollProgress)
 	const isInitialized = useRef(false)
 	const lastBrightness = useRef(0)
 	const lastSaturation = useRef(0)
@@ -30,7 +30,7 @@ export function useScrollAnimation() {
 		if (nav) {
 			ScrollTrigger.create({
 				start: "top -80",
-				onUpdate: self => {
+				onUpdate: (self) => {
 					if (self.direction === 1 && self.progress > 0) {
 						nav.classList.add("scrolled")
 					} else if (self.progress === 0) {
@@ -59,17 +59,13 @@ export function useScrollAnimation() {
 				start: "top top",
 				end: "bottom bottom",
 				scrub: 3,
-				onUpdate: self => {
+				onUpdate: (self) => {
 					const progress = self.progress
 					const brightness = 0.4 + progress * 0.4
 					const saturation = 0.8 + progress * 0.3
 
-					const brightnessDiff = Math.abs(
-						brightness - lastBrightness.current
-					)
-					const saturationDiff = Math.abs(
-						saturation - lastSaturation.current
-					)
+					const brightnessDiff = Math.abs(brightness - lastBrightness.current)
+					const saturationDiff = Math.abs(saturation - lastSaturation.current)
 
 					if (brightnessDiff < 0.02 && saturationDiff < 0.02) {
 						setScrollProgress(progress)
@@ -87,7 +83,7 @@ export function useScrollAnimation() {
 
 		// Story section animations
 		const storyContents = document.querySelectorAll(".story-content")
-		storyContents.forEach(content => {
+		for (const content of storyContents) {
 			ScrollTrigger.create({
 				trigger: content,
 				start: "top 80%",
@@ -97,7 +93,7 @@ export function useScrollAnimation() {
 				onEnterBack: () => content.classList.add("visible"),
 				onLeaveBack: () => content.classList.remove("visible"),
 			})
-		})
+		}
 
 		// Experience section animation
 		const experienceContent = document.querySelector(".experience-content")
@@ -106,13 +102,14 @@ export function useScrollAnimation() {
 				trigger: experienceContent,
 				start: "top 80%",
 				onEnter: () => experienceContent.classList.add("visible"),
-				onLeaveBack: () =>
-					experienceContent.classList.remove("visible"),
+				onLeaveBack: () => experienceContent.classList.remove("visible"),
 			})
 		}
 
 		return () => {
-			ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+			for (const trigger of ScrollTrigger.getAll()) {
+				trigger.kill()
+			}
 			isInitialized.current = false
 		}
 	}, [setScrollProgress])

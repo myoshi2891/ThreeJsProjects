@@ -44,10 +44,7 @@ export class LightParticles {
 			randoms[i] = Math.random() * Math.PI * 2
 		}
 
-		geometry.setAttribute(
-			"position",
-			new THREE.BufferAttribute(positions, 3)
-		)
+		geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3))
 		geometry.setAttribute("aScale", new THREE.BufferAttribute(scales, 1))
 		geometry.setAttribute("aRandom", new THREE.BufferAttribute(randoms, 1))
 

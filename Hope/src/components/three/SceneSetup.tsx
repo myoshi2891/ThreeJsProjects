@@ -1,4 +1,4 @@
-import { useThree, useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js"
@@ -17,7 +17,7 @@ export function SceneSetup() {
 	const { gl, scene, camera, size } = useThree()
 	const composerRef = useRef<EffectComposer | null>(null)
 	const bloomPassRef = useRef<UnrealBloomPass | null>(null)
-	const hopeFactor = useSceneStore(state => state.hopeFactor)
+	const hopeFactor = useSceneStore((state) => state.hopeFactor)
 
 	useEffect(() => {
 		// Configure renderer
@@ -34,7 +34,7 @@ export function SceneSetup() {
 			new THREE.Vector2(size.width, size.height),
 			0.2, // Initial strength
 			0.4, // Radius
-			0.3 // Threshold
+			0.3, // Threshold
 		)
 		composer.addPass(bloomPass)
 

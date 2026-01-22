@@ -12,10 +12,8 @@ import { VideoThumbnail } from "./VideoThumbnail"
  */
 export function ExperienceSection() {
 	const [isButtonHidden, setIsButtonHidden] = useState(false)
-	const setHopeMode = useAppStore(state => state.setHopeMode)
-	const isVideoThumbnailVisible = useAppStore(
-		state => state.isVideoThumbnailVisible
-	)
+	const setHopeMode = useAppStore((state) => state.setHopeMode)
+	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
 	const handleHopeClick = () => {
 		setIsButtonHidden(true)
@@ -27,6 +25,7 @@ export function ExperienceSection() {
 		<section className="experience-section" id="experience">
 			<div className="experience-content">
 				<button
+					type="button"
 					className={`experience-btn ${isButtonHidden ? "hidden" : ""}`}
 					id="hope-btn"
 					onClick={handleHopeClick}

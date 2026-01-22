@@ -40,10 +40,7 @@ export class Fog {
 			randoms[i] = Math.random()
 		}
 
-		geometry.setAttribute(
-			"position",
-			new THREE.BufferAttribute(positions, 3)
-		)
+		geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3))
 		geometry.setAttribute("aScale", new THREE.BufferAttribute(scales, 1))
 		geometry.setAttribute("aRandom", new THREE.BufferAttribute(randoms, 1))
 
@@ -133,8 +130,7 @@ export class Fog {
 		this.material.uniforms.uHopeFactor.value = hopeFactor
 
 		// Update particle positions for drifting effect
-		const positions = this.geometry.attributes.position
-			.array as Float32Array
+		const positions = this.geometry.attributes.position.array as Float32Array
 
 		for (let i = 0; i < this.particleCount; i++) {
 			const i3 = i * 3

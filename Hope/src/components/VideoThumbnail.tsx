@@ -14,8 +14,8 @@ const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
  */
 export function VideoThumbnail() {
 	const [isVisible, setIsVisible] = useState(false)
-	const showVideoOverlay = useAppStore(state => state.showVideoOverlay)
-	const hideVideoThumbnail = useAppStore(state => state.hideVideoThumbnail)
+	const showVideoOverlay = useAppStore((state) => state.showVideoOverlay)
+	const hideVideoThumbnail = useAppStore((state) => state.hideVideoThumbnail)
 
 	// Trigger fade-in animation after mount
 	useEffect(() => {
@@ -33,10 +33,7 @@ export function VideoThumbnail() {
 	}
 
 	return (
-		<div
-			className={`video-thumbnail ${isVisible ? "visible" : ""}`}
-			id="video-thumbnail"
-		>
+		<div className={`video-thumbnail ${isVisible ? "visible" : ""}`} id="video-thumbnail">
 			<div className="video-thumbnail-wrapper">
 				<iframe
 					id="youtube-thumbnail-player"
@@ -45,8 +42,9 @@ export function VideoThumbnail() {
 					frameBorder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					allowFullScreen
-				></iframe>
+				/>
 				<button
+					type="button"
 					className="video-expand-btn"
 					id="video-expand"
 					aria-label="Expand to fullscreen"

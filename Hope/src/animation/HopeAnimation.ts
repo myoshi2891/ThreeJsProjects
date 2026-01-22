@@ -1,12 +1,12 @@
 import { gsap } from "gsap"
 import * as THREE from "three"
-import type { SceneParams } from "../types"
-import type { Rain } from "../scene/objects/Rain"
-import type { Fog } from "../scene/objects/Fog"
-import type { LightParticles } from "../scene/objects/LightParticles"
 import type { GodRays } from "../effects/GodRays"
 import type { PostProcessing } from "../effects/PostProcessing"
 import type { AssetLoader } from "../loaders/AssetLoader"
+import type { Fog } from "../scene/objects/Fog"
+import type { LightParticles } from "../scene/objects/LightParticles"
+import type { Rain } from "../scene/objects/Rain"
+import type { SceneParams } from "../types"
 
 export class HopeAnimation {
 	private readonly params: SceneParams
@@ -28,7 +28,7 @@ export class HopeAnimation {
 		renderer: THREE.WebGLRenderer,
 		fog: Fog,
 		lightParticles: LightParticles,
-		godRays: GodRays
+		godRays: GodRays,
 	) {
 		this.params = params
 		this.rain = rain

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
-import { ExperienceSection } from "../ExperienceSection"
+import { fireEvent, render, screen } from "@testing-library/react"
+import { beforeEach, describe, expect, it } from "vitest"
 import { useAppStore } from "../../store/appStore"
+import { ExperienceSection } from "../ExperienceSection"
 
 describe("ExperienceSection", () => {
 	beforeEach(() => {
@@ -13,13 +13,11 @@ describe("ExperienceSection", () => {
 
 	it("should render hope button", () => {
 		render(<ExperienceSection />)
-		expect(
-			screen.getByRole("button", { name: /希望を見つける/i })
-		).toBeInTheDocument()
+		expect(screen.getByRole("button", { name: /希望を見つける/i })).toBeInTheDocument()
 	})
 
 	it("should hide hope button when it is clicked", () => {
-		const { rerender } = render(<ExperienceSection />)
+		render(<ExperienceSection />)
 		const button = screen.getByRole("button", { name: /希望を見つける/i })
 
 		fireEvent.click(button)

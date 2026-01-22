@@ -1,5 +1,5 @@
-import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js"
 import * as THREE from "three"
+import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js"
 import type { LoadingCallbacks } from "../types"
 
 export class AssetLoader {
@@ -11,10 +11,10 @@ export class AssetLoader {
 	}
 
 	public async loadHDRI(callbacks?: LoadingCallbacks): Promise<void> {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve, _reject) => {
 			new EXRLoader().load(
 				this.hdriUrl,
-				texture => {
+				(texture) => {
 					texture.mapping = THREE.EquirectangularReflectionMapping
 
 					// ✅ テクスチャの品質設定を追加
@@ -31,19 +31,16 @@ export class AssetLoader {
 					callbacks?.onComplete?.()
 					resolve()
 				},
-				progress => {
-					const percentComplete =
-						progress.total > 0
-							? (progress.loaded / progress.total) * 100
-							: 0
+				(progress) => {
+					const percentComplete = progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0
 					callbacks?.onProgress?.(percentComplete)
 				},
-				error => {
+				(error) => {
 					console.error("EXR loading error:", error)
 					callbacks?.onError?.(error as Error)
 					callbacks?.onComplete?.()
 					resolve()
-				}
+				},
 			)
 		})
 	}

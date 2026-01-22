@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { useAppStore } from "../store/appStore"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
@@ -11,18 +11,16 @@ const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
  * @returns The overlay JSX element when visible, or `null` when not visible.
  */
 export function VideoOverlay() {
-	const isVideoOverlayVisible = useAppStore(
-		state => state.isVideoOverlayVisible
-	)
-	const hideVideoOverlay = useAppStore(state => state.hideVideoOverlay)
-	const showVideoThumbnail = useAppStore(state => state.showVideoThumbnail)
+	const isVideoOverlayVisible = useAppStore((state) => state.isVideoOverlayVisible)
+	const hideVideoOverlay = useAppStore((state) => state.hideVideoOverlay)
+	const showVideoThumbnail = useAppStore((state) => state.showVideoThumbnail)
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		hideVideoOverlay()
 		setTimeout(() => {
 			showVideoThumbnail()
 		}, 500)
-	}
+	}, [hideVideoOverlay, showVideoThumbnail])
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,17 +31,14 @@ export function VideoOverlay() {
 
 		document.addEventListener("keydown", handleKeyDown)
 		return () => document.removeEventListener("keydown", handleKeyDown)
-	}, [isVideoOverlayVisible])
+	}, [isVideoOverlayVisible, handleClose])
 
 	if (!isVideoOverlayVisible) {
 		return null
 	}
 
 	return (
-		<div
-			className={`video-overlay ${isVideoOverlayVisible ? "visible" : ""}`}
-			id="video-overlay"
-		>
+		<div className={`video-overlay ${isVideoOverlayVisible ? "visible" : ""}`} id="video-overlay">
 			<div className="video-fullscreen-wrapper">
 				<iframe
 					id="youtube-player"
@@ -52,9 +47,10 @@ export function VideoOverlay() {
 					frameBorder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					allowFullScreen
-				></iframe>
+				/>
 			</div>
 			<button
+				type="button"
 				className="video-close-btn"
 				id="video-close"
 				aria-label="Close video"

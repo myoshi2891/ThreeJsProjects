@@ -1,12 +1,12 @@
 import * as THREE from "three"
-import { Rain } from "./objects/Rain"
+import { HopeAnimation } from "../animation/HopeAnimation"
+import { GodRays } from "../effects/GodRays"
+import { PostProcessing } from "../effects/PostProcessing"
+import { AssetLoader } from "../loaders/AssetLoader"
+import type { SceneParams } from "../types"
 import { Fog } from "./objects/Fog"
 import { LightParticles } from "./objects/LightParticles"
-import { AssetLoader } from "../loaders/AssetLoader"
-import { HopeAnimation } from "../animation/HopeAnimation"
-import { PostProcessing } from "../effects/PostProcessing"
-import { GodRays } from "../effects/GodRays"
-import type { SceneParams } from "../types"
+import { Rain } from "./objects/Rain"
 
 export class SceneManager {
 	private readonly scene: THREE.Scene
@@ -37,11 +37,7 @@ export class SceneManager {
 		this.renderer = this.createRenderer(container)
 		this.clock = new THREE.Clock()
 
-		this.postProcessing = new PostProcessing(
-			this.renderer,
-			this.scene,
-			this.camera
-		)
+		this.postProcessing = new PostProcessing(this.renderer, this.scene, this.camera)
 		this.assetLoader = new AssetLoader(this.scene)
 
 		// Create scene objects
@@ -66,7 +62,7 @@ export class SceneManager {
 			this.renderer,
 			this.fog,
 			this.lightParticles,
-			this.godRays
+			this.godRays,
 		)
 
 		this.setupEventListeners()
@@ -84,7 +80,7 @@ export class SceneManager {
 			75,
 			window.innerWidth / window.innerHeight,
 			0.1,
-			1000
+			1000,
 		)
 		camera.position.set(0, 3, 10)
 		return camera
@@ -109,7 +105,7 @@ export class SceneManager {
 		window.addEventListener("resize", () => this.onResize())
 
 		// Mouse parallax for camera
-		window.addEventListener("mousemove", e => this.onMouseMove(e))
+		window.addEventListener("mousemove", (e) => this.onMouseMove(e))
 	}
 
 	private onMouseMove(event: MouseEvent): void {

@@ -12,8 +12,8 @@ export function BackgroundLayer() {
 				className="background-image"
 				id="bg-image"
 			/>
-			<div className="background-overlay"></div>
-			<div className="background-image-mask"></div>
+			<div className="background-overlay" />
+			<div className="background-image-mask" />
 		</div>
 	)
 }

@@ -1,6 +1,6 @@
 import "./styles.css"
-import { SceneManager } from "./scene/SceneManager"
 import { ScrollAnimation } from "./animation/ScrollAnimation"
+import { SceneManager } from "./scene/SceneManager"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
@@ -25,38 +25,22 @@ class App {
 		}
 
 		this.loadingElement = document.getElementById("loading") as HTMLElement
-		this.progressBar = document.getElementById(
-			"progress-bar"
-		) as HTMLElement
-		this.startButton = document.getElementById(
-			"start-btn"
-		) as HTMLButtonElement
-		this.hopeButton = document.getElementById(
-			"hope-btn"
-		) as HTMLButtonElement
-		this.videoOverlay = document.getElementById(
-			"video-overlay"
-		) as HTMLElement
-		this.youtubePlayer = document.getElementById(
-			"youtube-player"
-		) as HTMLIFrameElement
-		this.videoCloseButton = document.getElementById(
-			"video-close"
-		) as HTMLButtonElement
-		this.videoThumbnail = document.getElementById(
-			"video-thumbnail"
-		) as HTMLElement
+		this.progressBar = document.getElementById("progress-bar") as HTMLElement
+		this.startButton = document.getElementById("start-btn") as HTMLButtonElement
+		this.hopeButton = document.getElementById("hope-btn") as HTMLButtonElement
+		this.videoOverlay = document.getElementById("video-overlay") as HTMLElement
+		this.youtubePlayer = document.getElementById("youtube-player") as HTMLIFrameElement
+		this.videoCloseButton = document.getElementById("video-close") as HTMLButtonElement
+		this.videoThumbnail = document.getElementById("video-thumbnail") as HTMLElement
 		this.youtubeThumbnailPlayer = document.getElementById(
-			"youtube-thumbnail-player"
+			"youtube-thumbnail-player",
 		) as HTMLIFrameElement
-		this.videoExpandButton = document.getElementById(
-			"video-expand"
-		) as HTMLButtonElement
+		this.videoExpandButton = document.getElementById("video-expand") as HTMLButtonElement
 
 		this.sceneManager = new SceneManager(container)
 
 		this.scrollAnimation = new ScrollAnimation({
-			onScrollProgress: progress => {
+			onScrollProgress: (progress) => {
 				this.sceneManager.setScrollProgress(progress)
 			},
 		})
@@ -115,11 +99,8 @@ class App {
 		})
 
 		// Close video on Escape key
-		document.addEventListener("keydown", e => {
-			if (
-				e.key === "Escape" &&
-				this.videoOverlay.classList.contains("visible")
-			) {
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && this.videoOverlay.classList.contains("visible")) {
 				this.hideVideoPlayer()
 			}
 		})

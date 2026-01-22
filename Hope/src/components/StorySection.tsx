@@ -63,8 +63,7 @@ const storyContent = {
 export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const content = storyContent[type]
-	const sectionId =
-		type === "storm" ? "story" : type === "about" ? "about" : undefined
+	const sectionId = type === "storm" ? "story" : type === "about" ? "about" : undefined
 
 	const handleImageClick = () => {
 		setIsModalOpen(true)
@@ -88,11 +87,7 @@ export function StorySection({ type }: StorySectionProps) {
 							onClick={handleImageClick}
 							aria-label={`View ${content.title} image`}
 						>
-							<img
-								src={content.image}
-								alt={content.title}
-								className="story-thumbnail-image"
-							/>
+							<img src={content.image} alt={content.title} className="story-thumbnail-image" />
 						</button>
 					</div>
 				</div>

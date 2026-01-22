@@ -20,7 +20,7 @@ interface AppState {
 	hideVideoThumbnail: () => void
 }
 
-export const useAppStore = create<AppState>(set => ({
+export const useAppStore = create<AppState>((set) => ({
 	// Initial state
 	isLoading: true,
 	loadingProgress: 0,
@@ -29,9 +29,9 @@ export const useAppStore = create<AppState>(set => ({
 	isVideoThumbnailVisible: false,
 
 	// Actions
-	setLoading: loading => set({ isLoading: loading }),
-	setLoadingProgress: progress => set({ loadingProgress: progress }),
-	setHopeMode: enabled => set({ isHopeMode: enabled }),
+	setLoading: (loading) => set({ isLoading: loading }),
+	setLoadingProgress: (progress) => set({ loadingProgress: progress }),
+	setHopeMode: (enabled) => set({ isHopeMode: enabled }),
 	showVideoOverlay: () => set({ isVideoOverlayVisible: true }),
 	hideVideoOverlay: () => set({ isVideoOverlayVisible: false }),
 	showVideoThumbnail: () => set({ isVideoThumbnailVisible: true }),

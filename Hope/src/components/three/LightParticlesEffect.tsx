@@ -1,5 +1,5 @@
-import { useRef, useMemo } from "react"
 import { useFrame } from "@react-three/fiber"
+import { useMemo, useRef } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
 
@@ -16,7 +16,7 @@ const PARTICLE_COUNT = 80
  */
 export function LightParticlesEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
-	const hopeFactor = useSceneStore(state => state.hopeFactor)
+	const hopeFactor = useSceneStore((state) => state.hopeFactor)
 
 	const { geometry, material } = useMemo(() => {
 		const geo = new THREE.BufferGeometry()
