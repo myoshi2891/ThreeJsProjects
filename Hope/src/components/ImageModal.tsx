@@ -68,6 +68,7 @@ export function ImageModal({
 			<div
 				className="image-modal-content"
 				onClick={e => e.stopPropagation()}
+				role="presentation"
 			>
 				<img
 					src={imageSrc}

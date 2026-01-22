@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 /**
  * Creates a subtle camera parallax effect driven by the user's mouse position.
  *
- * Listens for pointer movement, normalizes the cursor to a centered [-2, 2] range, and updates the Three.js camera position each frame to produce a horizontal and vertical parallax.
+ * Listens for pointer movement, normalizes the cursor to a centered [-1, 1] range, and updates the Three.js camera position each frame to produce a horizontal and vertical parallax.
  *
  * @returns A React node that renders nothing (`null`).
  */
