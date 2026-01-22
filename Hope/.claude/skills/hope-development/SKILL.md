@@ -7,22 +7,32 @@ description: Development guidelines for the Hope 3D experience project. Use when
 
 ## Architecture
 
-Hope is a TypeScript + Three.js + GSAP application with vite build.
+Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build and Biome linter.
 
 ### Core Files
 | File | Purpose |
 |------|---------|
-| `src/main.ts` | App entry, UI event handling |
+| `src/main.tsx` | React entry point |
+| `src/components/App.tsx` | Main application component |
+| `src/components/ThreeCanvas.tsx` | R3F Canvas wrapper |
 | `src/styles.css` | All styling including `hope-mode` theme |
-| `src/scene/SceneManager.ts` | Three.js scene orchestration |
-| `src/animation/HopeAnimation.ts` | Particle animation sequences |
+| `src/store/appStore.ts` | UI state (Zustand) |
+| `src/store/sceneStore.ts` | 3D scene state (Zustand) |
 
 ## Code Patterns
 
-### Adding UI Elements
-1. Add HTML to `index.html`
+### Adding UI Components
+1. Create component in `src/components/`
 2. Add styles to `styles.css`
-3. Add event handlers in `App` class (`main.ts`)
+3. Import and use in parent component (e.g., `App.tsx`)
+
+```typescript
+// src/components/MyComponent.tsx
+export function MyComponent() {
+  const someState = useAppStore(state => state.someState)
+  return <div className="my-component">{/* ... */}</div>
+}
+```
 
 ### Theme Switching
 ```css
@@ -30,55 +40,74 @@ Hope is a TypeScript + Three.js + GSAP application with vite build.
 .hero-subtitle { color: var(--color-text-secondary); }
 
 /* Light mode (after hope animation) */
-body.hope-mode .hero-subtitle { 
+body.hope-mode .hero-subtitle {
   color: #0a1628;
   background: rgba(255, 255, 255, 0.85);
 }
 ```
 
-### Three.js Modifications
+### 3D Effects (React Three Fiber)
 ```typescript
-// In SceneManager.ts
-public addCustomEffect(): void {
-  // 1. Create geometry/material
-  // 2. Add to scene: this.scene.add(mesh)
-  // 3. Update in animate loop if needed
+// src/components/three/MyEffect.tsx
+import { useFrame } from '@react-three/fiber'
+import { useSceneStore } from '../../store/sceneStore'
+
+export function MyEffect() {
+  const hopeFactor = useSceneStore(state => state.hopeFactor)
+  const meshRef = useRef<THREE.Mesh>(null)
+
+  useFrame((state, delta) => {
+    // Animation logic
+  })
+
+  return <mesh ref={meshRef}>{/* ... */}</mesh>
 }
 ```
 
-### GSAP Animations
+### GSAP Animations with Hooks
 ```typescript
+// src/hooks/useMyAnimation.ts
 import gsap from 'gsap'
+import { useEffect } from 'react'
 
-gsap.to(element, {
-  opacity: 1,
-  duration: 0.5,
-  ease: 'power2.out'
-})
+export function useMyAnimation(isActive: boolean) {
+  useEffect(() => {
+    if (!isActive) return
+
+    const tl = gsap.timeline()
+    tl.to('.element', { opacity: 1, duration: 0.5 })
+
+    return () => tl.kill()
+  }, [isActive])
+}
 ```
 
 ## Verification Checklist
 
 Before committing changes:
 
+- [ ] Run `bun run lint` - No Biome errors
+- [ ] Run `bun run typecheck` - No TypeScript errors
+- [ ] Run `bun run test` - All tests pass
 - [ ] Run `bun dev` and test in browser
 - [ ] Check both dark mode and hope-mode (light)
 - [ ] Test responsive layouts (mobile/tablet)
 - [ ] Verify YouTube player functionality
-- [ ] Check console for errors
 
 ## Common Tasks
 
-### Change Particle Colors
-Edit `src/scene/Particles.ts` - update color uniforms
+### Add New Story Section
+1. Add content to `storyContent` object in `StorySection.tsx`
+2. Add image to `public/images/` (WebP format recommended)
+3. Use component: `<StorySection type="newType" />`
 
 ### Modify Animation Timing
-Edit `src/animation/HopeAnimation.ts` or adjust setTimeout values in `main.ts`
+Edit hooks in `src/hooks/` or adjust GSAP timelines
 
-### Add New Section
-1. Add HTML section in `index.html`
-2. Add styles in `styles.css`
-3. Update scroll animation in `ScrollAnimation.ts` if needed
+### Add New 3D Effect
+1. Create component in `src/components/three/`
+2. Add to `ThreeCanvas.tsx`
+3. Connect to `sceneStore` if state needed
 
 ## Build & Deploy
 
@@ -86,3 +115,9 @@ Edit `src/animation/HopeAnimation.ts` or adjust setTimeout values in `main.ts`
 bun run build    # Creates dist/ folder
 bun run preview  # Local production test
 ```
+
+### CI/CD (GitHub Actions)
+- **ci.yml**: Lint, TypeScript, Tests, Build on PR/push
+- **deploy.yml**: Auto-deploy to Netlify
+  - `main` → Production
+  - `development` → Preview

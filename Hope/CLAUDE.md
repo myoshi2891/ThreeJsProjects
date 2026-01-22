@@ -34,15 +34,24 @@ bun dev
 Hope/
 ├── index.html            # React root
 ├── package.json          # Deps: React 19, R3F, Zustand, Vitest
+├── biome.json            # Biome linter/formatter config
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml        # Lint, TypeScript, Tests, Build
+│   │   └── deploy.yml    # Netlify deployment (main→prod, dev→preview)
+│   └── dependabot.yml    # Weekly dependency updates
 ├── src/
 │   ├── main.tsx          # React Entry point
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
 │   │   ├── StorySection.tsx # Story sections with quotes & thumbnails
+│   │   ├── ExperienceSection.tsx # Video section with StorySection-style layout
+│   │   ├── VideoThumbnail.tsx # In-page YouTube thumbnail player
+│   │   ├── VideoOverlay.tsx # Fullscreen YouTube player overlay
 │   │   ├── ImageModal.tsx # Fullscreen image modal viewer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
-│   │   └── [UI Components] # Hero, Navigation, etc.
+│   │   └── [UI Components] # Hero, Navigation, Loading, etc.
 │   ├── store/            # Global State Management (Zustand)
 │   │   ├── appStore.ts   # UI State
 │   │   └── sceneStore.ts # 3D Scene State
@@ -51,7 +60,7 @@ Hope/
 │   │   └── useScrollAnimation.ts # ScrollTrigger
 │   └── styles.css        # Global Styles
 └── public/
-    └── images/           # Story section thumbnail images
+    └── images/           # Story section thumbnail images (WebP format)
 ```
 
 ## Key Components
@@ -75,6 +84,21 @@ Hope/
 - 半透明オーバーレイ（雨アニメーションが見える）
 - キーボードアクセシビリティ（Escで閉じる）
 - スムーズな開閉アニメーション
+
+### ExperienceSection (`components/ExperienceSection.tsx`)
+- StorySection風のレイアウト（number, title, description）を持つビデオセクション
+- 「Watch the short Film」ボタンでHopeアニメーション開始
+- アニメーション完了後にVideoThumbnailを表示
+
+### VideoThumbnail (`components/VideoThumbnail.tsx`)
+- ページ内YouTubeサムネイルプレーヤー
+- フェードインアニメーションで表示
+- 拡大ボタンでVideoOverlayへ遷移
+
+### VideoOverlay (`components/VideoOverlay.tsx`)
+- フルスクリーンYouTubeプレーヤーオーバーレイ
+- ESCキーまたは閉じるボタンで終了
+- 閉じた後はVideoThumbnailに戻る
 
 ### Stores (`src/store/`)
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
@@ -109,4 +133,19 @@ bun run preview   # Preview production build
 - **GSAP** (3.12.5): Animations
 - **Vitest**: Testing Framework
 - **Vite**: Build Tool
-- **Bun**: Package Manager & Runtime
+- **Bun** (1.3.5): Package Manager & Runtime
+- **Biome**: Linter & Formatter
+
+## CI/CD
+
+GitHub Actionsによる自動化:
+
+- **ci.yml**: PR/pushでLint、TypeScript、テスト、ビルドを実行
+- **deploy.yml**: mainブランチ→本番、developmentブランチ→プレビューをNetlifyにデプロイ
+- **dependabot.yml**: 週次で依存関係の更新PRを作成
+
+```bash
+# ローカルでのLint/Format
+bun run lint        # Biome lint
+bun run format      # Biome format
+```
