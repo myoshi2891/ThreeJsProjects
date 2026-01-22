@@ -53,8 +53,12 @@ export function ImageModal({
 		<div
 			className={`image-modal-overlay ${isClosing ? "closing" : ""}`}
 			onClick={handleClose}
+			role="dialog"
+			aria-modal="true"
+			aria-label="Image viewer"
 		>
 			<button
+				type="button"
 				className="image-modal-close"
 				onClick={handleClose}
 				aria-label="Close modal"

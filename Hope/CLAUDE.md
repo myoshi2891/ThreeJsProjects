@@ -4,6 +4,22 @@
 
 希望（Hope）をテーマにした没入型3D Webエクスペリエンス。React 19, React Three Fiber, Zustandを使用したモダンなアーキテクチャで構築されています。
 
+## ⚠️ Agent Rules (IMPORTANT)
+
+> [!CAUTION]
+> **Git Repository Root**: このプロジェクトは親リポジトリ（`ThreeJsProjects`）の一部です。
+> 
+> **Git コマンド（add, commit, push等）は必ず親ディレクトリ `ThreeJsProjects/` から実行すること！**
+> 
+> ```bash
+> # ✅ 正しい実行場所
+> cd ../  # Hope → ThreeJsProjects に移動
+> git add -A && git commit -m "message"
+> 
+> # ❌ 間違い（Hope/ディレクトリから実行しない）
+> git commit  # Hopeサブディレクトリからは実行しないこと
+> ```
+
 ## Quick Start
 
 ```bash
@@ -94,8 +110,3 @@ bun run preview   # Preview production build
 - **Vitest**: Testing Framework
 - **Vite**: Build Tool
 - **Bun**: Package Manager & Runtime
-
-## Agent Rules
-
-- **Commit Location**: Always run git commands from the root directory (`/Users/mitsuruyoshizumi/Workspace/BasicFrontEnd/ThreeJsProjects`). The Hope subdirectory is now part of the parent repository (no separate .git).
-

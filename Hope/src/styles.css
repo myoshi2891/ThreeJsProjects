@@ -571,6 +571,25 @@ body {
 	align-items: center;
 }
 
+.story-thumbnail-btn {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	border-radius: var(--radius-xl);
+	transition:
+		transform var(--transition-base),
+		box-shadow var(--transition-base);
+}
+
+.story-thumbnail-btn:hover {
+}
+
+.story-thumbnail-btn:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 4px;
+}
+
 .story-thumbnail-image {
 	width: 100%;
 	max-width: 400px;
