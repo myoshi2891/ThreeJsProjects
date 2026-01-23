@@ -62,11 +62,11 @@ export function App() {
 			<BackgroundLayer />
 			<Navigation />
 			<Hero />
-			<StorySection type="storm" />
-			<StorySection type="change" />
 			<StorySection type="hope" />
+			<StorySection type="life" />
+			<StorySection type="possibility" />
 			<ExperienceSection />
-			<StorySection type="about" />
+			<StorySection type="light" />
 			<VideoOverlay />
 			<ThreeCanvas />
 		</div>

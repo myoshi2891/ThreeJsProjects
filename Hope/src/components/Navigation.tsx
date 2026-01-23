@@ -12,7 +12,7 @@ export function Navigation() {
 			</a>
 			<ul className="nav-links">
 				<li>
-					<a href="#story" className="nav-link">
+					<a href="#hope" className="nav-link">
 						Hope
 					</a>
 				</li>
@@ -22,7 +22,7 @@ export function Navigation() {
 					</a>
 				</li>
 				<li>
-					<a href="#about" className="nav-link">
+					<a href="#light" className="nav-link">
 						Light
 					</a>
 				</li>
