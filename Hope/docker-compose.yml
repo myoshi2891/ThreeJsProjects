@@ -1,0 +1,36 @@
+# =============================================================================
+# Hope Project - Production Docker Compose
+# =============================================================================
+# 本番環境（Nginx静的ファイル配信）
+# 使用方法: docker compose up -d
+# =============================================================================
+
+services:
+  hope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_YOUTUBE_VIDEO_ID: ${VITE_YOUTUBE_VIDEO_ID}
+    container_name: hope-production
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

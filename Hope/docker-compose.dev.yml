@@ -1,0 +1,42 @@
+# =============================================================================
+# Hope Project - Development Docker Compose
+# =============================================================================
+# ホットリロード対応の開発環境
+# 使用方法: docker compose -f docker-compose.dev.yml up
+# =============================================================================
+
+services:
+  hope-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: hope-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # ソースコードをマウント（ホットリロード対応）
+      - ./src:/app/src:delegated
+      - ./public:/app/public:delegated
+      - ./index.html:/app/index.html:delegated
+      - ./vite.config.ts:/app/vite.config.ts:delegated
+      - ./tsconfig.json:/app/tsconfig.json:delegated
+      - ./biome.json:/app/biome.json:delegated
+      # node_modulesはコンテナ内のものを使用（パフォーマンス向上）
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_YOUTUBE_VIDEO_ID=${VITE_YOUTUBE_VIDEO_ID:-default_video_id}
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  node_modules:
+    name: hope-node-modules

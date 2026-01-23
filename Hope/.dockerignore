@@ -1,0 +1,45 @@
+# 依存関係（コンテナ内で再インストール）
+node_modules
+
+# ビルド出力（マルチステージビルドで生成）
+dist
+out
+
+# Git
+.git
+.gitignore
+
+# IDE/エディタ
+.idea
+.vscode
+*.swp
+*.swo
+
+# テスト・カバレッジ
+coverage
+*.lcov
+
+# キャッシュ
+.cache
+.parcel-cache
+*.tsbuildinfo
+.eslintcache
+
+# ローカル環境変数（Docker Composeで注入）
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# ログ
+logs
+*.log
+
+# ドキュメント（README以外）
+*.md
+!README.md
+
+# Claude設定
+.claude/
