@@ -87,7 +87,7 @@ export function useMyAnimation(isActive: boolean) {
 Before committing changes:
 
 - [ ] Run `bun run lint` - No Biome errors
-- [ ] Run `bun run typecheck` - No TypeScript errors
+- [ ] Run `bunx tsc --noEmit` - No TypeScript errors
 - [ ] Run `bun run test` - All tests pass
 - [ ] Run `bun dev` and test in browser
 - [ ] Check both dark mode and hope-mode (light)

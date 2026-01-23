@@ -149,12 +149,12 @@ bun run preview   # Preview production build
 - **React** (19.0.0): UI Library
 - **React Three Fiber** (9.0.0): 3D Rendering Integration
 - **Zustand** (5.0.0): State Management
-- **Three.js** (0.172.0): 3D Core
+- **Three.js** (0.160.0): 3D Core
 - **GSAP** (3.12.5): Animations
 - **Vitest**: Testing Framework
 - **Vite**: Build Tool
 - **Bun** (1.3.5): Package Manager & Runtime
-- **Biome**: Linter & Formatter
+- **Biome** (2.x): Linter & Formatter
 
 ## CI/CD
 
