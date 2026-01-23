@@ -87,7 +87,7 @@ export function useMyAnimation(isActive: boolean) {
 Before committing changes:
 
 - [ ] Run `bun run lint` - No Biome errors
-- [ ] Run `bun run typecheck` - No TypeScript errors
+- [ ] Run `bunx tsc --noEmit` - No TypeScript errors
 - [ ] Run `bun run test` - All tests pass
 - [ ] Run `bun dev` and test in browser
 - [ ] Check both dark mode and hope-mode (light)
@@ -100,6 +100,8 @@ Before committing changes:
 1. Add content to `storyContent` object in `StorySection.tsx`
 2. Add image to `public/images/` (WebP format recommended)
 3. Use component: `<StorySection type="newType" />`
+
+Current valid types: `"hope" | "life" | "possibility" | "light"`
 
 ### Modify Animation Timing
 Edit hooks in `src/hooks/` or adjust GSAP timelines
