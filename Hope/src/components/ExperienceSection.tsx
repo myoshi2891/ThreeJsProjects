@@ -7,8 +7,7 @@ const experienceContent = {
 	title: "Short Film",
 	description: (
 		<>
-			"Hope is being able to see that there is light despite all of the
-			darkness."
+			"Hope is being able to see that there is light despite all of the darkness."
 			<br />- Desmond Tutu (South African Archbishop)
 		</>
 	),
@@ -24,10 +23,8 @@ const experienceContent = {
  */
 export function ExperienceSection() {
 	const [isButtonHidden, setIsButtonHidden] = useState(false)
-	const setHopeMode = useAppStore(state => state.setHopeMode)
-	const isVideoThumbnailVisible = useAppStore(
-		state => state.isVideoThumbnailVisible
-	)
+	const setHopeMode = useAppStore((state) => state.setHopeMode)
+	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
 	const handleHopeClick = () => {
 		setIsButtonHidden(true)
@@ -40,9 +37,7 @@ export function ExperienceSection() {
 			<div className="story-content" data-story="experience">
 				<span className="story-number">{experienceContent.number}</span>
 				<h2 className="story-title">{experienceContent.title}</h2>
-				<p className="story-description">
-					{experienceContent.description}
-				</p>
+				<p className="story-description">{experienceContent.description}</p>
 				<div className="story-thumbnail">
 					<button
 						type="button"

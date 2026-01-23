@@ -13,12 +13,14 @@ describe("ExperienceSection", () => {
 
 	it("should render hope button", () => {
 		render(<ExperienceSection />)
-		expect(screen.getByRole("button", { name: /希望を見つける/i })).toBeInTheDocument()
+		expect(screen.getByRole("button", { name: /Watch the short Film/i })).toBeInTheDocument()
 	})
 
 	it("should hide hope button when it is clicked", () => {
 		render(<ExperienceSection />)
-		const button = screen.getByRole("button", { name: /希望を見つける/i })
+		const button = screen.getByRole("button", {
+			name: /Watch the short Film/i,
+		})
 
 		fireEvent.click(button)
 
@@ -28,7 +30,9 @@ describe("ExperienceSection", () => {
 
 	it("should enable hope mode when button is clicked", () => {
 		render(<ExperienceSection />)
-		const button = screen.getByRole("button", { name: /希望を見つける/i })
+		const button = screen.getByRole("button", {
+			name: /Watch the short Film/i,
+		})
 
 		fireEvent.click(button)
 

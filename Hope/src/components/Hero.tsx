@@ -22,18 +22,11 @@ export function Hero() {
 				</div>
 				<h1 className="hero-title">Hope Lights the Way</h1>
 				<p className="hero-subtitle">
-					Even in the darkest night, a single spark can guide us to a
-					better tomorrow.
+					Even in the darkest night, a single spark can guide us to a better tomorrow.
 					<br />
-					After the rain comes the sun. Find your strength to rise
-					again.
+					After the rain comes the sun. Find your strength to rise again.
 				</p>
-				<button
-					type="button"
-					className="hero-cta"
-					id="start-btn"
-					onClick={handleStartClick}
-				>
+				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
 					<span>Learn More</span>
 					<span className="hero-cta-icon">→</span>
 				</button>
