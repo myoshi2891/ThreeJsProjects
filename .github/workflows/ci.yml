@@ -41,7 +41,7 @@ jobs:
         run: bun install
 
       - name: Lint check (Biome)
-        run: bunx @biomejs/biome check ./src
+        run: bun run lint
 
       - name: TypeScript check
         run: bunx tsc --noEmit

@@ -65,6 +65,7 @@ export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalPr
 			>
 				✕
 			</button>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
 			<div
 				className="image-modal-content"
 				onClick={(e) => e.stopPropagation()}
