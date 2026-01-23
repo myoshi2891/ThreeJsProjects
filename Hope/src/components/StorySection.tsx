@@ -2,11 +2,11 @@ import { useState } from "react"
 import { ImageModal } from "./ImageModal"
 
 interface StorySectionProps {
-	type: "storm" | "change" | "hope" | "about"
+	type: "hope" | "life" | "possibility" | "light"
 }
 
 const storyContent = {
-	storm: {
+	hope: {
 		number: "01",
 		title: "Hope",
 		description: (
@@ -17,7 +17,7 @@ const storyContent = {
 		),
 		image: "/images/hope-pillar.webp",
 	},
-	change: {
+	life: {
 		number: "02",
 		title: "Life",
 		description: (
@@ -30,7 +30,7 @@ const storyContent = {
 		),
 		image: "/images/live-learn-forever.webp",
 	},
-	hope: {
+	possibility: {
 		number: "03",
 		title: "Possibility",
 		description: (
@@ -41,7 +41,7 @@ const storyContent = {
 		),
 		image: "/images/never-too-late.webp",
 	},
-	about: {
+	light: {
 		number: "∞",
 		title: "Light",
 		description: (
@@ -57,13 +57,13 @@ const storyContent = {
 /**
  * Renders a story section (number, title, and description) for the given section type.
  *
- * @param type - The section variant to render: "storm", "change", "hope", or "about"
+ * @param type - The section variant to render: "hope", "life", "possibility", or "light"
  * @returns A <section> element containing the configured number, title, and description for the specified type
  */
 export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const content = storyContent[type]
-	const sectionId = type === "storm" ? "story" : type === "about" ? "about" : undefined
+	const sectionId = type === "hope" ? "hope" : type === "light" ? "light" : undefined
 
 	const handleImageClick = () => {
 		setIsModalOpen(true)
