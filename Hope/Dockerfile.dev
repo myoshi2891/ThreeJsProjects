@@ -15,10 +15,11 @@ RUN addgroup -g 1001 -S nodejs && \
     adduser -S vite -u 1001 -G nodejs
 
 # 依存関係ファイルをコピー（キャッシュ効率化）
-COPY --chown=vite:nodejs package.json bun.lock ./
+COPY --chown=vite:nodejs package.json ./
+COPY --chown=vite:nodejs bun.lock* ./
 
 # 依存関係インストール
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # ソースコードはボリュームマウントで提供されるため、ここではコピーしない
 

@@ -13,10 +13,11 @@ FROM oven/bun:1.3.5-alpine AS builder
 WORKDIR /app
 
 # 依存関係ファイルをコピー
-COPY package.json bun.lock ./
+COPY package.json ./
+COPY bun.lock* ./
 
 # 依存関係インストール（devDependencies含む、ビルドに必要）
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # ソースコードをコピー
 COPY . .
