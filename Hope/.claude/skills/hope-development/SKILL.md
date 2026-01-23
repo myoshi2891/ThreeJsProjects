@@ -101,6 +101,8 @@ Before committing changes:
 2. Add image to `public/images/` (WebP format recommended)
 3. Use component: `<StorySection type="newType" />`
 
+Current valid types: `"hope" | "life" | "possibility" | "light"`
+
 ### Modify Animation Timing
 Edit hooks in `src/hooks/` or adjust GSAP timelines
 

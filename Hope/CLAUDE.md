@@ -28,6 +28,26 @@ bun install
 bun dev
 ```
 
+## Docker Environment
+
+```
+Hope/
+├── Dockerfile            # Production multi-stage build
+├── Dockerfile.dev        # Development container
+├── docker-compose.yml    # Production configuration
+├── docker-compose.dev.yml # Development configuration
+├── nginx/nginx.conf      # Nginx configuration
+└── .dockerignore         # Docker exclude files
+```
+
+```bash
+# Production
+docker compose up -d
+
+# Development (with hot reload)
+docker compose -f docker-compose.dev.yml up
+```
+
 ## Project Structure
 
 ```
@@ -141,6 +161,7 @@ bun run preview   # Preview production build
 GitHub Actionsによる自動化:
 
 - **ci.yml**: PR/pushでLint、TypeScript、テスト、ビルドを実行
+- **docker.yml**: DockerイメージのビルドとCI
 - **deploy.yml**: mainブランチ→本番、developmentブランチ→プレビューをNetlifyにデプロイ
 - **dependabot.yml**: 週次で依存関係の更新PRを作成
 
