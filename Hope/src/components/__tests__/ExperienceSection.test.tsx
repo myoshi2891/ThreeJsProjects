@@ -13,9 +13,7 @@ describe("ExperienceSection", () => {
 
 	it("should render hope button", () => {
 		render(<ExperienceSection />)
-		expect(
-			screen.getByRole("button", { name: /Watch the short Film/i })
-		).toBeInTheDocument()
+		expect(screen.getByRole("button", { name: /Watch the short Film/i })).toBeInTheDocument()
 	})
 
 	it("should hide hope button when it is clicked", () => {
