@@ -15,27 +15,33 @@ describe("Hero", () => {
 
 	it("should render hero title", () => {
 		render(<Hero />)
-		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("HOPE")
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+			"Hope Lights the Way"
+		)
 	})
 
 	it("should render hero subtitle", () => {
 		render(<Hero />)
-		expect(screen.getByText(/静寂の水面に/)).toBeInTheDocument()
+		expect(
+			screen.getByText(/Even in the darkest night/)
+		).toBeInTheDocument()
 	})
 
 	it("should render start button", () => {
 		render(<Hero />)
-		expect(screen.getByRole("button", { name: /体験を始める/i })).toBeInTheDocument()
+		expect(
+			screen.getByRole("button", { name: /Learn More/i })
+		).toBeInTheDocument()
 	})
 
-	it("should render Interactive 3D Experience badge", () => {
+	it("should render Design the Future badge", () => {
 		render(<Hero />)
-		expect(screen.getByText("Interactive 3D Experience")).toBeInTheDocument()
+		expect(screen.getByText("Design the Future")).toBeInTheDocument()
 	})
 
 	it("should scroll to experience section when start button is clicked", () => {
 		render(<Hero />)
-		const button = screen.getByRole("button", { name: /体験を始める/i })
+		const button = screen.getByRole("button", { name: /Learn More/i })
 		fireEvent.click(button)
 		expect(mockScrollIntoView).toHaveBeenCalledWith({ behavior: "smooth" })
 	})
