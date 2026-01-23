@@ -65,9 +65,9 @@ export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalPr
 			>
 				✕
 			</button>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional event propagation stop */}
 			<div
 				className="image-modal-content"
-				role="presentation"
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
 			>
