@@ -67,6 +67,7 @@ export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalPr
 			</button>
 			<div
 				className="image-modal-content"
+				role="presentation"
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
 			>

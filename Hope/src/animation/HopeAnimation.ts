@@ -11,9 +11,6 @@ import type { SceneParams } from "../types"
 export class HopeAnimation {
 	private readonly params: SceneParams
 	private readonly rain: Rain
-	private readonly fog: Fog
-	private readonly lightParticles: LightParticles
-	private readonly godRays: GodRays
 	private readonly postProcessing: PostProcessing
 	private readonly assetLoader: AssetLoader
 	private readonly renderer: THREE.WebGLRenderer
@@ -26,18 +23,15 @@ export class HopeAnimation {
 		postProcessing: PostProcessing,
 		assetLoader: AssetLoader,
 		renderer: THREE.WebGLRenderer,
-		fog: Fog,
-		lightParticles: LightParticles,
-		godRays: GodRays,
+		_fog: Fog,
+		_lightParticles: LightParticles,
+		_godRays: GodRays,
 	) {
 		this.params = params
 		this.rain = rain
 		this.postProcessing = postProcessing
 		this.assetLoader = assetLoader
 		this.renderer = renderer
-		this.fog = fog
-		this.lightParticles = lightParticles
-		this.godRays = godRays
 		this.bgImage = document.getElementById("bg-image")
 	}
 

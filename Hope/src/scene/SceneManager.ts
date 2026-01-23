@@ -23,7 +23,6 @@ export class SceneManager {
 	private readonly hopeAnimation: HopeAnimation
 
 	private readonly params: SceneParams
-	private scrollProgress = 0
 
 	constructor(container: HTMLElement) {
 		this.params = {
@@ -132,8 +131,6 @@ export class SceneManager {
 	}
 
 	public setScrollProgress(progress: number): void {
-		this.scrollProgress = progress
-
 		// Apply scroll-based environmental changes
 		const scrollHope = Math.min(progress * 0.3, 0.3) // Max 30% from scrolling
 		this.updateEnvironmentFromScroll(scrollHope)
