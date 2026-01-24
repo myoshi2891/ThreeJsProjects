@@ -487,7 +487,7 @@ body {
 .loading-progress-bar {
 	height: 100%;
 	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
-	width: 0%;
+	width: var(--progress-width, 0%);
 	transition: width var(--transition-slow);
 }
 
