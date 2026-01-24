@@ -39,6 +39,30 @@ class SceneManager {
 }
 ```
 
+## Hope Project File Structure
+
+```
+src/
+├── components/three/     # React Three Fiber Components
+│   ├── SceneSetup.tsx    # EffectComposer, UnrealBloomPass setup
+│   ├── MouseParallax.tsx # Camera parallax based on mouse position
+│   ├── RainEffect.tsx    # Rain particle system (Points)
+│   ├── FogEffect.tsx     # Fog particles (ShaderMaterial)
+│   ├── LightParticlesEffect.tsx # Light particles (additive blend)
+│   └── GodRaysEffect.tsx # God rays mesh (ShaderMaterial)
+├── scene/                # Three.js Classes (non-React)
+│   ├── SceneManager.ts   # Scene lifecycle & rendering
+│   └── objects/          # 3D object classes
+│       ├── Rain.ts
+│       ├── Fog.ts
+│       └── LightParticles.ts
+├── effects/              # Post-processing
+│   ├── PostProcessing.ts # EffectComposer configuration
+│   └── GodRays.ts        # God rays effect class
+└── loaders/
+    └── AssetLoader.ts    # HDRI/EXR texture loading
+```
+
 ## Common Patterns
 
 ### Responsive Resize

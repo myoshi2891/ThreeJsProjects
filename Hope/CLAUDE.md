@@ -37,6 +37,7 @@ Hope/
 ├── docker-compose.yml    # Production configuration
 ├── docker-compose.dev.yml # Development configuration
 ├── nginx/nginx.conf      # Nginx configuration
+├── nginx/security-headers.conf # Shared security headers
 └── .dockerignore         # Docker exclude files
 ```
 
@@ -61,7 +62,8 @@ Hope/
 │   │   └── deploy.yml    # Netlify deployment (main→prod, dev→preview)
 │   └── dependabot.yml    # Weekly dependency updates
 ├── src/
-│   ├── main.tsx          # React Entry point
+│   ├── main.tsx          # React Entry point (現在使用中)
+│   ├── main.ts           # 旧バージョン（バニラJS）※非使用
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
@@ -70,14 +72,31 @@ Hope/
 │   │   ├── VideoThumbnail.tsx # In-page YouTube thumbnail player
 │   │   ├── VideoOverlay.tsx # Fullscreen YouTube player overlay
 │   │   ├── ImageModal.tsx # Fullscreen image modal viewer
+│   │   ├── BackgroundLayer.tsx # Decorative background layer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
+│   │   ├── __tests__/    # Component Tests
 │   │   └── [UI Components] # Hero, Navigation, Loading, etc.
 │   ├── store/            # Global State Management (Zustand)
 │   │   ├── appStore.ts   # UI State
-│   │   └── sceneStore.ts # 3D Scene State
-│   ├── hooks/            # Custom Hooks
-│   │   ├── useHopeAnimation.ts # GSAP Timeline
-│   │   └── useScrollAnimation.ts # ScrollTrigger
+│   │   ├── sceneStore.ts # 3D Scene State
+│   │   └── __tests__/    # Store Tests
+│   ├── hooks/            # Custom Hooks (React)
+│   │   ├── useHopeAnimation.ts # GSAP Timeline Hook
+│   │   └── useScrollAnimation.ts # ScrollTrigger Hook
+│   ├── animation/        # Animation Classes (非React)
+│   │   ├── HopeAnimation.ts # Hope animation logic class
+│   │   └── ScrollAnimation.ts # Scroll animation logic class
+│   ├── scene/            # 3D Scene Management (Three.js)
+│   │   ├── SceneManager.ts # Scene lifecycle & rendering
+│   │   └── objects/      # Scene objects
+│   │       ├── Rain.ts, Fog.ts, LightParticles.ts
+│   ├── effects/          # Post-processing Effects
+│   │   ├── PostProcessing.ts # EffectComposer configuration
+│   │   └── GodRays.ts    # God rays effect
+│   ├── loaders/          # Asset Loading
+│   │   └── AssetLoader.ts # HDRI texture & environment loading
+│   ├── types/            # TypeScript Type Definitions
+│   │   └── index.ts      # Shared types (SceneParams, LoadingCallbacks)
 │   └── styles.css        # Global Styles
 └── public/
     └── images/           # Story section thumbnail images (WebP format)
@@ -123,6 +142,21 @@ Hope/
 ### Stores (`src/store/`)
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
+
+### Animation Classes (`src/animation/`)
+- **HopeAnimation**: 希望アニメーションのロジッククラス（GSAPタイムライン）
+- **ScrollAnimation**: スクロール連動アニメーションのロジッククラス（ScrollTrigger）
+
+### Scene Management (`src/scene/`)
+- **SceneManager**: Three.jsシーンのライフサイクル管理、レンダリングループ
+- **objects/**: 3Dオブジェクトクラス（Rain, Fog, LightParticles）
+
+### Effects (`src/effects/`)
+- **PostProcessing**: EffectComposer設定、UnrealBloomPass等のポストエフェクト
+- **GodRays**: ゴッドレイ（光芒）エフェクトの実装
+
+### Loaders (`src/loaders/`)
+- **AssetLoader**: HDRIテクスチャ・環境マップのローディング（EXRLoader使用）
 
 ## Key Behaviors
 
