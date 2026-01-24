@@ -19,6 +19,23 @@ Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build
 | `src/store/appStore.ts` | UI state (Zustand) |
 | `src/store/sceneStore.ts` | 3D scene state (Zustand) |
 
+### Animation Files
+| File | Purpose |
+|------|---------|
+| `src/hooks/useHopeAnimation.ts` | React Hook - GSAP Timeline for hope animation |
+| `src/hooks/useScrollAnimation.ts` | React Hook - ScrollTrigger for scroll effects |
+| `src/animation/HopeAnimation.ts` | Class - Hope animation logic (non-React) |
+| `src/animation/ScrollAnimation.ts` | Class - Scroll animation logic (non-React) |
+
+### 3D Scene Files
+| File | Purpose |
+|------|---------|
+| `src/scene/SceneManager.ts` | Three.js scene lifecycle & rendering |
+| `src/scene/objects/*.ts` | 3D objects (Rain, Fog, LightParticles) |
+| `src/effects/PostProcessing.ts` | EffectComposer configuration |
+| `src/effects/GodRays.ts` | God rays effect |
+| `src/loaders/AssetLoader.ts` | HDRI texture & environment loading |
+
 ## Code Patterns
 
 ### Adding UI Components
