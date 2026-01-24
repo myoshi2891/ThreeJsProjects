@@ -37,6 +37,7 @@ Hope/
 ├── docker-compose.yml    # Production configuration
 ├── docker-compose.dev.yml # Development configuration
 ├── nginx/nginx.conf      # Nginx configuration
+├── nginx/security-headers.conf # Shared security headers
 └── .dockerignore         # Docker exclude files
 ```
 
@@ -71,6 +72,7 @@ Hope/
 │   │   ├── VideoOverlay.tsx # Fullscreen YouTube player overlay
 │   │   ├── ImageModal.tsx # Fullscreen image modal viewer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
+│   │   ├── __tests__/    # Component Tests
 │   │   └── [UI Components] # Hero, Navigation, Loading, etc.
 │   ├── store/            # Global State Management (Zustand)
 │   │   ├── appStore.ts   # UI State
