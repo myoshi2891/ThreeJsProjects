@@ -1,13 +1,13 @@
-import { fireEvent, render, screen, act } from "@testing-library/react"
-import { beforeEach, describe, expect, it, vi, afterEach } from "vitest"
-import { VideoThumbnail } from "../VideoThumbnail"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore } from "../../store/appStore"
+import { VideoThumbnail } from "../VideoThumbnail"
 
 describe("VideoThumbnail", () => {
 	beforeEach(() => {
 		vi.useFakeTimers()
 		// Mock requestAnimationFrame
-		vi.spyOn(window, "requestAnimationFrame").mockImplementation(cb => {
+		vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
 			cb(0)
 			return 0
 		})

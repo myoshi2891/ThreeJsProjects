@@ -1,10 +1,9 @@
-import { fireEvent, render, screen, act } from "@testing-library/react"
-import { beforeEach, describe, expect, it, vi, afterEach } from "vitest"
-import { VideoOverlay } from "../VideoOverlay"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore } from "../../store/appStore"
+import { VideoOverlay } from "../VideoOverlay"
 
 // Time utilities
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 describe("VideoOverlay", () => {
 	beforeEach(() => {
