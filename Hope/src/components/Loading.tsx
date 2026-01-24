@@ -19,7 +19,7 @@ export function Loading() {
 					className="loading-progress-bar"
 					id="progress-bar"
 					data-testid="progress-bar"
-					style={{ width: `${loadingProgress}%` }}
+					style={{ "--progress-width": `${loadingProgress}%` } as React.CSSProperties}
 				/>
 			</div>
 		</div>

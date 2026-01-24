@@ -30,13 +30,13 @@ describe("Loading", () => {
 		useAppStore.setState({ loadingProgress: 50 })
 		render(<Loading />)
 		const progressBar = screen.getByTestId("progress-bar")
-		expect(progressBar).toHaveStyle({ width: "50%" })
+		expect(progressBar).toHaveStyle({ "--progress-width": "50%" })
 	})
 
 	it("should show 100% progress when fully loaded", () => {
 		useAppStore.setState({ loadingProgress: 100 })
 		render(<Loading />)
 		const progressBar = screen.getByTestId("progress-bar")
-		expect(progressBar).toHaveStyle({ width: "100%" })
+		expect(progressBar).toHaveStyle({ "--progress-width": "100%" })
 	})
 })
