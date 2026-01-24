@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { Hero } from "../Hero"
 
 const mockScrollIntoView = vi.fn()
@@ -15,17 +15,23 @@ describe("Hero", () => {
 
 	it("should render hero title", () => {
 		render(<Hero />)
-		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Hope Lights the Way")
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+			"Hope Lights the Way"
+		)
 	})
 
 	it("should render hero subtitle", () => {
 		render(<Hero />)
-		expect(screen.getByText(/Even in the darkest night/)).toBeInTheDocument()
+		expect(
+			screen.getByText(/Even in the darkest night/)
+		).toBeInTheDocument()
 	})
 
 	it("should render start button", () => {
 		render(<Hero />)
-		expect(screen.getByRole("button", { name: /Learn More/i })).toBeInTheDocument()
+		expect(
+			screen.getByRole("button", { name: /Learn More/i })
+		).toBeInTheDocument()
 	})
 
 	it("should render Design the Future badge", () => {
