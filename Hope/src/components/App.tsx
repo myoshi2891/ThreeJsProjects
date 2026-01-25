@@ -11,7 +11,7 @@ import {
 import { ThreeCanvas } from "../components/ThreeCanvas"
 import { useHopeAnimation } from "../hooks/useHopeAnimation"
 import { useScrollAnimation } from "../hooks/useScrollAnimation"
-import { useAppStore } from "../store/appStore"
+import { useAppStore } from "../store"
 
 /**
  * Root application component that composes the UI and coordinates initial loading and hope-mode animation.

@@ -54,6 +54,11 @@ const storyContent = {
 	},
 }
 
+const sectionIdMap: Record<string, string | undefined> = {
+	hope: "hope",
+	light: "light",
+}
+
 /**
  * Renders a story section (number, title, and description) for the given section type.
  *
@@ -63,7 +68,7 @@ const storyContent = {
 export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const content = storyContent[type]
-	const sectionId = type === "hope" ? "hope" : type === "light" ? "light" : undefined
+	const sectionId = sectionIdMap[type]
 
 	const handleImageClick = () => {
 		setIsModalOpen(true)

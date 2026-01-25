@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useAppStore } from "../store/appStore"
+import { useAppStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
 const experienceContent = {
@@ -44,6 +44,7 @@ export function ExperienceSection() {
 						className={`experience-btn ${isButtonHidden ? "hidden" : ""}`}
 						id="hope-btn"
 						onClick={handleHopeClick}
+						aria-label="Watch the short film - start hope experience"
 					>
 						Watch the short Film
 					</button>
