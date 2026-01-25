@@ -1,7 +1,6 @@
 import { gsap } from "gsap"
 import { useCallback } from "react"
-import { useAppStore } from "../store/appStore"
-import { useSceneStore } from "../store/sceneStore"
+import { useAppStore, useSceneStore } from "../store"
 
 /**
  * Provides a hook that exposes a function to run a staged "hope" animation sequence.

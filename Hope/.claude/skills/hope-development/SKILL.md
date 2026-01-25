@@ -10,6 +10,7 @@ description: Development guidelines for the Hope 3D experience project. Use when
 Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build and Biome linter.
 
 ### Core Files
+
 | File | Purpose |
 |------|---------|
 | `src/main.tsx` | React entry point |
@@ -20,6 +21,7 @@ Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build
 | `src/store/sceneStore.ts` | 3D scene state (Zustand) |
 
 ### Animation Files
+
 | File | Purpose |
 |------|---------|
 | `src/hooks/useHopeAnimation.ts` | React Hook - GSAP Timeline for hope animation |
@@ -28,6 +30,7 @@ Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build
 | `src/animation/ScrollAnimation.ts` | Class - Scroll animation logic (non-React) |
 
 ### 3D Scene Files
+
 | File | Purpose |
 |------|---------|
 | `src/scene/SceneManager.ts` | Three.js scene lifecycle & rendering |
@@ -39,6 +42,7 @@ Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build
 ## Code Patterns
 
 ### Adding UI Components
+
 1. Create component in `src/components/`
 2. Add styles to `styles.css`
 3. Import and use in parent component (e.g., `App.tsx`)
@@ -52,6 +56,7 @@ export function MyComponent() {
 ```
 
 ### Theme Switching
+
 ```css
 /* Dark mode (default) */
 .hero-subtitle { color: var(--color-text-secondary); }
@@ -64,10 +69,11 @@ body.hope-mode .hero-subtitle {
 ```
 
 ### 3D Effects (React Three Fiber)
+
 ```typescript
 // src/components/three/MyEffect.tsx
 import { useFrame } from '@react-three/fiber'
-import { useSceneStore } from '../../store/sceneStore'
+import { useSceneStore } from '../../store'
 
 export function MyEffect() {
   const hopeFactor = useSceneStore(state => state.hopeFactor)
@@ -82,6 +88,7 @@ export function MyEffect() {
 ```
 
 ### GSAP Animations with Hooks
+
 ```typescript
 // src/hooks/useMyAnimation.ts
 import gsap from 'gsap'
@@ -110,20 +117,43 @@ Before committing changes:
 - [ ] Check both dark mode and hope-mode (light)
 - [ ] Test responsive layouts (mobile/tablet)
 - [ ] Verify YouTube player functionality
+- [ ] Check accessibility attributes (aria-labels on interactive elements)
+- [ ] Verify skip link functionality (Tab to focus, Enter to skip)
 
 ## Common Tasks
 
 ### Add New Story Section
+
 1. Add content to `storyContent` object in `StorySection.tsx`
 2. Add image to `public/images/` (WebP format recommended)
 3. Use component: `<StorySection type="newType" />`
 
 Current valid types: `"hope" | "life" | "possibility" | "light"`
 
+### StorySection Implementation Pattern
+
+セクションIDのマッピングにはオブジェクトを使用（switch文より保守性が高い）:
+
+```typescript
+// src/components/StorySection.tsx
+const sectionIdMap: Record<StorySectionType, string> = {
+  hope: 'hope-section',
+  life: 'life-section',
+  possibility: 'possibility-section',
+  light: 'light-section',
+}
+
+const sectionId = sectionIdMap[type]
+```
+
+このパターンは新しいセクションタイプ追加時に型安全性を保証します。
+
 ### Modify Animation Timing
+
 Edit hooks in `src/hooks/` or adjust GSAP timelines
 
 ### Add New 3D Effect
+
 1. Create component in `src/components/three/`
 2. Add to `ThreeCanvas.tsx`
 3. Connect to `sceneStore` if state needed
@@ -136,7 +166,8 @@ bun run preview  # Local production test
 ```
 
 ### CI/CD (GitHub Actions)
+
 - **ci.yml**: Lint, TypeScript, Tests, Build on PR/push
 - **deploy.yml**: Auto-deploy to Netlify
-  - `main` → Production
-  - `development` → Preview
+    - `main` → Production
+    - `development` → Preview

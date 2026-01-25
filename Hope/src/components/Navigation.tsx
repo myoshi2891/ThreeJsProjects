@@ -5,28 +5,33 @@
  */
 export function Navigation() {
 	return (
-		<nav className="nav" id="nav">
-			<a href="#hero" className="nav-logo">
-				<span className="nav-logo-icon">✧</span>
-				<span>HOPE</span>
+		<>
+			<a href="#hero" className="skip-link">
+				Skip to main content
 			</a>
-			<ul className="nav-links">
-				<li>
-					<a href="#hope" className="nav-link">
-						Hope
-					</a>
-				</li>
-				<li>
-					<a href="#experience" className="nav-link">
-						Short Film
-					</a>
-				</li>
-				<li>
-					<a href="#light" className="nav-link">
-						Light
-					</a>
-				</li>
-			</ul>
-		</nav>
+			<nav className="nav" id="nav">
+				<a href="#hero" className="nav-logo">
+					<span className="nav-logo-icon">✧</span>
+					<span>HOPE</span>
+				</a>
+				<ul className="nav-links">
+					<li>
+						<a href="#hope" className="nav-link">
+							Hope
+						</a>
+					</li>
+					<li>
+						<a href="#experience" className="nav-link">
+							Short Film
+						</a>
+					</li>
+					<li>
+						<a href="#light" className="nav-link">
+							Light
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</>
 	)
 }

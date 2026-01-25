@@ -8,14 +8,14 @@
 
 > [!CAUTION]
 > **Git Repository Root**: このプロジェクトは親リポジトリ（`ThreeJsProjects`）の一部です。
-> 
+>
 > **Git コマンド（add, commit, push等）は必ず親ディレクトリ `ThreeJsProjects/` から実行すること！**
-> 
+>
 > ```bash
 > # ✅ 正しい実行場所
 > cd ../  # Hope → ThreeJsProjects に移動
 > git add -A && git commit -m "message"
-> 
+>
 > # ❌ 間違い（Hope/ディレクトリから実行しない）
 > git commit  # Hopeサブディレクトリからは実行しないこと
 > ```
@@ -34,18 +34,19 @@ bun dev
 > **CIで `bun ci` を使用しているため、`bun.lock` は常に最新である必要があります。**
 >
 > 依存関係を変更した場合や、CIで以下のエラーが発生した場合：
+>
 > ```
 > error: lockfile had changes, but lockfile is frozen
 > ```
 >
 > **対処方法:**
+>
 > ```bash
 > cd Hope
 > bun install          # lockfileを更新
 > cd ..                # ThreeJsProjectsに移動
 > git add Hope/bun.lock
 > git commit -m "chore: update bun.lock"
-> git push
 > ```
 
 ## Docker Environment
@@ -82,8 +83,7 @@ Hope/
 │   │   └── deploy.yml    # Netlify deployment (main→prod, dev→preview)
 │   └── dependabot.yml    # Weekly dependency updates
 ├── src/
-│   ├── main.tsx          # React Entry point (現在使用中)
-│   ├── main.ts           # 旧バージョン（バニラJS）※非使用
+│   ├── main.tsx          # React Entry point
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
@@ -95,8 +95,9 @@ Hope/
 │   │   ├── BackgroundLayer.tsx # Decorative background layer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
 │   │   ├── __tests__/    # Component Tests
-│   │   └── [UI Components] # Hero, Navigation, Loading, etc.
+│   │   └── [UI Components] # Hero, Navigation (skip link), Loading, etc.
 │   ├── store/            # Global State Management (Zustand)
+│   │   ├── index.ts      # Barrel export (use this for imports)
 │   │   ├── appStore.ts   # UI State
 │   │   ├── sceneStore.ts # 3D Scene State
 │   │   └── __tests__/    # Store Tests
@@ -125,57 +126,69 @@ Hope/
 ## Key Components
 
 ### App (`components/App.tsx`)
+
 - アプリケーションのメインコンポーネント
 - UIレイヤーと3Dキャンバス(`ThreeCanvas`)を合成
 - アニメーションフックの初期化
 
 ### ThreeCanvas (`components/ThreeCanvas.tsx`)
+
 - React Three Fiber (`Canvas`) の設定
 - シーンエフェクト(`RainEffect`, `FogEffect`, `GodRaysEffect`等)の配置
 
 ### StorySection (`components/StorySection.tsx`)
+
 - 4つのストーリーセクション（Hope, Life, Possibility, Light）
 - 各セクションに名言とサムネイル画像を表示
 - クリックでImageModalによる拡大表示
 
 ### ImageModal (`components/ImageModal.tsx`)
+
 - フルスクリーン画像モーダル
 - 半透明オーバーレイ（雨アニメーションが見える）
 - キーボードアクセシビリティ（Escで閉じる）
 - スムーズな開閉アニメーション
 
 ### ExperienceSection (`components/ExperienceSection.tsx`)
+
 - StorySection風のレイアウト（number, title, description）を持つビデオセクション
 - 「Watch the short Film」ボタンでHopeアニメーション開始
 - アニメーション完了後にVideoThumbnailを表示
 
 ### VideoThumbnail (`components/VideoThumbnail.tsx`)
+
 - ページ内YouTubeサムネイルプレーヤー
 - フェードインアニメーションで表示
 - 拡大ボタンでVideoOverlayへ遷移
 
 ### VideoOverlay (`components/VideoOverlay.tsx`)
+
 - フルスクリーンYouTubeプレーヤーオーバーレイ
 - ESCキーまたは閉じるボタンで終了
 - 閉じた後はVideoThumbnailに戻る
 
 ### Stores (`src/store/`)
+
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
 
 ### Animation Classes (`src/animation/`)
+
 - **HopeAnimation**: 希望アニメーションのロジッククラス（GSAPタイムライン）
 - **ScrollAnimation**: スクロール連動アニメーションのロジッククラス（ScrollTrigger）
 
 ### Scene Management (`src/scene/`)
+
 - **SceneManager**: Three.jsシーンのライフサイクル管理、レンダリングループ
 - **objects/**: 3Dオブジェクトクラス（Rain, Fog, LightParticles）
 
 ### Effects (`src/effects/`)
+
 - **PostProcessing**: EffectComposer設定、UnrealBloomPass等のポストエフェクト
 - **GodRays**: ゴッドレイ（光芒）エフェクトの実装
 
 ### Loaders (`src/loaders/`)
+
 - **AssetLoader**: HDRIテクスチャ・環境マップのローディング（EXRLoader使用）
 
 ## Key Behaviors
@@ -183,7 +196,7 @@ Hope/
 1. **Loading**: Zustandストアで進捗管理 → 完了後に非表示
 2. **Start Button**: 体験セクションへスクロール
 3. **Story Sections**: 名言とサムネイル画像を表示、クリックでモーダル拡大
-4. **Hope Animation**: 
+4. **Hope Animation**:
    - `useHopeAnimation`フックがGSAPタイムラインを実行
    - Zustandの`hopeFactor`を更新し、UIと3Dシーンが同期して変化
    - 完了後にビデオオーバーレイを表示
@@ -198,15 +211,30 @@ bun run build     # Production build
 bun run preview   # Preview production build
 ```
 
+## Performance Optimization
+
+### LCP (Largest Contentful Paint)
+
+- 背景画像のプリロード: `index.html` に `<link rel="preload">` タグ追加
+- Hero セクションの背景画像を優先的に読み込み
+
+### Font Loading
+
+- Google Fonts は `<link>` タグで読み込み（`@import` は非推奨）
+- `font-display: swap` で FOUT (Flash of Unstyled Text) を許容
+- `preconnect` で fonts.googleapis.com への接続を事前確立
+
 ## Tech Stack
 
 - **React** (19.0.0): UI Library
 - **React Three Fiber** (9.0.0): 3D Rendering Integration
 - **Zustand** (5.0.0): State Management
-- **Three.js** (0.160.0): 3D Core
+- **Three.js** (0.182.0): 3D Core
+- **@react-three/drei** (10.7.7): R3F Utilities
 - **GSAP** (3.12.5): Animations
-- **Vitest**: Testing Framework
-- **Vite**: Build Tool
+- **Vitest** (4.x): Testing Framework
+- **@testing-library/user-event**: User interaction testing
+- **Vite** (7.x): Build Tool
 - **Bun** (1.3.5): Package Manager & Runtime
 - **Biome** (2.x): Linter & Formatter
 

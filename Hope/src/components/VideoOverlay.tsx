@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react"
-import { useAppStore } from "../store/appStore"
+import { useAppStore } from "../store"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 

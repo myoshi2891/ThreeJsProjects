@@ -26,7 +26,13 @@ export function Hero() {
 					<br />
 					After the rain comes the sun. Find your strength to rise again.
 				</p>
-				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
+				<button
+					type="button"
+					className="hero-cta"
+					id="start-btn"
+					onClick={handleStartClick}
+					aria-label="Learn more - scroll to experience section"
+				>
 					<span>Learn More</span>
 					<span className="hero-cta-icon">→</span>
 				</button>

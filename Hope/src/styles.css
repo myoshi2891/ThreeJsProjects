@@ -2,8 +2,7 @@
    Hope Experience - Design System
    ===================================================== */
 
-/* Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap");
+/* Google Fonts - Loaded via <link> in index.html for better performance */
 
 /* =====================================================
    CSS Variables - Design Tokens
@@ -162,6 +161,30 @@ body {
 	height: 80px;
 	background: linear-gradient(135deg, transparent 0%, var(--color-bg-dark) 60%);
 	pointer-events: none;
+}
+
+/* =====================================================
+   Skip Link (Accessibility)
+   ===================================================== */
+.skip-link {
+	position: absolute;
+	top: -100%;
+	left: 50%;
+	transform: translateX(-50%);
+	background: var(--color-accent);
+	color: #ffffff;
+	padding: var(--space-md) var(--space-xl);
+	text-decoration: none;
+	font-weight: var(--font-weight-semibold);
+	border-radius: var(--radius-md);
+	z-index: calc(var(--z-nav) + 1);
+	transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+	top: var(--space-md);
+	outline: 2px solid #ffffff;
+	outline-offset: 2px;
 }
 
 /* =====================================================

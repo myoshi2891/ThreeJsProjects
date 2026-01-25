@@ -1,4 +1,4 @@
-import { useAppStore } from "../store/appStore"
+import { useAppStore } from "../store"
 
 /**
  * Renders a loading UI that reflects application loading progress.
@@ -19,7 +19,11 @@ export function Loading() {
 					className="loading-progress-bar"
 					id="progress-bar"
 					data-testid="progress-bar"
-					style={{ "--progress-width": `${loadingProgress}%` } as React.CSSProperties}
+					style={
+						{
+							"--progress-width": `${loadingProgress}%`,
+						} as React.CSSProperties
+					}
 				/>
 			</div>
 		</div>

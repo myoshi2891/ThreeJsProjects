@@ -1,7 +1,7 @@
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useEffect, useRef } from "react"
-import { useSceneStore } from "../store/sceneStore"
+import { useSceneStore } from "../store"
 
 gsap.registerPlugin(ScrollTrigger)
 

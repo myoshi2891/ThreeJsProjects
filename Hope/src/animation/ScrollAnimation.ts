@@ -154,6 +154,7 @@ export class ScrollAnimation {
 		for (const trigger of ScrollTrigger.getAll()) {
 			trigger.kill()
 		}
+		this.storyVisibilityState.clear()
 		this.isInitialized = false
 	}
 }
