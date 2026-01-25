@@ -83,8 +83,7 @@ Hope/
 │   │   └── deploy.yml    # Netlify deployment (main→prod, dev→preview)
 │   └── dependabot.yml    # Weekly dependency updates
 ├── src/
-│   ├── main.tsx          # React Entry point (現在使用中)
-│   ├── main.ts           # 旧バージョン（バニラJS）※非使用
+│   ├── main.tsx          # React Entry point
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
@@ -96,8 +95,9 @@ Hope/
 │   │   ├── BackgroundLayer.tsx # Decorative background layer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
 │   │   ├── __tests__/    # Component Tests
-│   │   └── [UI Components] # Hero, Navigation, Loading, etc.
+│   │   └── [UI Components] # Hero, Navigation (skip link), Loading, etc.
 │   ├── store/            # Global State Management (Zustand)
+│   │   ├── index.ts      # Barrel export (use this for imports)
 │   │   ├── appStore.ts   # UI State
 │   │   ├── sceneStore.ts # 3D Scene State
 │   │   └── __tests__/    # Store Tests
@@ -216,10 +216,12 @@ bun run preview   # Preview production build
 - **React** (19.0.0): UI Library
 - **React Three Fiber** (9.0.0): 3D Rendering Integration
 - **Zustand** (5.0.0): State Management
-- **Three.js** (0.160.0): 3D Core
+- **Three.js** (0.182.0): 3D Core
+- **@react-three/drei** (10.7.7): R3F Utilities
 - **GSAP** (3.12.5): Animations
-- **Vitest**: Testing Framework
-- **Vite**: Build Tool
+- **Vitest** (4.x): Testing Framework
+- **@testing-library/user-event**: User interaction testing
+- **Vite** (7.x): Build Tool
 - **Bun** (1.3.5): Package Manager & Runtime
 - **Biome** (2.x): Linter & Formatter
 

@@ -67,7 +67,7 @@ body.hope-mode .hero-subtitle {
 ```typescript
 // src/components/three/MyEffect.tsx
 import { useFrame } from '@react-three/fiber'
-import { useSceneStore } from '../../store/sceneStore'
+import { useSceneStore } from '../../store'
 
 export function MyEffect() {
   const hopeFactor = useSceneStore(state => state.hopeFactor)
