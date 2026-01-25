@@ -211,6 +211,19 @@ bun run build     # Production build
 bun run preview   # Preview production build
 ```
 
+## Performance Optimization
+
+### LCP (Largest Contentful Paint)
+
+- 背景画像のプリロード: `index.html` に `<link rel="preload">` タグ追加
+- Hero セクションの背景画像を優先的に読み込み
+
+### Font Loading
+
+- Google Fonts は `<link>` タグで読み込み（`@import` は非推奨）
+- `font-display: swap` で FOUT (Flash of Unstyled Text) を許容
+- `preconnect` で fonts.googleapis.com への接続を事前確立
+
 ## Tech Stack
 
 - **React** (19.0.0): UI Library
