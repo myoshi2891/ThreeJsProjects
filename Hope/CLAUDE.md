@@ -28,6 +28,26 @@ bun install
 bun dev
 ```
 
+## ⚠️ Lockfile Management (IMPORTANT)
+
+> [!WARNING]
+> **CIで `bun ci` を使用しているため、`bun.lock` は常に最新である必要があります。**
+>
+> 依存関係を変更した場合や、CIで以下のエラーが発生した場合：
+> ```
+> error: lockfile had changes, but lockfile is frozen
+> ```
+>
+> **対処方法:**
+> ```bash
+> cd Hope
+> bun install          # lockfileを更新
+> cd ..                # ThreeJsProjectsに移動
+> git add Hope/bun.lock
+> git commit -m "chore: update bun.lock"
+> git push
+> ```
+
 ## Docker Environment
 
 ```

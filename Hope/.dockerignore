@@ -43,3 +43,8 @@ logs
 
 # Claude設定
 .claude/
+
+# Docker関連ファイル（ビルドコンテキストに不要）
+Dockerfile*
+docker-compose*.yml
+.dockerignore

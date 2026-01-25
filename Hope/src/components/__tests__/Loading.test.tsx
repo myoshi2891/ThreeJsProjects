@@ -26,6 +26,12 @@ describe("Loading", () => {
 		expect(screen.getByTestId("progress-bar")).toBeInTheDocument()
 	})
 
+	it("should show 0% progress in initial state", () => {
+		render(<Loading />)
+		const progressBar = screen.getByTestId("progress-bar")
+		expect(progressBar).toHaveStyle({ "--progress-width": "0%" })
+	})
+
 	it("should update progress bar width based on loadingProgress", () => {
 		useAppStore.setState({ loadingProgress: 50 })
 		render(<Loading />)
