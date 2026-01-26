@@ -3,7 +3,7 @@ import { useAppStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
 const experienceContent = {
-	number: "xx",
+	number: "04",
 	title: "Short Film",
 	description: (
 		<>
@@ -46,7 +46,7 @@ export function ExperienceSection() {
 						onClick={handleHopeClick}
 						aria-label="Watch the short film - start hope experience"
 					>
-						Watch the short Film
+						Watch the Short Film
 					</button>
 
 					{isVideoThumbnailVisible && <VideoThumbnail />}

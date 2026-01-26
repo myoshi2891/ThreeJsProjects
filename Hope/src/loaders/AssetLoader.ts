@@ -11,7 +11,7 @@ export class AssetLoader {
 	}
 
 	public async loadHDRI(callbacks?: LoadingCallbacks): Promise<void> {
-		return new Promise((resolve, _reject) => {
+		return new Promise((resolve, reject) => {
 			new EXRLoader().load(
 				this.hdriUrl,
 				(texture) => {
@@ -39,7 +39,7 @@ export class AssetLoader {
 					console.error("EXR loading error:", error)
 					callbacks?.onError?.(error as Error)
 					callbacks?.onComplete?.()
-					resolve()
+					reject(error)
 				},
 			)
 		})

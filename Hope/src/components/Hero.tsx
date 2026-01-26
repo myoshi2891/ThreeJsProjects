@@ -14,7 +14,7 @@ export function Hero() {
 	}
 
 	return (
-		<section className="hero" id="hero">
+		<section className="hero" id="hero" tabIndex={-1}>
 			<div className="hero-content">
 				<div className="hero-badge">
 					<span className="hero-badge-icon">✦</span>
