@@ -1,62 +1,21 @@
 import { useState } from "react"
+import { useI18nStore } from "../store"
 import { ImageModal } from "./ImageModal"
 
 interface StorySectionProps {
 	type: "hope" | "life" | "possibility" | "light"
 }
 
-const storyContent = {
-	hope: {
-		number: "01",
-		title: "Hope",
-		description: (
-			<>
-				"Hope is the pillar that holds up the world."
-				<br />- Pliny the Elder (Roman Author)
-			</>
-		),
-		image: "/images/hope-pillar.webp",
-	},
-	life: {
-		number: "02",
-		title: "Life",
-		description: (
-			<>
-				"Live as if you were to die tomorrow.
-				<br />
-				Learn as if you were to live forever."
-				<br />- Mahatma Gandhi (Indian Lawyer & Ethicist)
-			</>
-		),
-		image: "/images/live-learn-forever.webp",
-	},
-	possibility: {
-		number: "03",
-		title: "Possibility",
-		description: (
-			<>
-				"It is never too late to be what you might have been."
-				<br />- George Eliot (English Novelist)
-			</>
-		),
-		image: "/images/never-too-late.webp",
-	},
-	light: {
-		number: "∞",
-		title: "Light",
-		description: (
-			<>
-				"Better to light a candle than to curse the darkness."
-				<br />- Chinese Proverb (Asian Wisdom)
-			</>
-		),
-		image: "/images/light-a-candle.webp",
-	},
-}
-
 const sectionIdMap: Record<string, string | undefined> = {
 	hope: "hope",
 	light: "light",
+}
+
+const imageMap = {
+	hope: "/images/hope-pillar.webp",
+	life: "/images/live-learn-forever.webp",
+	possibility: "/images/never-too-late.webp",
+	light: "/images/light-a-candle.webp",
 }
 
 /**
@@ -67,8 +26,39 @@ const sectionIdMap: Record<string, string | undefined> = {
  */
 export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const content = storyContent[type]
+
+	// Subscribe to both locale and t to ensure re-render on language change
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
+
+	// Force re-evaluation when locale changes
+	void locale
+
 	const sectionId = sectionIdMap[type]
+	const image = imageMap[type]
+
+	const number = t(`story.${type}.number`)
+	const title = t(`story.${type}.title`)
+
+	// Build description based on type
+	const renderDescription = () => {
+		if (type === "life") {
+			return (
+				<>
+					{t(`story.${type}.quote1`)}
+					<br />
+					{t(`story.${type}.quote2`)}
+					<br />- {t(`story.${type}.author`)}
+				</>
+			)
+		}
+		return (
+			<>
+				{t(`story.${type}.quote`)}
+				<br />- {t(`story.${type}.author`)}
+			</>
+		)
+	}
 
 	const handleImageClick = () => {
 		setIsModalOpen(true)
@@ -82,25 +72,25 @@ export function StorySection({ type }: StorySectionProps) {
 		<>
 			<section className="story-section" id={sectionId}>
 				<div className="story-content" data-story={type}>
-					<span className="story-number">{content.number}</span>
-					<h2 className="story-title">{content.title}</h2>
-					<p className="story-description">{content.description}</p>
+					<span className="story-number">{number}</span>
+					<h2 className="story-title">{title}</h2>
+					<p className="story-description">{renderDescription()}</p>
 					<div className="story-thumbnail">
 						<button
 							type="button"
 							className="story-thumbnail-btn"
 							onClick={handleImageClick}
-							aria-label={`View ${content.title} image`}
+							aria-label={t("imageModal.viewImage").replace("{title}", title)}
 						>
-							<img src={content.image} alt={content.title} className="story-thumbnail-image" />
+							<img src={image} alt={title} className="story-thumbnail-image" />
 						</button>
 					</div>
 				</div>
 			</section>
 			<ImageModal
 				isOpen={isModalOpen}
-				imageSrc={content.image}
-				imageAlt={content.title}
+				imageSrc={image}
+				imageAlt={title}
 				onClose={handleCloseModal}
 			/>
 		</>

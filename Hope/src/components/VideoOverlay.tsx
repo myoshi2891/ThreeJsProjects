@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react"
-import { useAppStore } from "../store"
+import { useAppStore, useI18nStore } from "../store"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
@@ -14,6 +14,13 @@ export function VideoOverlay() {
 	const isVideoOverlayVisible = useAppStore((state) => state.isVideoOverlayVisible)
 	const hideVideoOverlay = useAppStore((state) => state.hideVideoOverlay)
 	const showVideoThumbnail = useAppStore((state) => state.showVideoThumbnail)
+
+	// Subscribe to both locale and t to ensure re-render on language change
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
+
+	// Force re-evaluation when locale changes
+	void locale
 
 	const handleClose = useCallback(() => {
 		hideVideoOverlay()
@@ -53,7 +60,7 @@ export function VideoOverlay() {
 				type="button"
 				className="video-close-btn"
 				id="video-close"
-				aria-label="Close video"
+				aria-label={t("video.close")}
 				onClick={handleClose}
 			>
 				<span>✕</span>

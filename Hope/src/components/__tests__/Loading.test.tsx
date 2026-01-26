@@ -18,7 +18,8 @@ describe("Loading", () => {
 
 	it("should render loading text", () => {
 		render(<Loading />)
-		expect(screen.getByText("Loading Experience")).toBeInTheDocument()
+		// i18n default is English: "Loading..."
+		expect(screen.getByText("Loading...")).toBeInTheDocument()
 	})
 
 	it("should render progress bar", () => {

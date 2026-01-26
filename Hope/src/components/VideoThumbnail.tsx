@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useAppStore } from "../store"
+import { useAppStore, useI18nStore } from "../store"
 
 const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
 
@@ -16,6 +16,13 @@ export function VideoThumbnail() {
 	const [isVisible, setIsVisible] = useState(false)
 	const showVideoOverlay = useAppStore((state) => state.showVideoOverlay)
 	const hideVideoThumbnail = useAppStore((state) => state.hideVideoThumbnail)
+
+	// Subscribe to both locale and t to ensure re-render on language change
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
+
+	// Force re-evaluation when locale changes
+	void locale
 
 	// Trigger fade-in animation after mount
 	useEffect(() => {
@@ -47,7 +54,7 @@ export function VideoThumbnail() {
 					type="button"
 					className="video-expand-btn"
 					id="video-expand"
-					aria-label="Expand to fullscreen"
+					aria-label={t("video.expand")}
 					onClick={handleExpand}
 				>
 					<span>⛶</span>
