@@ -92,6 +92,7 @@ Hope/
 │   │   ├── VideoThumbnail.tsx # In-page YouTube thumbnail player
 │   │   ├── VideoOverlay.tsx # Fullscreen YouTube player overlay
 │   │   ├── ImageModal.tsx # Fullscreen image modal viewer
+│   │   ├── LanguageToggle.tsx # i18n language switcher
 │   │   ├── BackgroundLayer.tsx # Decorative background layer
 │   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
 │   │   ├── __tests__/    # Component Tests
@@ -100,7 +101,12 @@ Hope/
 │   │   ├── index.ts      # Barrel export (use this for imports)
 │   │   ├── appStore.ts   # UI State
 │   │   ├── sceneStore.ts # 3D Scene State
+│   │   ├── i18nStore.ts  # Internationalization State
 │   │   └── __tests__/    # Store Tests
+│   ├── locales/          # Translation Files
+│   │   ├── index.ts      # Translation export
+│   │   ├── en.json       # English translations
+│   │   └── ja.json       # Japanese translations
 │   ├── hooks/            # Custom Hooks (React)
 │   │   ├── useHopeAnimation.ts # GSAP Timeline Hook
 │   │   └── useScrollAnimation.ts # ScrollTrigger Hook
@@ -167,10 +173,17 @@ Hope/
 - ESCキーまたは閉じるボタンで終了
 - 閉じた後はVideoThumbnailに戻る
 
+### LanguageToggle (`components/LanguageToggle.tsx`)
+
+- 日英言語切り替えボタン
+- ナビゲーションバーに配置
+- LocalStorageに設定を保存
+
 ### Stores (`src/store/`)
 
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
+- **i18nStore**: 言語設定(`locale`)と翻訳関数(`t`)を提供。Zustand persistで永続化。
 
 ### Animation Classes (`src/animation/`)
 
@@ -201,6 +214,10 @@ Hope/
    - Zustandの`hopeFactor`を更新し、UIと3Dシーンが同期して変化
    - 完了後にビデオオーバーレイを表示
 5. **Video**: フルスクリーン再生 → 閉じた後に右下サムネイル表示（フェードイン）
+6. **Language Switching**:
+   - ナビゲーションバーのトグルで日英切り替え
+   - ブラウザ言語設定を自動検出（初回）
+   - 設定はLocalStorageに保存され、再訪問時も維持
 
 ## Development Commands
 

@@ -19,6 +19,9 @@ Hope is a **React 19 + React Three Fiber + Zustand** application with Vite build
 | `src/styles.css` | All styling including `hope-mode` theme |
 | `src/store/appStore.ts` | UI state (Zustand) |
 | `src/store/sceneStore.ts` | 3D scene state (Zustand) |
+| `src/store/i18nStore.ts` | Internationalization state (Zustand + persist) |
+| `src/locales/` | Translation files (en.json, ja.json) |
+| `src/components/LanguageToggle.tsx` | Language switcher component |
 
 ### Animation Files
 
@@ -119,6 +122,8 @@ Before committing changes:
 - [ ] Verify YouTube player functionality
 - [ ] Check accessibility attributes (aria-labels on interactive elements)
 - [ ] Verify skip link functionality (Tab to focus, Enter to skip)
+- [ ] Test language toggle (EN ↔ JA switching)
+- [ ] Verify all UI text is properly translated
 
 ## Common Tasks
 
@@ -147,6 +152,21 @@ const sectionId = sectionIdMap[type]
 ```
 
 このパターンは新しいセクションタイプ追加時に型安全性を保証します。
+
+### Add Translation Key
+
+1. Add key to both `src/locales/en.json` and `src/locales/ja.json`
+2. Use dot notation for nested keys (e.g., `"navigation.home"`)
+3. Use in component:
+
+```typescript
+import { useI18nStore } from '../store'
+
+function MyComponent() {
+  const t = useI18nStore(state => state.t)
+  return <span>{t('your.translation.key')}</span>
+}
+```
 
 ### Modify Animation Timing
 
