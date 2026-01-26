@@ -272,6 +272,51 @@ body {
 }
 
 /* =====================================================
+   Language Toggle Button
+   ===================================================== */
+.language-toggle {
+	background: var(--glass-bg);
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-full);
+	padding: var(--space-xs) var(--space-md);
+	font-family: var(--font-primary);
+	font-size: 0.75rem;
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.05em;
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition:
+		color var(--transition-base),
+		background var(--transition-base),
+		border-color var(--transition-base);
+}
+
+.language-toggle:hover {
+	color: var(--color-text-primary);
+	background: rgba(255, 255, 255, 0.1);
+	border-color: var(--color-accent);
+}
+
+.language-toggle:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
+}
+
+/* Hope Mode - Language Toggle */
+body.hope-mode .language-toggle {
+	background: var(--glass-bg-light);
+	border-color: var(--glass-border-light);
+	color: var(--color-text-secondary-light);
+}
+
+body.hope-mode .language-toggle:hover {
+	color: var(--color-text-primary-light);
+	border-color: var(--color-accent-light);
+}
+
+/* =====================================================
    Hero Section
    ===================================================== */
 .hero {
@@ -283,6 +328,7 @@ body {
 	align-items: center;
 	text-align: center;
 	padding: var(--space-4xl) var(--space-xl);
+	padding-bottom: calc(var(--space-4xl) + 120px); /* Extra space for scroll indicator */
 	z-index: var(--z-ui);
 }
 

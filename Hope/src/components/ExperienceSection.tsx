@@ -1,17 +1,6 @@
 import { useState } from "react"
-import { useAppStore } from "../store"
+import { useAppStore, useI18nStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
-
-const experienceContent = {
-	number: "04",
-	title: "Short Film",
-	description: (
-		<>
-			"Hope is being able to see that there is light despite all of the darkness."
-			<br />- Desmond Tutu (South African Archbishop)
-		</>
-	),
-}
 
 /**
  * Renders the experience section with a video thumbnail in the same style as StorySection.
@@ -26,6 +15,13 @@ export function ExperienceSection() {
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
+	// Subscribe to both locale and t to ensure re-render on language change
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
+
+	// Force re-evaluation when locale changes
+	void locale
+
 	const handleHopeClick = () => {
 		setIsButtonHidden(true)
 		setHopeMode(true)
@@ -35,18 +31,21 @@ export function ExperienceSection() {
 	return (
 		<section className="experience-section" id="experience">
 			<div className="story-content" data-story="experience">
-				<span className="story-number">{experienceContent.number}</span>
-				<h2 className="story-title">{experienceContent.title}</h2>
-				<p className="story-description">{experienceContent.description}</p>
+				<span className="story-number">{t("experience.number")}</span>
+				<h2 className="story-title">{t("experience.title")}</h2>
+				<p className="story-description">
+					{t("experience.quote")}
+					<br />- {t("experience.author")}
+				</p>
 				<div className="story-thumbnail">
 					<button
 						type="button"
 						className={`experience-btn ${isButtonHidden ? "hidden" : ""}`}
 						id="hope-btn"
 						onClick={handleHopeClick}
-						aria-label="Watch the short film - start hope experience"
+						aria-label={t("experience.ctaLabel")}
 					>
-						Watch the Short Film
+						{t("experience.cta")}
 					</button>
 
 					{isVideoThumbnailVisible && <VideoThumbnail />}

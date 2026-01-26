@@ -1,0 +1,62 @@
+{
+	"nav": {
+		"skipLink": "Skip to main content",
+		"hope": "Hope",
+		"shortFilm": "Short Film",
+		"light": "Light"
+	},
+	"hero": {
+		"badge": "Design the Future",
+		"title": "Hope Lights the Way",
+		"subtitle1": "Even in the darkest night, a single spark can guide us to a better tomorrow.",
+		"subtitle2": "After the rain comes the sun. Find your strength to rise again.",
+		"cta": "Learn More",
+		"scroll": "Scroll to Explore"
+	},
+	"story": {
+		"hope": {
+			"number": "01",
+			"title": "Hope",
+			"quote": "Hope is the pillar that holds up the world.",
+			"author": "Pliny the Elder (Roman Author)"
+		},
+		"life": {
+			"number": "02",
+			"title": "Life",
+			"quote1": "Live as if you were to die tomorrow.",
+			"quote2": "Learn as if you were to live forever.",
+			"author": "Mahatma Gandhi (Indian Lawyer & Ethicist)"
+		},
+		"possibility": {
+			"number": "03",
+			"title": "Possibility",
+			"quote": "It is never too late to be what you might have been.",
+			"author": "George Eliot (English Novelist)"
+		},
+		"light": {
+			"number": "∞",
+			"title": "Light",
+			"quote": "Better to light a candle than to curse the darkness.",
+			"author": "Chinese Proverb (Asian Wisdom)"
+		}
+	},
+	"experience": {
+		"number": "Video",
+		"title": "Short Film",
+		"quote": "Hope is being able to see that there is light despite all of the darkness.",
+		"author": "Desmond Tutu (South African Archbishop)",
+		"cta": "Watch the Short Film",
+		"ctaLabel": "Watch the Short film - start hope experience"
+	},
+	"loading": {
+		"text": "Loading..."
+	},
+	"video": {
+		"close": "Close video",
+		"expand": "Expand to fullscreen"
+	},
+	"imageModal": {
+		"close": "Close image",
+		"viewImage": "View {title} image"
+	}
+}
