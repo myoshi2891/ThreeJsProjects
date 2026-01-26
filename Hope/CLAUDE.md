@@ -106,7 +106,7 @@ Hope/
 │   ├── locales/          # Translation Files
 │   │   ├── index.ts      # Translation export
 │   │   ├── en.json       # English translations
-	│   │   └── ja.json       # Japanese translations
+│   │   └── ja.json       # Japanese translations
 │   ├── hooks/            # Custom Hooks (React)
 │   │   ├── useHopeAnimation.ts # GSAP Timeline Hook
 │   │   └── useScrollAnimation.ts # ScrollTrigger Hook
