@@ -233,10 +233,13 @@ bun run preview   # Preview production build
 - **@react-three/drei** (10.7.7): R3F Utilities
 - **GSAP** (3.12.5): Animations
 - **Vitest** (4.x): Testing Framework
-- **@testing-library/user-event**: User interaction testing
+- **@testing-library/user-event** (14.6.1): User interaction testing
 - **Vite** (7.x): Build Tool
-- **Bun** (1.3.5): Package Manager & Runtime
 - **Biome** (2.x): Linter & Formatter
+
+### Tools & Runtime
+
+- **Bun** (1.3.5): Package Manager & Runtime
 
 ## CI/CD
 
