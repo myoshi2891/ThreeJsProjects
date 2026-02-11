@@ -12,8 +12,12 @@ RUN groupadd -g 1001 nodejs && \
     useradd -r -u 1001 -g nodejs vite
 
 # gosuのインストール（ルート権限での実行時にユーザー切り替えを行うため）
+# wget, ca-certificatesはヘルスチェック用
 RUN apt-get update && \
-    apt-get install -y gosu && \
+    apt-get install -y --no-install-recommends \
+    wget \
+    ca-certificates \
+    gosu=1.14-1+b6 && \
     rm -rf /var/lib/apt/lists/*
 
 # 作業ディレクトリ設定
@@ -41,9 +45,11 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Vite開発サーバーのポート
 EXPOSE 5173
 
-# ヘルスチェック（viteユーザーで実行）
+# ヘルスチェック（viteユーザーで実行するためgosuを使用）
+# NOTE: エントリーポイントの動作上、コンテナの実行ユーザーはrootである必要があるため、
+# gosuを使って明示的にviteユーザーでヘルスチェックを実行します。
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:5173 || exit 1
+    CMD gosu vite wget --no-verbose --tries=1 --spider http://localhost:5173 || exit 1
 
 # エントリーポイント設定（rootで実行され、内部でviteユーザーに切り替え）
 ENTRYPOINT ["docker-entrypoint.sh"]

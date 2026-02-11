@@ -29,7 +29,7 @@ if [ "$(id -u)" = "0" ]; then
   # node_modulesが存在し、所有者がvite:nodejsでない場合のみ権限を修正
   # NOTE: docker-compose.dev.ymlでボリュームのマウント時にuid/gidを適切に設定することで
   # このchown処理を不要にすることができます。
-  if [ -d "node_modules" ] && [ "$(stat -c '%U:%G' node_modules 2>/dev/null)" != "vite:nodejs" ]; then
+  if [ -d "node_modules" ] && [ "$(stat -c '%u:%g' node_modules 2>/dev/null)" != "1001:1001" ]; then
     echo "🔧 Fixing permissions..."
     chown -R vite:nodejs node_modules 2>/dev/null || true
   fi
