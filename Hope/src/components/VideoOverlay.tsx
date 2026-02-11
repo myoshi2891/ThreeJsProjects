@@ -1,13 +1,6 @@
 import { useCallback, useEffect } from "react"
 import { useAppStore, useI18nStore } from "../store"
-
-// YouTube Video ID のバリデーション（11文字、英数字とハイフン/アンダースコア）
-function validateYouTubeVideoId(id: string): string {
-	const pattern = /^[a-zA-Z0-9_-]{11}$/
-	return pattern.test(id) ? id : ""
-}
-
-const YOUTUBE_VIDEO_ID = validateYouTubeVideoId(import.meta.env.VITE_YOUTUBE_VIDEO_ID || "")
+import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
 
 /**
  * Renders a fullscreen YouTube video overlay controlled by application state.
