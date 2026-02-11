@@ -1,15 +1,20 @@
 # =============================================================================
 # Hope Project - Development Dockerfile
 # =============================================================================
-# ベースイメージ: Bun 1.3.5 (Debian)
+# ベースイメージ: Bun 1.3.9 (Debian)
 # 用途: ホットリロード対応の開発環境
 # =============================================================================
 
-FROM oven/bun:1.3.5-debian
+FROM oven/bun:1.3.9-debian
 
 # セキュリティ: 非rootユーザーで実行
 RUN groupadd -g 1001 nodejs && \
     useradd -r -u 1001 -g nodejs vite
+
+# gosuのインストール（ルート権限での実行時にユーザー切り替えを行うため）
+RUN apt-get update && \
+    apt-get install -y gosu && \
+    rm -rf /var/lib/apt/lists/*
 
 # 作業ディレクトリ設定
 WORKDIR /app
@@ -22,7 +27,10 @@ COPY --chown=vite:nodejs package.json ./
 COPY --chown=vite:nodejs bun.lock* ./
 
 # 依存関係インストール（イメージキャッシュ用）
+# node_modulesの権限問題を回避するためviteユーザーで実行
+USER vite
 RUN bun install
+USER root
 
 # エントリーポイントスクリプトをコピー
 COPY --chown=vite:nodejs docker-entrypoint.sh /usr/local/bin/
