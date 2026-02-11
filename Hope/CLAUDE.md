@@ -20,6 +20,20 @@
 > git commit  # Hopeサブディレクトリからは実行しないこと
 > ```
 
+## ⚠️ Commit Procedure (REQUIRED)
+
+> [!IMPORTANT]
+> **コミット前に必ずLint修正を実行してください**
+>
+> 繰り返し発生するLintエラー（特にCSSのフォーマット問題）を防ぐため、以下のコマンドをコミット前に実行することを必須とします。
+>
+> ```bash
+> cd Hope
+> bun run lint:fix  # Biomeによる自動修正とフォーマット
+> cd ..             # 親ディレクトリに戻る
+> # その後、git add / git commit を実行
+> ```
+
 ## Quick Start
 
 ```bash
