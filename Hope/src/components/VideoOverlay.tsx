@@ -1,7 +1,13 @@
 import { useCallback, useEffect } from "react"
 import { useAppStore, useI18nStore } from "../store"
 
-const YOUTUBE_VIDEO_ID = import.meta.env.VITE_YOUTUBE_VIDEO_ID || ""
+// YouTube Video ID のバリデーション（11文字、英数字とハイフン/アンダースコア）
+function validateYouTubeVideoId(id: string): string {
+	const pattern = /^[a-zA-Z0-9_-]{11}$/
+	return pattern.test(id) ? id : ""
+}
+
+const YOUTUBE_VIDEO_ID = validateYouTubeVideoId(import.meta.env.VITE_YOUTUBE_VIDEO_ID || "")
 
 /**
  * Renders a fullscreen YouTube video overlay controlled by application state.
@@ -52,7 +58,7 @@ export function VideoOverlay() {
 					src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`}
 					title="Hope Video"
 					frameBorder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allow="autoplay; encrypted-media"
 					allowFullScreen
 				/>
 			</div>
