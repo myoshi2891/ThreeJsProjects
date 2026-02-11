@@ -8,31 +8,39 @@
 
 set -e
 
-# rootで実行されている場合、権限を修正
-if [ "$(id -u)" = "0" ]; then
-  echo "🔧 Fixing permissions..."
-  chown -R vite:nodejs /app/node_modules 2>/dev/null || true
-
-  # node_modulesが空または存在しない場合のみ、依存関係をインストール
+# 依存関係インストールの共通処理
+install_dependencies() {
   if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
     echo "📦 Installing dependencies..."
-    su vite -c "bun install"
+    # rootの場合はgosuを使ってviteユーザーとして実行
+    if [ "$(id -u)" = "0" ]; then
+      gosu vite bun install
+    else
+      bun install
+    fi
     echo "✅ Dependencies installed successfully"
   else
     echo "✅ Dependencies already installed"
   fi
+}
 
-  # viteユーザーでコマンドを実行
-  exec su vite -c "exec $*"
+# rootで実行されている場合
+if [ "$(id -u)" = "0" ]; then
+  # node_modulesが存在し、所有者がvite:nodejsでない場合のみ権限を修正
+  # NOTE: docker-compose.dev.ymlでボリュームのマウント時にuid/gidを適切に設定することで
+  # このchown処理を不要にすることができます。
+  if [ -d "node_modules" ] && [ "$(stat -c '%U:%G' node_modules 2>/dev/null)" != "vite:nodejs" ]; then
+    echo "🔧 Fixing permissions..."
+    chown -R vite:nodejs node_modules 2>/dev/null || true
+  fi
+
+  install_dependencies
+
+  # viteユーザーでコマンドを実行（gosuを使用）
+  exec gosu vite "$@"
 else
   # 既にviteユーザーの場合
-  if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
-    echo "📦 Installing dependencies..."
-    bun install
-    echo "✅ Dependencies installed successfully"
-  else
-    echo "✅ Dependencies already installed"
-  fi
+  install_dependencies
 
   exec "$@"
 fi

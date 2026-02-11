@@ -655,9 +655,9 @@ body.hope-mode .language-toggle:hover {
 
 .story-thumbnail-image {
 	width: 100%;
-	max-width: 400px;
+	max-width: 600px;
 	height: auto;
-	border-radius: var(--radius-xl);
+	border-radius: var(--radius-lg);
 	object-fit: cover;
 	box-shadow:
 		0 8px 32px rgba(0, 0, 0, 0.3),
@@ -960,11 +960,11 @@ body.hope-mode .hero-badge {
 /* Tablet: max-width 1024px (0-1024px, overridden by smaller breakpoints) */
 @media (max-width: 1024px) {
 	.story-thumbnail-image {
-		max-width: 350px;
+		max-width: 500px;
 	}
 
 	.video-thumbnail-wrapper {
-		max-width: 350px;
+		max-width: 500px;
 	}
 }
 
@@ -1213,9 +1213,9 @@ body.hope-mode .hero-badge {
 .video-thumbnail-wrapper {
 	position: relative;
 	width: 100%;
-	max-width: 400px;
+	max-width: 600px;
 	aspect-ratio: 16 / 9;
-	border-radius: var(--radius-xl);
+	border-radius: var(--radius-lg);
 	overflow: hidden;
 	box-shadow:
 		0 8px 40px var(--color-accent-light-glow),
