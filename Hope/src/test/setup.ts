@@ -30,7 +30,7 @@ if (typeof HTMLCanvasElement !== "undefined") {
 	HTMLCanvasElement.prototype.getContext = vi.fn(function (
 		this: HTMLCanvasElement,
 		contextId: string,
-		...args: any[]
+		...args: unknown[]
 	) {
 		if (contextId === "webgl" || contextId === "webgl2") {
 			return {
@@ -53,6 +53,7 @@ if (typeof HTMLCanvasElement !== "undefined") {
 		}
 
 		// その他のコンテキスト（2dなど）は元の実装を使用
+		// biome-ignore lint/suspicious/noExplicitAny: Pass-through arguments for overloads
 		return originalGetContext.apply(this, [contextId, ...args] as any)
 	}) as unknown as typeof HTMLCanvasElement.prototype.getContext
 }

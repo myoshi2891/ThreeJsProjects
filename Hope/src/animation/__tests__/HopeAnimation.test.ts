@@ -10,7 +10,12 @@ import type { Rain } from "../../scene/objects/Rain"
 import type { SceneParams } from "../../types"
 import { HopeAnimation } from "../HopeAnimation"
 
-// 共通GSAPモックを使用
+// テスト用の型定義: privateメンバーへのアクセス用
+type HopeAnimationInternals = {
+	lastHopeFactor: number
+	updateScene: () => void
+}
+
 // 共通GSAPモックを使用
 vi.mock("gsap", async () => {
 	const { createGSAPMock } = await import("../../test/mocks/gsap")
@@ -83,7 +88,7 @@ describe("HopeAnimation", () => {
 			mockRenderer,
 			mockFog,
 			mockLightParticles,
-			mockGodRays
+			mockGodRays,
 		)
 
 		vi.clearAllMocks()
@@ -119,7 +124,7 @@ describe("HopeAnimation", () => {
 			bgImageElement,
 			expect.objectContaining({
 				filter: expect.stringContaining("brightness"),
-			})
+			}),
 		)
 	})
 
@@ -139,7 +144,7 @@ describe("HopeAnimation", () => {
 			mockRenderer,
 			mockFog,
 			mockLightParticles,
-			mockGodRays
+			mockGodRays,
 		)
 
 		expect(() => animationWithoutBg.start()).not.toThrow()
@@ -181,22 +186,22 @@ describe("HopeAnimation", () => {
 
 		// 1. ベースラインStateの確率
 		// 初期化のために一度呼ぶ（ここで lastHopeFactor = 0 になるはずだが、初期値も0なので強制的に更新させる）
-		;(hopeAnimation as any).lastHopeFactor = -1
+		;(hopeAnimation as unknown as HopeAnimationInternals).lastHopeFactor = -1
 		params.hopeFactor = 0
-		;(hopeAnimation as any).updateScene()
+		;(hopeAnimation as unknown as HopeAnimationInternals).updateScene()
 		expect(mockRain.setOpacity).toHaveBeenCalledTimes(1)
 
 		// 2. 微小な変化（0.01未満）
 		// 差分: 0.005 < 0.01 -> 更新されないはず
 		params.hopeFactor = 0.005
-		;(hopeAnimation as any).updateScene()
+		;(hopeAnimation as unknown as HopeAnimationInternals).updateScene()
 		expect(mockRain.setOpacity).toHaveBeenCalledTimes(1) // 回数は増えない
 
 		// 3. 大きな変化（0.01以上）
 		// 差分: 0.02 - 0 (lastHopeFactor) = 0.02 >= 0.01 -> 更新されるはず
 		// ここで params.hopeFactor = 0.02 に変更
 		params.hopeFactor = 0.02
-		;(hopeAnimation as any).updateScene()
+		;(hopeAnimation as unknown as HopeAnimationInternals).updateScene()
 		expect(mockRain.setOpacity).toHaveBeenCalledTimes(2) // 回数が増える
 	})
 })

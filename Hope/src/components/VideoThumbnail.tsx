@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useAppStore, useI18nStore } from "../store"
 import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
 
@@ -24,20 +24,33 @@ export function VideoThumbnail() {
 	void locale
 
 	// Trigger fade-in animation after mount
+	const expandTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+	// Trigger fade-in animation after mount
 	useEffect(() => {
-		requestAnimationFrame(() => {
+		const rafId = requestAnimationFrame(() => {
 			setIsVisible(true)
 		})
+		return () => cancelAnimationFrame(rafId)
+	}, [])
+
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current)
+		}
 	}, [])
 
 	const handleExpand = () => {
+		setIsVisible(false)
+
 		// Request fullscreen for the document
 		document.documentElement.requestFullscreen().catch((err) => {
 			console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
 		})
 
-		setIsVisible(false)
-		setTimeout(() => {
+		if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current)
+		expandTimeoutRef.current = setTimeout(() => {
 			hideVideoThumbnail()
 			showVideoOverlay()
 		}, 500)
