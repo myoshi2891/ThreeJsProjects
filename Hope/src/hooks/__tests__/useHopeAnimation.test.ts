@@ -2,50 +2,14 @@ import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore, useSceneStore } from "../../store"
 import { resetAllStores } from "../../test/helpers/storeReset"
+import { createGSAPMock } from "../../test/mocks/gsap"
 import { useHopeAnimation } from "../useHopeAnimation"
 
-// GSAPモジュール全体をモック化
+// 共通GSAPモックを使用
 vi.mock("gsap", () => {
-	const timelineMock = {
-		to: function (this: unknown, target: unknown, config: unknown) {
-			// onUpdate コールバックを即座に実行して hopeFactor 更新をシミュレート
-			if (
-				config &&
-				typeof config === "object" &&
-				"onUpdate" in config &&
-				typeof config.onUpdate === "function"
-			) {
-				if (
-					target &&
-					typeof target === "object" &&
-					"hopeFactor" in target &&
-					"hopeFactor" in config
-				) {
-					;(target as { hopeFactor: number }).hopeFactor = config.hopeFactor as number
-				}
-				config.onUpdate()
-			}
-
-			// onComplete コールバックの実行
-			if (
-				config &&
-				typeof config === "object" &&
-				"onComplete" in config &&
-				typeof config.onComplete === "function"
-			) {
-				config.onComplete()
-			}
-
-			return this
-		},
-	}
-
+	const mocks = createGSAPMock()
 	return {
-		gsap: {
-			timeline: () => timelineMock,
-			to: () => {},
-			registerPlugin: () => {},
-		},
+		gsap: mocks.gsap,
 	}
 })
 
@@ -53,6 +17,13 @@ describe("useHopeAnimation", () => {
 	beforeEach(() => {
 		resetAllStores()
 		vi.clearAllMocks()
+		// Fake timersの有効化（全テスト共通）
+		vi.useFakeTimers()
+	})
+
+	// テスト終了後にタイマーを戻す
+	afterEach(() => {
+		vi.useRealTimers()
 	})
 
 	it("startAnimation関数を返す", () => {
@@ -101,7 +72,8 @@ describe("useHopeAnimation", () => {
 		result.current.startAnimation()
 
 		// GSAPモックはonCompleteを即座に実行するが、showVideoOverlayはsetTimeout(0)で遅延
-		await new Promise((resolve) => setTimeout(resolve, 10))
+		// Fake timersを使って時間を進める
+		vi.advanceTimersByTime(10)
 
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})

@@ -1,11 +1,17 @@
 import { vi } from "vitest"
 
 /**
- * GSAP & ScrollTrigger モック
+ * GSAP & ScrollTrigger モックファクトリ
  * 全アニメーションテストの基盤となる共通モック
  */
-
 export const createGSAPMock = () => {
+	// ScrollTriggerインスタンスを保持
+	const scrollTriggers: Array<{
+		config: any
+		kill: () => void
+		killed: boolean
+	}> = []
+
 	const timelineMock = {
 		to: vi.fn(function (this: unknown, target: unknown, config: unknown) {
 			// onUpdate コールバックを即座に実行して hopeFactor 更新をシミュレート
@@ -43,15 +49,27 @@ export const createGSAPMock = () => {
 	return {
 		gsap: {
 			timeline: vi.fn(() => timelineMock),
-			to: vi.fn(),
+			to: vi.fn((_target: unknown, _config: unknown) => {
+				// gsap.to()のモック動作（背景フィルタアニメーション等）
+				// 必要に応じて実装
+			}),
 			registerPlugin: vi.fn(),
 		},
 		ScrollTrigger: {
-			create: vi.fn((config) => ({
-				kill: vi.fn(),
-				config,
-			})),
-			getAll: vi.fn(() => []),
+			create: vi.fn((config) => {
+				const trigger = {
+					config,
+					killed: false,
+					kill: function (this: { killed: boolean }) {
+						this.killed = true
+					},
+				}
+				scrollTriggers.push(trigger)
+				return trigger
+			}),
+			getAll: vi.fn(() => scrollTriggers),
 		},
+		// テスト検証用ヘルパー
+		scrollTriggers,
 	}
 }

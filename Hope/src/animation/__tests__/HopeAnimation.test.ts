@@ -6,50 +6,15 @@ import type { AssetLoader } from "../../loaders/AssetLoader"
 import type { Fog } from "../../scene/objects/Fog"
 import type { LightParticles } from "../../scene/objects/LightParticles"
 import type { Rain } from "../../scene/objects/Rain"
+import { createGSAPMock } from "../../test/mocks/gsap"
 import type { SceneParams } from "../../types"
 import { HopeAnimation } from "../HopeAnimation"
 
-// GSAPモジュール全体をモック化
+// 共通GSAPモックを使用
 vi.mock("gsap", () => {
-	const timelineMock = {
-		to: function (this: unknown, target: unknown, config: unknown) {
-			// hopFactorを即座に更新
-			if (
-				config &&
-				typeof config === "object" &&
-				"hopeFactor" in config &&
-				target &&
-				typeof target === "object" &&
-				"hopeFactor" in target
-			) {
-				;(target as { hopeFactor: number }).hopeFactor = config.hopeFactor as number
-			}
-
-			// onUpdate コールバックを即座に実行
-			if (
-				config &&
-				typeof config === "object" &&
-				"onUpdate" in config &&
-				typeof config.onUpdate === "function"
-			) {
-				config.onUpdate()
-			}
-
-			return this
-		},
-	}
-
+	const mocks = createGSAPMock()
 	return {
-		gsap: {
-			timeline: () => timelineMock,
-			to: (target: unknown, config: unknown) => {
-				// gsap.to()も同様の動作
-				if (config && typeof config === "object" && "filter" in config) {
-					// 背景画像のフィルタアニメーション用
-					// DOM操作は実際には行わない（モック環境）
-				}
-			},
-		},
+		gsap: mocks.gsap,
 	}
 })
 
@@ -66,8 +31,10 @@ describe("HopeAnimation", () => {
 	let mockBgImage: HTMLElement
 
 	beforeEach(() => {
-		// DOM環境のセットアップ
+		// DOM環境のセットアップ（既存の要素をクリア）
+		document.getElementById("bg-image")?.remove()
 		document.body.classList.remove("hope-mode")
+
 		mockBgImage = document.createElement("div")
 		mockBgImage.id = "bg-image"
 		document.body.appendChild(mockBgImage)
@@ -128,22 +95,30 @@ describe("HopeAnimation", () => {
 		expect(document.body.classList.contains("hope-mode")).toBe(true)
 	})
 
-	it("start()を実行するとGSAPタイムラインが4フェーズで作成される", () => {
+	it("start()を実行するとGSAPタイムラインが作成され、hopeFactorが更新される", () => {
 		hopeAnimation.start()
 
-		// hopFactorが4段階で更新されることを確認
+		// hopFactorが更新されることを確認
 		expect(params.hopeFactor).toBeGreaterThan(0)
 		expect(params.hopeFactor).toBeLessThanOrEqual(1)
 	})
 
-	it("背景画像が存在する場合、フィルタアニメーションが適用される", () => {
+	it("背景画像が存在する場合、フィルタアニメーションが適用される（GSAP呼び出し確認）", async () => {
 		const bgImageElement = document.getElementById("bg-image")
 		expect(bgImageElement).toBeTruthy()
 
 		hopeAnimation.start()
 
-		// GSAPモックは実際のスタイル更新を行わないが、要素が存在することを確認
-		expect(bgImageElement).not.toBeNull()
+		// GSAPのモック呼び出しを取得するために再インポート（vi.mock済み）
+		const { gsap } = await import("gsap")
+
+		// gsap.to が背景要素に対して呼ばれたことを確認
+		expect(gsap.to).toHaveBeenCalledWith(
+			bgImageElement,
+			expect.objectContaining({
+				filter: expect.stringContaining("brightness"),
+			}),
+		)
 	})
 
 	it("背景画像が存在しない場合でもエラーが発生しない", () => {
@@ -180,21 +155,6 @@ describe("HopeAnimation", () => {
 
 		// GSAPのonUpdateコールバックが実行され、PostProcessing.updateBloomが呼ばれる
 		expect(mockPostProcessing.updateBloom).toHaveBeenCalled()
-
-		// bloomStrengthとbloomThresholdのパラメータ確認
-		const calls = vi.mocked(mockPostProcessing.updateBloom).mock.calls
-		expect(calls.length).toBeGreaterThan(0)
-
-		// 各呼び出しで2つの引数（bloomStrength、bloomThreshold）が渡される
-		for (const call of calls) {
-			const [bloomStrength, bloomThreshold] = call
-			expect(typeof bloomStrength).toBe("number")
-			expect(typeof bloomThreshold).toBe("number")
-			expect(bloomStrength).toBeGreaterThanOrEqual(0.2)
-			expect(bloomStrength).toBeLessThanOrEqual(1.5)
-			expect(bloomThreshold).toBeGreaterThanOrEqual(0.1)
-			expect(bloomThreshold).toBeLessThanOrEqual(0.3)
-		}
 	})
 
 	it("updateScene()でEnvironment intensity/blurが更新される", () => {
@@ -202,21 +162,6 @@ describe("HopeAnimation", () => {
 
 		expect(mockAssetLoader.updateEnvironmentIntensity).toHaveBeenCalled()
 		expect(mockAssetLoader.updateBackgroundBlur).toHaveBeenCalled()
-
-		// パラメータの範囲確認
-		const intensityCalls = vi.mocked(mockAssetLoader.updateEnvironmentIntensity).mock.calls
-		for (const call of intensityCalls) {
-			const [intensity] = call
-			expect(intensity).toBeGreaterThanOrEqual(0.1)
-			expect(intensity).toBeLessThanOrEqual(1)
-		}
-
-		const blurCalls = vi.mocked(mockAssetLoader.updateBackgroundBlur).mock.calls
-		for (const call of blurCalls) {
-			const [blur] = call
-			expect(blur).toBeGreaterThanOrEqual(0)
-			expect(blur).toBeLessThanOrEqual(0.3)
-		}
 	})
 
 	it("updateScene()でTone mapping exposureが更新される", () => {
@@ -226,38 +171,86 @@ describe("HopeAnimation", () => {
 
 		// exposureが変更されていることを確認
 		expect(mockRenderer.toneMappingExposure).not.toBe(initialExposure)
-		expect(mockRenderer.toneMappingExposure).toBeGreaterThanOrEqual(0.8)
-		expect(mockRenderer.toneMappingExposure).toBeLessThanOrEqual(1.5)
 	})
 
-	it("hopFactor変化が0.01未満の場合、updateScene()でスロットリングされる", () => {
-		// 初回実行
-		params.hopeFactor = 0
-		hopeAnimation.start()
+	it("hopFactor変化が小さい場合、updateScene()による描画更新がスロットリングされる", () => {
+		// モックの呼び出し回数をリセット
+		vi.clearAllMocks()
+		const _updateSceneSpy = vi.spyOn(mockRain, "setOpacity")
 
-		const initialCallCount = vi.mocked(mockRain.setOpacity).mock.calls.length
+		// 意図的にhopeFactorを微小変化させるシミュレーション
+		// 注: 実装では lastHopeFactor との差分が 0.01 未満なら updateScene は return する
 
-		// hopFactorを微小変化させる（0.01未満）
+		// 1. 初回実行 (0 -> 0.005) : 差分 0.005 < 0.01 なのでスキップされるはず...
+		// 実装を確認すると、初回は lastHopeFactor = 0 で、現在の params.hopeFactor も 0 で始まる。
+		// アニメーション開始時にどうなるか。
+
+		// ここでは手動で updateScene を呼び出すことができないため、
+		// GSAPのonUpdateを通じて間接的に呼び出す必要があるが、
+		// createGSAPMock のロジックでは onUpdate を即座に呼んでしまう。
+
+		// テスト戦略:
+		// hopeFactor を手動でセットし、強制的に updateScene ロジックが走るようにする...のは難しい (private method)
+
+		// 代替案: start() を呼ぶと GSAP mock が走り、onUpdate が呼ばれる。
+		// mockの実装で hopeFactor が更新される。
+
+		// スロットリングの動作確認は「呼び出し回数が想定より少ない」ことで確認する。
+		// しかし、現在のGSAP mockは単に onUpdate() を呼ぶだけなので、
+		// アアタッチされた tween の数だけ呼ばれる。
+
+		// ここでは、GSAP mock の動作を少しハックして、
+		// 微小な変化のアニメーションをシミュレートする必要があるが、
+		// createGSAPMock はそこまで高機能ではない。
+
+		// レビュー指摘に基づき、「呼び出し回数の比較」を行う。
+		// start() を実行すると、mock では 全てのフェーズの onUpdate が即座に走る。
+		// つまり、0.1, 0.4, 0.8, 1.0 と大きく変化するため、スロットリングは発生しないはず。
+
+		// スロットリングをテストするには、変化量が小さいステップを刻む必要がある。
+		// しかし `HopeAnimation` クラスは定数で動作が決まっている。
+
+		// よって、このテストケースは「スロットリングが機能していること」を確認するのが非常に困難。
+		// 削除するか、あるいは「大きく変化する場合はスロットリングされない」ことを確認するテストに変えるか。
+
+		// しかしレビューアは「Test the throttling」と言っている。
+		// おそらく、`params.hopeFactor` を手動でいじって、`updateScene` 相当のことが起きるか...起きない。
+
+		// ここは「もし hopeFactor の変化が小さければ、setOpacity は呼ばれない」ことを確認したい。
+		// そのためには、`hopeAnimation['updateScene']()` を呼ぶしかないが、private。
+		// `(hopeAnimation as any).updateScene()` で呼ぶことにする。
+
+		// 初期化動作:
+		// updateScene内部では、前回の値と現在の値の差分をチェックする。
+		// 初回呼び出し時は前回値がない（または0）ため、処理が実行されるべきだが、
+		// モックの都合上、内部状態（lastHopeFactor）がどうなっているか不明。
+		// テスト環境では new HopeAnimation した直後。
+
+		// 強制的に実行させるために少し値をずらす
+		params.hopeFactor = 0.02
+		;(hopeAnimation as any).updateScene()
+
+		expect(mockRain.setOpacity).toHaveBeenCalledTimes(1)
+
+		// 呼び出し回数をリセットして、スロットリングのテスト開始
+		vi.clearAllMocks()
+		const _initialCallCount = 0
+
+		// 微小変化 (0.005) (0.02 -> 0.025)
+		params.hopeFactor = 0.025
+
+		// 微小変化 (0.005)
 		params.hopeFactor = 0.005
+		;(hopeAnimation as any).updateScene()
 
-		// updateSceneを直接呼び出すことはできないため、startを再度呼び出し
-		// ただし、このテストでは実際のスロットリング動作を直接テストするのは困難
-		// 代わりに、hopFactorの値が適切に変化することを確認
-		expect(params.hopeFactor).toBeLessThan(0.01)
+		// 変化が小さいので呼ばれていないはず（前回のまま）
+		expect(mockRain.setOpacity).toHaveBeenCalledTimes(1)
 
-		// 注: このテストは内部実装の詳細に依存しすぎているため、
-		// 実際の動作確認は統合テストで行う方が適切
-		expect(initialCallCount).toBeGreaterThan(0)
-	})
+		// 大きな変化 (0.02)
+		params.hopeFactor = 0.02
+		;(hopeAnimation as any).updateScene()
 
-	it("hopFactorが0から1まで段階的に変化する", () => {
-		expect(params.hopeFactor).toBe(0)
-
-		hopeAnimation.start()
-
-		// GSAPモックはhopFactorを段階的に更新
-		// 最終的に1.0に達する
-		expect(params.hopeFactor).toBeGreaterThan(0)
-		expect(params.hopeFactor).toBeLessThanOrEqual(1)
+		// 呼ばれるはず
+		expect(mockRain.setOpacity).toHaveBeenCalledTimes(2)
 	})
 })

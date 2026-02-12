@@ -2,39 +2,55 @@ import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useSceneStore } from "../../store"
 import { resetAllStores } from "../../test/helpers/storeReset"
+import { createGSAPMock } from "../../test/mocks/gsap"
 import { useScrollAnimation } from "../useScrollAnimation"
 
-// ScrollTriggerインスタンスを保持（グローバルスコープ）
-const scrollTriggers: Array<{
-	config: {
-		trigger?: unknown
-		start?: string
-		end?: string
-		scrub?: number
-		onUpdate?: (self: { progress: number; direction: number }) => void
-		onEnter?: () => void
-		onLeave?: () => void
-		onEnterBack?: () => void
-		onLeaveBack?: () => void
-	}
-	kill: () => void
-	killed: boolean
-}> = []
+// 共通GSAPモック
+// 注: vi.mock内で外部変数（mocks）を参照できないため、
+// テスト内で検証するためのグローバルな参照用変数を用意するか、
+// import("gsap/ScrollTrigger")して検証する
+const scrollTriggersRef: any[] = []
 
-// GSAPとScrollTriggerをモック化
 vi.mock("gsap", () => {
+	const mocks = createGSAPMock()
 	return {
-		gsap: {
-			registerPlugin: () => {},
-			to: () => {},
-		},
+		gsap: mocks.gsap,
 	}
 })
 
+// ScrollTrigger.createのモック
 vi.mock("gsap/ScrollTrigger", () => {
+	// 参照用に外に出すトリック（完全にsafeではないがテスト用）
+	// ただし、vi.mockはhoistingされるため、ここでの副作用は期待通り動かない可能性がある。
+	// 代わりに、createGSAPMockの挙動を再現するか、
+	// モジュール全体をモックして、getMockImplementationでアクセスする。
+
+	// ここではシンプルに、createGSAPMockを使って新しくインスタンスを作るが、
+	// テストケースからその内部状態（scrollTriggers）にアクセスできない問題がある。
+
+	// 解決策: createGSAPMockを直接使うのではなく、
+	// テストファイル内で独自のモック定義を行うか、
+	// あるいは __mocks__ ディレクトリを使うのが正攻法だが、
+	// ここでは inline mock で createGSAPMock を呼んでいる。
+
+	// scrollTriggers の参照を共有するために、
+	// createGSAPMock が返す scrollTriggers 配列は
+	// 毎回新しい配列である。
+
+	// 共有状態を持つシングルトン的なモックファクトリが必要かもしれないが、
+	// Vitestのhoisting制約があるため、外部変数の参照はNG。
+
+	// 妥協案: このファイル内では createGSAPMock を使わず、
+	// 以前のように inline で定義しつつ、
+	// createGSAPMock のロジックをコピーするか、
+	// createGSAPMock を改善して状態を共有できるようにする。
+
+	// 今回は、テストファイル内で定義することで確実にアクセスできるようにする（以前のアプローチに戻す）。
+	// ただし、createGSAPMock は使いたい。
+
 	return {
 		ScrollTrigger: {
-			create: (config: (typeof scrollTriggers)[number]["config"]) => {
+			create: (config: any) => {
 				const trigger = {
 					config,
 					killed: false,
@@ -42,10 +58,10 @@ vi.mock("gsap/ScrollTrigger", () => {
 						this.killed = true
 					},
 				}
-				scrollTriggers.push(trigger)
+				scrollTriggersRef.push(trigger)
 				return trigger
 			},
-			getAll: () => scrollTriggers,
+			getAll: () => scrollTriggersRef,
 		},
 	}
 })
@@ -60,7 +76,8 @@ describe("useScrollAnimation", () => {
 	beforeEach(() => {
 		resetAllStores()
 		vi.clearAllMocks()
-		scrollTriggers.length = 0
+		// ScrollTriggersの配列リセット
+		scrollTriggersRef.length = 0
 
 		// DOM要素のセットアップ
 		document.body.innerHTML = ""
@@ -90,17 +107,17 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		// ScrollTriggerが作成されていることを確認
-		expect(scrollTriggers.length).toBeGreaterThan(0)
+		expect(scrollTriggersRef.length).toBeGreaterThan(0)
 	})
 
 	it("複数回レンダリングしても初期化は一度のみ", () => {
 		const { rerender } = renderHook(() => useScrollAnimation())
 
-		const initialTriggerCount = scrollTriggers.length
+		const initialTriggerCount = scrollTriggersRef.length
 
 		rerender()
 
-		const afterRerenderTriggerCount = scrollTriggers.length
+		const afterRerenderTriggerCount = scrollTriggersRef.length
 
 		expect(afterRerenderTriggerCount).toBe(initialTriggerCount)
 	})
@@ -111,7 +128,7 @@ describe("useScrollAnimation", () => {
 		expect(nav.classList.contains("scrolled")).toBe(false)
 
 		// ScrollTriggerのonUpdateコールバックをシミュレート
-		const navTrigger = scrollTriggers.find((t) => t.config.start === "top -80")
+		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		expect(navTrigger).toBeDefined()
 
 		if (navTrigger?.config.onUpdate) {
@@ -127,7 +144,7 @@ describe("useScrollAnimation", () => {
 		// まずscrolledクラスを追加
 		nav.classList.add("scrolled")
 
-		const navTrigger = scrollTriggers.find((t) => t.config.start === "top -80")
+		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		if (navTrigger?.config.onUpdate) {
 			navTrigger.config.onUpdate({ progress: 0, direction: -1 })
 		}
@@ -138,7 +155,9 @@ describe("useScrollAnimation", () => {
 	it("背景画像のフィルタがスクロール進捗に応じて更新される", () => {
 		renderHook(() => useScrollAnimation())
 
-		const bgTrigger = scrollTriggers.find(
+		// 修正: 確実にターゲットと一致するトリガーを見つける
+		// 実装では trigger: "body", start: "top top" が背景用
+		const bgTrigger = scrollTriggersRef.find(
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 		expect(bgTrigger).toBeDefined()
@@ -156,7 +175,7 @@ describe("useScrollAnimation", () => {
 	it("背景フィルタの変化が閾値未満の場合、DOM更新がスキップされる", () => {
 		renderHook(() => useScrollAnimation())
 
-		const bgTrigger = scrollTriggers.find(
+		const bgTrigger = scrollTriggersRef.find(
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
@@ -179,7 +198,7 @@ describe("useScrollAnimation", () => {
 	it("スクロール進捗がストアに保存される", () => {
 		renderHook(() => useScrollAnimation())
 
-		const bgTrigger = scrollTriggers.find(
+		const bgTrigger = scrollTriggersRef.find(
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
@@ -193,7 +212,7 @@ describe("useScrollAnimation", () => {
 	it("Story要素にvisibleクラスがトグルされる", () => {
 		renderHook(() => useScrollAnimation())
 
-		const storyTriggers = scrollTriggers.filter(
+		const storyTriggers = scrollTriggersRef.filter(
 			(t) =>
 				t.config.trigger instanceof HTMLElement &&
 				t.config.trigger.classList.contains("story-content"),
@@ -234,7 +253,7 @@ describe("useScrollAnimation", () => {
 	it("Experience要素にvisibleクラスがトグルされる", () => {
 		renderHook(() => useScrollAnimation())
 
-		const experienceTrigger = scrollTriggers.find(
+		const experienceTrigger = scrollTriggersRef.find(
 			(t) =>
 				t.config.trigger instanceof HTMLElement &&
 				t.config.trigger.classList.contains("experience-content"),
@@ -260,13 +279,13 @@ describe("useScrollAnimation", () => {
 	it("unmount時に全てのScrollTriggerがクリーンアップされる", () => {
 		const { unmount } = renderHook(() => useScrollAnimation())
 
-		const triggerCount = scrollTriggers.length
+		const triggerCount = scrollTriggersRef.length
 		expect(triggerCount).toBeGreaterThan(0)
 
 		unmount()
 
 		// 全てのトリガーのkill()が呼ばれたことを確認
-		for (const trigger of scrollTriggers) {
+		for (const trigger of scrollTriggersRef) {
 			expect(trigger.killed).toBe(true)
 		}
 	})
@@ -283,11 +302,35 @@ describe("useScrollAnimation", () => {
 		expect(() => renderHook(() => useScrollAnimation())).not.toThrow()
 	})
 
-	it("背景パララックスアニメーションが設定される", () => {
+	it("背景パララックスアニメーションが設定されている（ScrollTriggerの設定確認）", () => {
 		renderHook(() => useScrollAnimation())
 
-		// 背景画像が存在し、ScrollTriggerが設定されていることを確認
+		// 背景画像が存在する
 		expect(bgImage).toBeTruthy()
-		expect(scrollTriggers.length).toBeGreaterThan(0)
+
+		// 背景パララックス用のトリガーが存在することを確認
+		// 実装: scrollTrigger: { trigger: "#bg-image", scrub: true, ... } ではなく、
+		// GSAP.to("#bg-image", { scrollTrigger: { ... } }) の形式かもしれないし、
+		// ScrollTrigger.create({...}) かもしれない。
+		// このテストファイル上部の定義では ScrollTrigger.create がフック内で呼ばれていると仮定。
+
+		// 実装(useScrollAnimation.ts)を見ると:
+		/*
+		ScrollTrigger.create({
+			trigger: "body",
+			start: "top top",
+			end: "bottom bottom",
+			scrub: 0.5,
+			onUpdate: (self) => { ... }
+		})
+		*/
+
+		const bgTrigger = scrollTriggersRef.find(
+			(t) => t.config.trigger === "body" && t.config.start === "top top",
+		)
+
+		expect(bgTrigger).toBeDefined()
+		expect(bgTrigger?.config.scrub).toBe(3)
+		expect(typeof bgTrigger?.config.onUpdate).toBe("function")
 	})
 })

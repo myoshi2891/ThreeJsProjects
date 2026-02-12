@@ -25,10 +25,34 @@ globalThis.ResizeObserver = class ResizeObserver {
 
 // WebGLのモック（Three.js用）
 if (typeof HTMLCanvasElement !== "undefined") {
-	HTMLCanvasElement.prototype.getContext = vi.fn((contextId: string) => {
+	const originalGetContext = HTMLCanvasElement.prototype.getContext
+
+	HTMLCanvasElement.prototype.getContext = vi.fn(function (
+		this: HTMLCanvasElement,
+		contextId: string,
+		...args: any[]
+	) {
 		if (contextId === "webgl" || contextId === "webgl2") {
-			return {} // 最小限のモック
+			return {
+				// 最小限のWebGLコンテキストモック
+				getParameter: vi.fn(() => 0),
+				getExtension: vi.fn(() => ({})),
+				createTexture: vi.fn(() => ({})),
+				bindTexture: vi.fn(),
+				texParameteri: vi.fn(),
+				texImage2D: vi.fn(),
+				clearColor: vi.fn(),
+				clear: vi.fn(),
+				enable: vi.fn(),
+				disable: vi.fn(),
+				blendFunc: vi.fn(),
+				depthFunc: vi.fn(),
+				viewport: vi.fn(),
+				// 必要に応じてメソッドを追加
+			}
 		}
-		return null
+
+		// その他のコンテキスト（2dなど）は元の実装を使用
+		return originalGetContext.apply(this, [contextId, ...args])
 	}) as unknown as typeof HTMLCanvasElement.prototype.getContext
 }

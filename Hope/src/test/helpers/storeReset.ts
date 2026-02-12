@@ -1,6 +1,4 @@
-import { useAppStore } from "../../store/appStore"
-import { useI18nStore } from "../../store/i18nStore"
-import { useSceneStore } from "../../store/sceneStore"
+import { useAppStore, useI18nStore, useSceneStore } from "../../store"
 
 /**
  * 全Zustandストアを初期状態にリセット
@@ -18,6 +16,8 @@ export const resetAllStores = () => {
 	useSceneStore.setState({
 		hopeFactor: 0,
 		scrollProgress: 0,
+		bloomStrength: 0.2, // 初期値
+		envIntensity: 0.1, // 初期値
 	})
 
 	useI18nStore.setState({
