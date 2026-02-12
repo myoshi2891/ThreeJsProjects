@@ -31,11 +31,16 @@ export function VideoThumbnail() {
 	}, [])
 
 	const handleExpand = () => {
+		// Request fullscreen for the document
+		document.documentElement.requestFullscreen().catch((err) => {
+			console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
+		})
+
 		setIsVisible(false)
 		setTimeout(() => {
 			hideVideoThumbnail()
 			showVideoOverlay()
-		}, 300)
+		}, 500)
 	}
 
 	return (

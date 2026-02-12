@@ -12,10 +12,16 @@ describe("VideoOverlay", () => {
 			isVideoThumbnailVisible: false,
 		})
 		vi.useFakeTimers()
+		// Mock requestAnimationFrame for fade-in animation
+		vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+			cb(0)
+			return 0
+		})
 	})
 
 	afterEach(() => {
 		vi.useRealTimers()
+		vi.restoreAllMocks()
 	})
 
 	it("should not render when isVideoOverlayVisible is false", () => {
@@ -51,16 +57,16 @@ describe("VideoOverlay", () => {
 		const closeBtn = screen.getByRole("button", { name: "Close video" })
 		fireEvent.click(closeBtn)
 
-		// Should hide overlay immediately
-		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		// フェードアウト中はストア状態はまだ変更されていない
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 
-		// Should show thumbnail after delay
-		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false) // Not yet
-
+		// 500ms後にストア状態が更新される
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
 
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 	})
 
@@ -70,11 +76,15 @@ describe("VideoOverlay", () => {
 
 		fireEvent.keyDown(document, { key: "Escape" })
 
-		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		// フェードアウト中はストア状態はまだ変更されていない
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 
+		// 500ms後にストア状態が更新される
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
+
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 	})
 

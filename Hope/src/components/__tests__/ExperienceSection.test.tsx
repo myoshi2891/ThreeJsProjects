@@ -1,15 +1,19 @@
-import { render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { beforeEach, describe, expect, it } from "vitest"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore } from "../../store"
 import { ExperienceSection } from "../ExperienceSection"
 
 describe("ExperienceSection", () => {
 	beforeEach(() => {
+		vi.useFakeTimers()
 		useAppStore.setState({
 			isHopeMode: false,
 			isVideoThumbnailVisible: false,
 		})
+	})
+
+	afterEach(() => {
+		vi.useRealTimers()
 	})
 
 	it("should render hope button", () => {
@@ -17,27 +21,33 @@ describe("ExperienceSection", () => {
 		expect(screen.getByRole("button", { name: /Watch the short Film/i })).toBeInTheDocument()
 	})
 
-	it("should hide hope button when it is clicked", async () => {
-		const user = userEvent.setup()
+	it("should hide hope button when it is clicked", () => {
 		render(<ExperienceSection />)
 		const button = screen.getByRole("button", {
 			name: /Watch the short Film/i,
 		})
 
-		await user.click(button)
+		fireEvent.click(button)
 
-		// Button should have hidden class after click
+		// クリック直後はfadingクラスが適用される
+		expect(button).toHaveClass("fading")
+		expect(button).not.toHaveClass("hidden")
+
+		// 1500ms後にhiddenクラスが適用される
+		act(() => {
+			vi.advanceTimersByTime(1500)
+		})
+
 		expect(button).toHaveClass("hidden")
 	})
 
-	it("should enable hope mode when button is clicked", async () => {
-		const user = userEvent.setup()
+	it("should enable hope mode when button is clicked", () => {
 		render(<ExperienceSection />)
 		const button = screen.getByRole("button", {
 			name: /Watch the short Film/i,
 		})
 
-		await user.click(button)
+		fireEvent.click(button)
 
 		expect(useAppStore.getState().isHopeMode).toBe(true)
 	})

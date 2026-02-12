@@ -5,10 +5,16 @@ import { ImageModal } from "../ImageModal"
 describe("ImageModal", () => {
 	beforeEach(() => {
 		vi.useFakeTimers()
+		// Mock requestAnimationFrame for fade-in animation
+		vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+			cb(0)
+			return 0
+		})
 	})
 
 	afterEach(() => {
 		vi.useRealTimers()
+		vi.restoreAllMocks()
 		document.body.className = "" // cleanup body class
 	})
 
@@ -35,16 +41,16 @@ describe("ImageModal", () => {
 		const closeBtn = screen.getByRole("button", { name: "Close image" })
 		fireEvent.click(closeBtn)
 
-		// Check for closing class
+		// フェードアウト中はvisibleクラスが削除される
 		const dialog = screen.getByRole("dialog")
-		expect(dialog).toHaveClass("closing")
+		expect(dialog).not.toHaveClass("visible")
 
-		// onClose shouldn't be called yet
+		// onCloseはまだ呼ばれていない
 		expect(onClose).not.toHaveBeenCalled()
 
-		// Fast forward
+		// 500ms後にonCloseが呼ばれる
 		act(() => {
-			vi.advanceTimersByTime(400)
+			vi.advanceTimersByTime(500)
 		})
 
 		expect(onClose).toHaveBeenCalled()
@@ -59,7 +65,7 @@ describe("ImageModal", () => {
 		fireEvent.click(img)
 
 		act(() => {
-			vi.advanceTimersByTime(400)
+			vi.advanceTimersByTime(500)
 		})
 
 		expect(onClose).not.toHaveBeenCalled()
@@ -73,7 +79,7 @@ describe("ImageModal", () => {
 		fireEvent.click(dialog) // Click on the dialog overlay itself
 
 		act(() => {
-			vi.advanceTimersByTime(400)
+			vi.advanceTimersByTime(500)
 		})
 
 		expect(onClose).toHaveBeenCalled()
@@ -86,7 +92,7 @@ describe("ImageModal", () => {
 		fireEvent.keyDown(document, { key: "Escape" })
 
 		act(() => {
-			vi.advanceTimersByTime(400)
+			vi.advanceTimersByTime(500)
 		})
 
 		expect(onClose).toHaveBeenCalled()

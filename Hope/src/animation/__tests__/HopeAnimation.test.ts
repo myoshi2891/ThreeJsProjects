@@ -83,7 +83,7 @@ describe("HopeAnimation", () => {
 			mockRenderer,
 			mockFog,
 			mockLightParticles,
-			mockGodRays,
+			mockGodRays
 		)
 
 		vi.clearAllMocks()
@@ -119,7 +119,7 @@ describe("HopeAnimation", () => {
 			bgImageElement,
 			expect.objectContaining({
 				filter: expect.stringContaining("brightness"),
-			}),
+			})
 		)
 	})
 
@@ -139,7 +139,7 @@ describe("HopeAnimation", () => {
 			mockRenderer,
 			mockFog,
 			mockLightParticles,
-			mockGodRays,
+			mockGodRays
 		)
 
 		expect(() => animationWithoutBg.start()).not.toThrow()

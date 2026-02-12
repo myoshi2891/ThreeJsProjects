@@ -12,6 +12,8 @@ import { VideoThumbnail } from "./VideoThumbnail"
  */
 export function ExperienceSection() {
 	const [isButtonHidden, setIsButtonHidden] = useState(false)
+	// State for the slow fade-out animation
+	const [isFading, setIsFading] = useState(false)
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
@@ -23,9 +25,14 @@ export function ExperienceSection() {
 	void locale
 
 	const handleHopeClick = () => {
-		setIsButtonHidden(true)
+		// Start slow fade out
+		setIsFading(true)
 		setHopeMode(true)
-		// Note: Hope animation and video display will be triggered by the parent App component
+
+		// Remove from layout after fade completes (1.5s)
+		setTimeout(() => {
+			setIsButtonHidden(true)
+		}, 1500)
 	}
 
 	return (
@@ -40,7 +47,7 @@ export function ExperienceSection() {
 				<div className="story-thumbnail">
 					<button
 						type="button"
-						className={`experience-btn ${isButtonHidden ? "hidden" : ""}`}
+						className={`experience-btn ${isFading ? "fading" : ""} ${isButtonHidden ? "hidden" : ""}`}
 						id="hope-btn"
 						onClick={handleHopeClick}
 						aria-label={t("experience.ctaLabel")}

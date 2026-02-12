@@ -753,10 +753,10 @@ body.hope-mode .story-thumbnail-image:hover {
 		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.experience-btn.hidden {
+.experience-btn.fading {
 	opacity: 0;
 	pointer-events: none;
-	transform: scale(0.9);
+	transition: opacity 1.5s ease-out;
 }
 
 /* =====================================================
@@ -1038,47 +1038,57 @@ body.hope-mode .hero-badge {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, 0.95);
 	z-index: var(--z-modal);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	animation: fadeIn 0.4s ease;
+	/* Base state (hidden) */
+	opacity: 0;
+	pointer-events: none;
 	transition:
-		opacity 0.4s ease,
-		background 0.4s ease;
+		opacity 0.5s ease,
+		background 0.5s ease;
 }
 
-.image-modal-overlay.closing {
-	opacity: 0;
-	background: rgba(0, 0, 0, 0);
+.image-modal-overlay.visible {
+	opacity: 1;
+	pointer-events: auto;
 }
 
 .image-modal-content {
+	width: 100%;
 	max-width: 90vw;
 	max-height: 90vh;
+	aspect-ratio: 16 / 9;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .image-modal-img {
-	max-width: 100%;
-	max-height: 90vh;
-	object-fit: contain;
-	border-radius: var(--radius-xl);
-	box-shadow:
-		0 20px 60px rgba(0, 0, 0, 0.5),
-		0 40px 100px rgba(0, 0, 0, 0.3);
-	animation: fadeInUp 0.4s ease;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 0;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	/* Base state (scaled down) */
+	transform: scale(0.95);
 	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease;
+		opacity 0.5s ease,
+		transform 0.5s ease;
 }
 
-.image-modal-img.closing {
+.image-modal-img.switching {
 	opacity: 0;
-	transform: translateY(30px) scale(0.95);
+	transform: scale(0.98);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
+}
+
+.image-modal-overlay.visible .image-modal-img {
+	transform: scale(1);
 }
 
 .image-modal-close {
@@ -1200,18 +1210,27 @@ body.hope-mode .hero-badge {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.95);
+	background: rgba(0, 0, 0, 0);
 	z-index: var(--z-modal);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity var(--transition-slow);
+	transform: scale(1.05);
+	filter: blur(10px);
+	transition:
+		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .video-overlay.visible {
 	opacity: 1;
+	transform: scale(1);
+	filter: blur(0);
+	background: rgba(0, 0, 0, 0.95);
 	pointer-events: auto;
 }
 
@@ -1228,6 +1247,16 @@ body.hope-mode .hero-badge {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	opacity: 0;
+	transform: scale(0.9);
+	transition:
+		opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
+		transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+}
+
+.video-overlay.visible .video-fullscreen-wrapper {
+	opacity: 1;
+	transform: scale(1);
 }
 
 .video-fullscreen-wrapper iframe {
@@ -1277,13 +1306,18 @@ body.hope-mode .hero-badge {
 	align-items: center;
 	width: 100%;
 	opacity: 0;
-	transform: scale(0.9);
-	transition: all var(--transition-slow);
+	transform: scale(0.85);
+	filter: blur(8px);
+	transition:
+		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .video-thumbnail.visible {
 	opacity: 1;
 	transform: scale(1);
+	filter: blur(0);
 }
 
 .video-thumbnail.hidden {
@@ -1375,6 +1409,10 @@ body.hope-mode .video-thumbnail-wrapper {
 	scroll-timeline: --slider-scroll x;
 }
 
+.experience-btn.hidden {
+	display: none;
+}
+
 .image-slider-track::-webkit-scrollbar {
 	display: none;
 }
@@ -1383,19 +1421,16 @@ body.hope-mode .video-thumbnail-wrapper {
 	flex: 0 0 100%;
 	scroll-snap-align: center;
 
-	/* フェードイン/フェードアウト効果 */
+	/* フェードイン効果のみ（サイズ変更は削除） */
 	opacity: 0.3;
-	transform: scale(0.92);
 	filter: blur(2px);
 	transition:
 		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
 		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .image-slider-slide.active {
 	opacity: 1;
-	transform: scale(1);
 	filter: blur(0);
 }
 
@@ -1411,7 +1446,7 @@ body.hope-mode .video-thumbnail-wrapper {
 .image-slider-image {
 	width: 100%;
 	height: auto;
-	aspect-ratio: 16 / 10;
+	aspect-ratio: 16 / 9;
 	object-fit: cover;
 	border-radius: var(--radius-lg);
 	box-shadow:
@@ -1546,6 +1581,23 @@ body.hope-mode .image-slider-dot.active {
 	.image-slider-arrow,
 	.image-slider-dot {
 		transition: none;
+	}
+
+	/* 動画プレーヤーのトランジション無効化 */
+	.video-overlay,
+	.video-fullscreen-wrapper,
+	.video-thumbnail {
+		transition: none;
+		filter: none;
+		transform: none;
+	}
+
+	.video-overlay {
+		background: rgba(0, 0, 0, 0.95);
+	}
+
+	.video-fullscreen-wrapper {
+		opacity: 1;
 	}
 }
 
