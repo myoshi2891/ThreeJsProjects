@@ -121,7 +121,7 @@ describe("App", () => {
 		expect(mockUseScrollAnimationCallCount).toBeGreaterThan(0)
 	})
 
-	it("useHopeAnimationフックが呼ばれる", () => {
+	it("初期レンダリングで startAnimation が呼ばれていないことを確認する", () => {
 		render(<App />)
 
 		// startAnimation関数が取得されることを確認（まだ実行はされない）
