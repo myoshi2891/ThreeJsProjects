@@ -10,17 +10,15 @@ import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
  * @returns The overlay JSX element when visible, or `null` when not visible.
  */
 export function VideoOverlay() {
-	const isVideoOverlayVisible = useAppStore(
-		state => state.isVideoOverlayVisible
-	)
-	const hideVideoOverlay = useAppStore(state => state.hideVideoOverlay)
-	const showVideoThumbnail = useAppStore(state => state.showVideoThumbnail)
+	const isVideoOverlayVisible = useAppStore((state) => state.isVideoOverlayVisible)
+	const hideVideoOverlay = useAppStore((state) => state.hideVideoOverlay)
+	const showVideoThumbnail = useAppStore((state) => state.showVideoThumbnail)
 	// Local state for fade animation
 	const [isVisible, setIsVisible] = useState(false)
 
 	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore(state => state.locale)
-	const t = useI18nStore(state => state.t)
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
 
 	// Force re-evaluation when locale changes
 	void locale
@@ -42,10 +40,8 @@ export function VideoOverlay() {
 
 		// Exit fullscreen
 		if (document.fullscreenElement) {
-			document.exitFullscreen().catch(err => {
-				console.error(
-					`Error attempting to exit full-screen mode: ${err.message} (${err.name})`
-				)
+			document.exitFullscreen().catch((err) => {
+				console.error(`Error attempting to exit full-screen mode: ${err.message} (${err.name})`)
 			})
 		}
 
@@ -72,10 +68,7 @@ export function VideoOverlay() {
 	}
 
 	return (
-		<div
-			className={`video-overlay ${isVisible ? "visible" : ""}`}
-			id="video-overlay"
-		>
+		<div className={`video-overlay ${isVisible ? "visible" : ""}`} id="video-overlay">
 			<div className="video-fullscreen-wrapper">
 				<iframe
 					id="youtube-player"

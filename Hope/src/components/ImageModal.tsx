@@ -1,6 +1,6 @@
+import { isVisible } from "@testing-library/user-event/dist/cjs/utils/index.js"
 import { useCallback, useEffect, useState } from "react"
 import { useI18nStore } from "../store"
-import { isVisible } from "@testing-library/user-event/dist/cjs/utils/index.js"
 
 interface ImageModalProps {
 	isOpen: boolean

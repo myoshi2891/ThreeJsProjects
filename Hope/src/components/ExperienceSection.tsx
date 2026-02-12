@@ -14,14 +14,12 @@ export function ExperienceSection() {
 	const [isButtonHidden, setIsButtonHidden] = useState(false)
 	// State for the slow fade-out animation
 	const [isFading, setIsFading] = useState(false)
-	const setHopeMode = useAppStore(state => state.setHopeMode)
-	const isVideoThumbnailVisible = useAppStore(
-		state => state.isVideoThumbnailVisible
-	)
+	const setHopeMode = useAppStore((state) => state.setHopeMode)
+	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
 	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore(state => state.locale)
-	const t = useI18nStore(state => state.t)
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
 
 	// Force re-evaluation when locale changes
 	void locale

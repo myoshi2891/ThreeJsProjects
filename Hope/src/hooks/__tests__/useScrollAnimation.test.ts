@@ -99,7 +99,9 @@ describe("useScrollAnimation", () => {
 		expect(nav.classList.contains("scrolled")).toBe(false)
 
 		// ScrollTriggerのonUpdateコールバックをシミュレート
-		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
+		const navTrigger = scrollTriggersRef.find(
+			t => t.config.start === "top -80"
+		)
 		expect(navTrigger).toBeDefined()
 
 		if (navTrigger?.config.onUpdate) {
@@ -115,7 +117,9 @@ describe("useScrollAnimation", () => {
 		// まずscrolledクラスを追加
 		nav.classList.add("scrolled")
 
-		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
+		const navTrigger = scrollTriggersRef.find(
+			t => t.config.start === "top -80"
+		)
 		if (navTrigger?.config.onUpdate) {
 			navTrigger.config.onUpdate({ progress: 0, direction: -1 })
 		}
@@ -129,7 +133,10 @@ describe("useScrollAnimation", () => {
 		// 修正: 確実にターゲットと一致するトリガーを見つける
 		// 実装では trigger: "body", start: "top top" が背景用
 		const bgTrigger = scrollTriggersRef.find(
-			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
+			t =>
+				t.config.trigger === "body" &&
+				t.config.start === "top top" &&
+				t.config.onUpdate
 		)
 		expect(bgTrigger).toBeDefined()
 
@@ -147,7 +154,10 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const bgTrigger = scrollTriggersRef.find(
-			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
+			t =>
+				t.config.trigger === "body" &&
+				t.config.start === "top top" &&
+				t.config.onUpdate
 		)
 
 		// 初回更新
@@ -170,7 +180,10 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const bgTrigger = scrollTriggersRef.find(
-			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
+			t =>
+				t.config.trigger === "body" &&
+				t.config.start === "top top" &&
+				t.config.onUpdate
 		)
 
 		if (bgTrigger?.config.onUpdate) {
@@ -184,9 +197,9 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const storyTriggers = scrollTriggersRef.filter(
-			(t) =>
+			t =>
 				t.config.trigger instanceof HTMLElement &&
-				t.config.trigger.classList.contains("story-content"),
+				t.config.trigger.classList.contains("story-content")
 		)
 
 		expect(storyTriggers.length).toBe(2)
@@ -225,9 +238,9 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const experienceTrigger = scrollTriggersRef.find(
-			(t) =>
+			t =>
 				t.config.trigger instanceof HTMLElement &&
-				t.config.trigger.classList.contains("experience-content"),
+				t.config.trigger.classList.contains("experience-content")
 		)
 
 		expect(experienceTrigger).toBeDefined()
@@ -280,7 +293,7 @@ describe("useScrollAnimation", () => {
 		expect(bgImage).toBeTruthy()
 
 		const bgTrigger = scrollTriggersRef.find(
-			(t) => t.config.trigger === "body" && t.config.start === "top top",
+			t => t.config.trigger === "body" && t.config.start === "top top"
 		)
 
 		expect(bgTrigger).toBeDefined()
