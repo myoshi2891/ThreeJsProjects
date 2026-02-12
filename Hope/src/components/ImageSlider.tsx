@@ -55,7 +55,7 @@ export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderPr
 					// biome-ignore lint/a11y/useSemanticElements: WAI-ARIA Carousel slide pattern
 					<div
 						key={image}
-						className="image-slider-slide"
+						className={`image-slider-slide ${index === currentIndex ? "active" : ""}`}
 						role="group"
 						aria-roledescription="slide"
 						aria-label={t("slider.slideLabel")

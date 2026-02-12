@@ -1370,6 +1370,8 @@ body.hope-mode .video-thumbnail-wrapper {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	outline: none;
+	/* スクロールアニメーションを遅くする */
+	scroll-timeline: --slider-scroll x;
 }
 
 .image-slider-track::-webkit-scrollbar {
@@ -1379,6 +1381,20 @@ body.hope-mode .video-thumbnail-wrapper {
 .image-slider-slide {
 	flex: 0 0 100%;
 	scroll-snap-align: center;
+	/* フェードイン/フェードアウト効果 */
+	opacity: 0.3;
+	transform: scale(0.92);
+	filter: blur(2px);
+	transition:
+		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-slider-slide.active {
+	opacity: 1;
+	transform: scale(1);
+	filter: blur(0);
 }
 
 .image-slider-btn {
@@ -1515,6 +1531,13 @@ body.hope-mode .image-slider-dot.active {
 @media (prefers-reduced-motion: reduce) {
 	.image-slider-track {
 		scroll-behavior: auto;
+	}
+
+	.image-slider-slide {
+		opacity: 1;
+		transform: none;
+		filter: none;
+		transition: none;
 	}
 
 	.image-slider-image,
