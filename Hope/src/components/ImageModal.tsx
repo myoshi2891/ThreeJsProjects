@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { useI18nStore } from "../store"
+import { isVisible } from "@testing-library/user-event/dist/cjs/utils/index.js"
 
 interface ImageModalProps {
 	isOpen: boolean
@@ -21,9 +22,12 @@ export function ImageModal({
 	initialIndex = 0,
 	onClose,
 }: ImageModalProps) {
-	const [isClosing, setIsClosing] = useState(false)
+	// State for fade/scale animation
+	const [isVisible, setIsVisible] = useState(false)
+	// State for switching images
+	const [isSwitching, setIsSwitching] = useState(false)
 	const [currentIndex, setCurrentIndex] = useState(initialIndex)
-	const t = useI18nStore((state) => state.t)
+	const t = useI18nStore(state => state.t)
 
 	// 配列かどうかを判定
 	const images = Array.isArray(imageSrc) ? imageSrc : [imageSrc]
@@ -35,21 +39,42 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
+	// Trigger entry animation
+	useEffect(() => {
+		if (isOpen) {
+			requestAnimationFrame(() => {
+				setIsVisible(true)
+			})
+		} else {
+			setIsVisible(false)
+			setIsSwitching(false)
+		}
+	}, [isOpen])
+
 	const handleClose = useCallback(() => {
-		setIsClosing(true)
+		setIsVisible(false)
 		setTimeout(() => {
-			setIsClosing(false)
 			onClose()
-		}, 400) // アニメーション時間に合わせる
+		}, 500) // アニメーション時間に合わせる (CSS transition matches VideoOverlay)
 	}, [onClose])
 
 	const goNext = useCallback(() => {
-		setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
-	}, [images.length])
+		if (isSwitching) return
+		setIsSwitching(true)
+		setTimeout(() => {
+			setCurrentIndex(prev => (prev < images.length - 1 ? prev + 1 : 0))
+			setIsSwitching(false)
+		}, 300) // Wait for fade out
+	}, [images.length, isSwitching])
 
 	const goPrev = useCallback(() => {
-		setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
-	}, [images.length])
+		if (isSwitching) return
+		setIsSwitching(true)
+		setTimeout(() => {
+			setCurrentIndex(prev => (prev > 0 ? prev - 1 : images.length - 1))
+			setIsSwitching(false)
+		}, 300) // Wait for fade out
+	}, [images.length, isSwitching])
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
@@ -71,7 +96,7 @@ export function ImageModal({
 					break
 			}
 		},
-		[handleClose, goNext, goPrev, isMultiple],
+		[handleClose, goNext, goPrev, isMultiple]
 	)
 
 	useEffect(() => {
@@ -90,9 +115,9 @@ export function ImageModal({
 	return (
 		<dialog
 			open
-			className={`image-modal-overlay ${isClosing ? "closing" : ""}`}
+			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}
-			onKeyDown={(e) => {
+			onKeyDown={e => {
 				if (e.key === "Escape") {
 					handleClose()
 				}
@@ -114,7 +139,7 @@ export function ImageModal({
 				<button
 					type="button"
 					className="image-modal-nav image-modal-nav--prev"
-					onClick={(e) => {
+					onClick={e => {
 						e.stopPropagation()
 						goPrev()
 					}}
@@ -127,14 +152,14 @@ export function ImageModal({
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
 			<div
 				className="image-modal-content"
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
+				onClick={e => e.stopPropagation()}
+				onKeyDown={e => e.stopPropagation()}
 				role="presentation"
 			>
 				<img
 					src={currentImage}
 					alt={`${imageAlt} ${currentIndex + 1}`}
-					className={`image-modal-img ${isClosing ? "closing" : ""}`}
+					className={`image-modal-img ${isSwitching ? "switching" : ""}`}
 				/>
 			</div>
 
@@ -143,7 +168,7 @@ export function ImageModal({
 				<button
 					type="button"
 					className="image-modal-nav image-modal-nav--next"
-					onClick={(e) => {
+					onClick={e => {
 						e.stopPropagation()
 						goNext()
 					}}

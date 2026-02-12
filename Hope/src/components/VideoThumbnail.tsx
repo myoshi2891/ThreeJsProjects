@@ -13,12 +13,12 @@ import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
  */
 export function VideoThumbnail() {
 	const [isVisible, setIsVisible] = useState(false)
-	const showVideoOverlay = useAppStore((state) => state.showVideoOverlay)
-	const hideVideoThumbnail = useAppStore((state) => state.hideVideoThumbnail)
+	const showVideoOverlay = useAppStore(state => state.showVideoOverlay)
+	const hideVideoThumbnail = useAppStore(state => state.hideVideoThumbnail)
 
 	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
+	const locale = useI18nStore(state => state.locale)
+	const t = useI18nStore(state => state.t)
 
 	// Force re-evaluation when locale changes
 	void locale
@@ -31,15 +31,25 @@ export function VideoThumbnail() {
 	}, [])
 
 	const handleExpand = () => {
+		// Request fullscreen for the document
+		document.documentElement.requestFullscreen().catch(err => {
+			console.error(
+				`Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+			)
+		})
+
 		setIsVisible(false)
 		setTimeout(() => {
 			hideVideoThumbnail()
 			showVideoOverlay()
-		}, 300)
+		}, 500)
 	}
 
 	return (
-		<div className={`video-thumbnail ${isVisible ? "visible" : ""}`} id="video-thumbnail">
+		<div
+			className={`video-thumbnail ${isVisible ? "visible" : ""}`}
+			id="video-thumbnail"
+		>
 			<div className="video-thumbnail-wrapper">
 				<iframe
 					id="youtube-thumbnail-player"

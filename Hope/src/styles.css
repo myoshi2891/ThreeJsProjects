@@ -767,6 +767,12 @@ body.hope-mode .story-thumbnail-image:hover {
 		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+.experience-btn.fading {
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 1.5s ease-out;
+}
+
 /* =====================================================
    Hope Mode - Light Background Styles（ボタン押下後）
    ===================================================== */
@@ -1051,15 +1057,17 @@ body.hope-mode .hero-badge {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	animation: fadeIn 0.4s ease;
+	/* Base state (hidden) */
+	opacity: 0;
+	pointer-events: none;
 	transition:
-		opacity 0.4s ease,
-		background 0.4s ease;
+		opacity 0.5s ease,
+		background 0.5s ease;
 }
 
-.image-modal-overlay.closing {
-	opacity: 0;
-	background: rgba(0, 0, 0, 0);
+.image-modal-overlay.visible {
+	opacity: 1;
+	pointer-events: auto;
 }
 
 .image-modal-content {
@@ -1078,15 +1086,23 @@ body.hope-mode .hero-badge {
 	object-fit: cover;
 	border-radius: 0;
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-	animation: fadeInUp 0.4s ease;
+	/* Base state (scaled down) */
+	transform: scale(0.95);
 	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease;
+		opacity 0.5s ease,
+		transform 0.5s ease;
 }
 
-.image-modal-img.closing {
+.image-modal-img.switching {
 	opacity: 0;
-	transform: translateY(30px) scale(0.95);
+	transform: scale(0.98);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
+}
+
+.image-modal-overlay.visible .image-modal-img {
+	transform: scale(1);
 }
 
 .image-modal-close {
@@ -1215,11 +1231,15 @@ body.hope-mode .hero-badge {
 	align-items: center;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity var(--transition-slow);
+	transform: scale(0.95);
+	transition:
+		opacity var(--transition-slow),
+		transform var(--transition-slow);
 }
 
 .video-overlay.visible {
 	opacity: 1;
+	transform: scale(1);
 	pointer-events: auto;
 }
 
