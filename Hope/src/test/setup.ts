@@ -29,7 +29,7 @@ if (typeof HTMLCanvasElement !== "undefined") {
 
 	HTMLCanvasElement.prototype.getContext = vi.fn(function (
 		this: HTMLCanvasElement,
-		contextId: Parameters<HTMLCanvasElement["getContext"]>[0],
+		contextId: string,
 		...args: any[]
 	) {
 		if (contextId === "webgl" || contextId === "webgl2") {

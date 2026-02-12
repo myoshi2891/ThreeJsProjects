@@ -8,8 +8,14 @@ import { useScrollAnimation } from "../useScrollAnimation"
 // テスト内で検証するためのグローバルな参照用変数
 // 共通GSAPモック
 // テスト内で検証するためのグローバルな参照用変数
+interface MockScrollTrigger {
+	config: any
+	killed: boolean
+	kill: () => void
+}
+
 const { scrollTriggersRef } = vi.hoisted(() => {
-	return { scrollTriggersRef: [] }
+	return { scrollTriggersRef: [] as MockScrollTrigger[] }
 })
 
 vi.mock("gsap", async () => {
