@@ -159,7 +159,11 @@ body {
 	right: 0;
 	width: 80px;
 	height: 80px;
-	background: linear-gradient(135deg, transparent 0%, var(--color-bg-dark) 60%);
+	background: linear-gradient(
+		135deg,
+		transparent 0%,
+		var(--color-bg-dark) 60%
+	);
 	pointer-events: none;
 }
 
@@ -328,7 +332,9 @@ body.hope-mode .language-toggle:hover {
 	align-items: center;
 	text-align: center;
 	padding: var(--space-4xl) var(--space-xl);
-	padding-bottom: calc(var(--space-4xl) + 120px); /* Extra space for scroll indicator */
+	padding-bottom: calc(
+		var(--space-4xl) + 120px
+	); /* Extra space for scroll indicator */
 	z-index: var(--z-ui);
 }
 
@@ -555,7 +561,11 @@ body.hope-mode .language-toggle:hover {
 
 .loading-progress-bar {
 	height: 100%;
-	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
+	background: linear-gradient(
+		90deg,
+		var(--color-accent-dim),
+		var(--color-accent-bright)
+	);
 	width: var(--progress-width, 0%);
 	transition: width var(--transition-slow);
 }
@@ -718,7 +728,11 @@ body.hope-mode .story-thumbnail-image:hover {
 
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
-	background: linear-gradient(135deg, rgba(10, 15, 26, 0.8) 0%, rgba(26, 37, 53, 0.9) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(10, 15, 26, 0.8) 0%,
+		rgba(26, 37, 53, 0.9) 100%
+	);
 	border: 2px solid var(--color-accent);
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
@@ -751,12 +765,6 @@ body.hope-mode .story-thumbnail-image:hover {
 		0 8px 40px var(--color-accent-glow),
 		0 16px 60px rgba(231, 111, 81, 0.3),
 		inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.experience-btn.hidden {
-	opacity: 0;
-	pointer-events: none;
-	transform: scale(0.9);
 }
 
 /* =====================================================
@@ -1038,7 +1046,7 @@ body.hope-mode .hero-badge {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, 0.95);
 	z-index: var(--z-modal);
 	display: flex;
 	justify-content: center;
@@ -1055,21 +1063,21 @@ body.hope-mode .hero-badge {
 }
 
 .image-modal-content {
+	width: 100%;
 	max-width: 90vw;
 	max-height: 90vh;
+	aspect-ratio: 16 / 9;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .image-modal-img {
-	max-width: 100%;
-	max-height: 90vh;
-	object-fit: contain;
-	border-radius: var(--radius-xl);
-	box-shadow:
-		0 20px 60px rgba(0, 0, 0, 0.5),
-		0 40px 100px rgba(0, 0, 0, 0.3);
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 0;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 	animation: fadeInUp 0.4s ease;
 	transition:
 		opacity 0.4s ease,
@@ -1375,6 +1383,10 @@ body.hope-mode .video-thumbnail-wrapper {
 	scroll-timeline: --slider-scroll x;
 }
 
+.experience-btn.hidden {
+	display: none;
+}
+
 .image-slider-track::-webkit-scrollbar {
 	display: none;
 }
@@ -1383,19 +1395,16 @@ body.hope-mode .video-thumbnail-wrapper {
 	flex: 0 0 100%;
 	scroll-snap-align: center;
 
-	/* フェードイン/フェードアウト効果 */
+	/* フェードイン効果のみ（サイズ変更は削除） */
 	opacity: 0.3;
-	transform: scale(0.92);
 	filter: blur(2px);
 	transition:
 		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
 		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .image-slider-slide.active {
 	opacity: 1;
-	transform: scale(1);
 	filter: blur(0);
 }
 
@@ -1411,7 +1420,7 @@ body.hope-mode .video-thumbnail-wrapper {
 .image-slider-image {
 	width: 100%;
 	height: auto;
-	aspect-ratio: 16 / 10;
+	aspect-ratio: 16 / 9;
 	object-fit: cover;
 	border-radius: var(--radius-lg);
 	box-shadow:
