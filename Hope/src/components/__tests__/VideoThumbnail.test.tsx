@@ -11,6 +11,8 @@ describe("VideoThumbnail", () => {
 			cb(0)
 			return 0
 		})
+		// Mock requestFullscreen API
+		document.documentElement.requestFullscreen = vi.fn(() => Promise.resolve())
 		useAppStore.setState({
 			isVideoThumbnailVisible: false, // Note: Component ignores this prop and renders if parent mounts it, but good to reset logic
 		})
@@ -50,9 +52,9 @@ describe("VideoThumbnail", () => {
 		// Store state shouldn't change yet
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 
-		// Fast forward
+		// Fast forward (500msはコンポーネントのtimeout値と一致)
 		act(() => {
-			vi.advanceTimersByTime(300)
+			vi.advanceTimersByTime(500)
 		})
 
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
