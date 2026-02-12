@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useAppStore, useI18nStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
@@ -11,9 +11,12 @@ import { VideoThumbnail } from "./VideoThumbnail"
  * @returns The section's JSX element containing the number, title, description, and VideoThumbnail.
  */
 export function ExperienceSection() {
+	// State to track if the button should be in the DOM (for accessibility)
 	const [isButtonHidden, setIsButtonHidden] = useState(false)
 	// State for the slow fade-out animation
 	const [isFading, setIsFading] = useState(false)
+	const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
@@ -24,16 +27,30 @@ export function ExperienceSection() {
 	// Force re-evaluation when locale changes
 	void locale
 
-	const handleHopeClick = () => {
-		// Start slow fade out
-		setIsFading(true)
-		setHopeMode(true)
+	const handleHopeClick = useCallback(() => {
+		if (isFading) return
 
-		// Remove from layout after fade completes (1.5s)
-		setTimeout(() => {
+		setIsFading(true)
+
+		// Clear any existing timeout
+		if (fadeTimeoutRef.current) {
+			clearTimeout(fadeTimeoutRef.current)
+		}
+
+		fadeTimeoutRef.current = setTimeout(() => {
+			setHopeMode(true)
 			setIsButtonHidden(true)
-		}, 1500)
-	}
+		}, 800) // Match CSS transition duration
+	}, [setHopeMode, isFading])
+
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (fadeTimeoutRef.current) {
+				clearTimeout(fadeTimeoutRef.current)
+			}
+		}
+	}, [])
 
 	return (
 		<section className="experience-section" id="experience">
@@ -44,19 +61,21 @@ export function ExperienceSection() {
 					{t("experience.quote")}
 					<br />- {t("experience.author")}
 				</p>
-				<div className="story-thumbnail">
-					<button
-						type="button"
-						className={`experience-btn ${isFading ? "fading" : ""} ${isButtonHidden ? "hidden" : ""}`}
-						id="hope-btn"
-						onClick={handleHopeClick}
-						aria-label={t("experience.ctaLabel")}
-					>
-						{t("experience.cta")}
-					</button>
-
-					{isVideoThumbnailVisible && <VideoThumbnail />}
+				<div className="experience-cta">
+					{!isButtonHidden && (
+						<button
+							type="button"
+							className={`experience-btn ${isFading ? "fading" : ""}`}
+							id="hope-btn"
+							onClick={handleHopeClick}
+							aria-label={t("experience.cta")}
+							disabled={isFading}
+						>
+							{t("experience.cta")}
+						</button>
+					)}
 				</div>
+				{isVideoThumbnailVisible && <VideoThumbnail />}
 			</div>
 		</section>
 	)

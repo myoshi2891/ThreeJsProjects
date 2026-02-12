@@ -1,5 +1,4 @@
-import { isVisible } from "@testing-library/user-event/dist/cjs/utils/index.js"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useI18nStore } from "../store"
 
 interface ImageModalProps {
@@ -27,7 +26,7 @@ export function ImageModal({
 	// State for switching images
 	const [isSwitching, setIsSwitching] = useState(false)
 	const [currentIndex, setCurrentIndex] = useState(initialIndex)
-	const t = useI18nStore(state => state.t)
+	const t = useI18nStore((state) => state.t)
 
 	// 配列かどうかを判定
 	const images = Array.isArray(imageSrc) ? imageSrc : [imageSrc]
@@ -39,21 +38,38 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
+	// Refs for cleanup
+	const switchingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+	const closingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
 	// Trigger entry animation
 	useEffect(() => {
+		let rafId: number
 		if (isOpen) {
-			requestAnimationFrame(() => {
+			rafId = requestAnimationFrame(() => {
 				setIsVisible(true)
 			})
 		} else {
 			setIsVisible(false)
 			setIsSwitching(false)
 		}
+		return () => {
+			if (rafId) cancelAnimationFrame(rafId)
+		}
 	}, [isOpen])
+
+	// Cleanup timeouts on unmount
+	useEffect(() => {
+		return () => {
+			if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
+			if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current)
+		}
+	}, [])
 
 	const handleClose = useCallback(() => {
 		setIsVisible(false)
-		setTimeout(() => {
+		if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current)
+		closingTimeoutRef.current = setTimeout(() => {
 			onClose()
 		}, 500) // アニメーション時間に合わせる (CSS transition matches VideoOverlay)
 	}, [onClose])
@@ -61,8 +77,9 @@ export function ImageModal({
 	const goNext = useCallback(() => {
 		if (isSwitching) return
 		setIsSwitching(true)
-		setTimeout(() => {
-			setCurrentIndex(prev => (prev < images.length - 1 ? prev + 1 : 0))
+		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
+		switchingTimeoutRef.current = setTimeout(() => {
+			setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
 	}, [images.length, isSwitching])
@@ -70,8 +87,9 @@ export function ImageModal({
 	const goPrev = useCallback(() => {
 		if (isSwitching) return
 		setIsSwitching(true)
-		setTimeout(() => {
-			setCurrentIndex(prev => (prev > 0 ? prev - 1 : images.length - 1))
+		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
+		switchingTimeoutRef.current = setTimeout(() => {
+			setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
 	}, [images.length, isSwitching])
@@ -96,7 +114,7 @@ export function ImageModal({
 					break
 			}
 		},
-		[handleClose, goNext, goPrev, isMultiple]
+		[handleClose, goNext, goPrev, isMultiple],
 	)
 
 	useEffect(() => {
@@ -117,7 +135,7 @@ export function ImageModal({
 			open
 			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}
-			onKeyDown={e => {
+			onKeyDown={(e) => {
 				if (e.key === "Escape") {
 					handleClose()
 				}
@@ -139,7 +157,7 @@ export function ImageModal({
 				<button
 					type="button"
 					className="image-modal-nav image-modal-nav--prev"
-					onClick={e => {
+					onClick={(e) => {
 						e.stopPropagation()
 						goPrev()
 					}}
@@ -152,8 +170,8 @@ export function ImageModal({
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
 			<div
 				className="image-modal-content"
-				onClick={e => e.stopPropagation()}
-				onKeyDown={e => e.stopPropagation()}
+				onClick={(e) => e.stopPropagation()}
+				onKeyDown={(e) => e.stopPropagation()}
 				role="presentation"
 			>
 				<img
@@ -168,7 +186,7 @@ export function ImageModal({
 				<button
 					type="button"
 					className="image-modal-nav image-modal-nav--next"
-					onClick={e => {
+					onClick={(e) => {
 						e.stopPropagation()
 						goNext()
 					}}
