@@ -10,9 +10,6 @@ describe("StorySection", () => {
 		expect(screen.getByText(/Hope is the pillar/)).toBeInTheDocument()
 
 		// ID check unique to hope/light
-		// ID check unique to hope/light
-		// Better strategy: select by ID to verify it exists
-		// The component renders a <section> with id="hope"
 		const sectionElement = document.getElementById("hope")
 		expect(sectionElement).toBeInTheDocument()
 	})
@@ -27,25 +24,45 @@ describe("StorySection", () => {
 		expect(sectionElement).not.toBeInTheDocument()
 	})
 
-	it("should open modal when thumbnail is clicked", () => {
+	it("should render ImageSlider with all section images", () => {
 		render(<StorySection type="hope" />)
 
-		const button = screen.getByRole("button", { name: /View Hope image/i })
-		expect(button).toBeInTheDocument()
+		// スライダーのカルーセルが表示されている
+		const slider = screen.getByRole("region", { name: /Hope/i })
+		expect(slider).toBeInTheDocument()
+		expect(slider).toHaveAttribute("aria-roledescription", "carousel")
 
-		// Verify Image Alt
-		const img = screen.getByAltText("Hope")
-		expect(img).toBeInTheDocument()
-		expect(img).toHaveAttribute("src", "/images/hope-pillar.webp")
+		// 7枚の画像（Hopeセクション）
+		const images = screen.getAllByRole("img")
+		expect(images.length).toBe(7)
+	})
 
-		fireEvent.click(button)
+	it("should open modal when slider image is clicked", () => {
+		render(<StorySection type="hope" />)
 
-		// Modal verification
+		// 最初の画像をクリック
+		const buttons = screen.getAllByRole("button", { name: /View image/i })
+		expect(buttons.length).toBeGreaterThan(0)
+
+		fireEvent.click(buttons[0])
+
+		// モーダルが開く
 		const modal = screen.getByRole("dialog", { name: /Image viewer/i })
 		expect(modal).toBeInTheDocument()
+	})
 
-		// Verify modal content matches section
-		const modalImg = screen.getAllByAltText("Hope")[1] // One in thumbnail, one in modal
-		expect(modalImg).toBeInTheDocument()
+	it("should show navigation in modal when multiple images", () => {
+		render(<StorySection type="hope" />)
+
+		// 画像をクリックしてモーダルを開く
+		const buttons = screen.getAllByRole("button", { name: /View image/i })
+		fireEvent.click(buttons[0])
+
+		// ナビゲーションボタンが表示される
+		expect(screen.getByLabelText("Previous image")).toBeInTheDocument()
+		expect(screen.getByLabelText("Next image")).toBeInTheDocument()
+
+		// カウンターが表示される
+		expect(screen.getByText(/1 of 7/)).toBeInTheDocument()
 	})
 })
