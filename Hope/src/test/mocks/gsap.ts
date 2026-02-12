@@ -4,13 +4,15 @@ import { vi } from "vitest"
  * GSAP & ScrollTrigger モックファクトリ
  * 全アニメーションテストの基盤となる共通モック
  */
-export const createGSAPMock = () => {
-	// ScrollTriggerインスタンスを保持
-	const scrollTriggers: Array<{
+export const createGSAPMock = (
+	injectedScrollTriggers?: Array<{
 		config: any
 		kill: () => void
 		killed: boolean
-	}> = []
+	}>,
+) => {
+	// ScrollTriggerインスタンスを保持
+	const scrollTriggers = injectedScrollTriggers || []
 
 	const timelineMock = {
 		to: vi.fn(function (this: unknown, target: unknown, config: unknown) {
@@ -50,8 +52,19 @@ export const createGSAPMock = () => {
 		gsap: {
 			timeline: vi.fn(() => timelineMock),
 			to: vi.fn((_target: unknown, _config: unknown) => {
-				// gsap.to()のモック動作（背景フィルタアニメーション等）
-				// 必要に応じて実装
+				// gsap.to()のモック動作
+				// 最小限のTweenオブジェクトを返す（chainingやkill()呼び出しに対応）
+				return {
+					kill: vi.fn(),
+					pause: vi.fn(),
+					resume: vi.fn(),
+					progress: vi.fn(),
+					// biome-ignore lint/suspicious/noThenProperty: Mocking a Thenable interface
+					then: vi.fn().mockImplementation((cb) => {
+						if (cb) cb()
+						return Promise.resolve()
+					}),
+				}
 			}),
 			registerPlugin: vi.fn(),
 		},

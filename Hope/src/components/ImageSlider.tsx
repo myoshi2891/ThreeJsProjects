@@ -49,13 +49,20 @@ export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderPr
 			aria-label={t("slider.ariaLabel").replace("{section}", sectionName)}
 		>
 			{/* スライダートラック */}
-			{/* biome-ignore lint/a11y/noNoninteractiveTabindex: キーボードナビゲーションに必要 */}
-			<div ref={containerRef} className="image-slider-track" tabIndex={0} aria-live="polite">
+			<div
+				ref={containerRef}
+				className="image-slider-track"
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: キーボードナビゲーションに必要
+				tabIndex={0}
+				aria-live="polite"
+			>
 				{images.map((image, index) => (
 					// biome-ignore lint/a11y/useSemanticElements: WAI-ARIA Carousel slide pattern
 					<div
 						key={image}
-						className={`image-slider-slide ${index === currentIndex ? "active" : ""}`}
+						className={["image-slider-slide", index === currentIndex && "active"]
+							.filter(Boolean)
+							.join(" ")}
 						role="group"
 						aria-roledescription="slide"
 						aria-label={t("slider.slideLabel")
