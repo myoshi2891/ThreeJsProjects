@@ -1,34 +1,77 @@
 import { useCallback, useEffect, useState } from "react"
+import { useI18nStore } from "../store"
 
 interface ImageModalProps {
 	isOpen: boolean
-	imageSrc: string
+	imageSrc: string | string[]
 	imageAlt: string
+	initialIndex?: number
 	onClose: () => void
 }
 
 /**
- * A fullscreen modal overlay for displaying images.
- * Closes on click outside the image, Escape key, or close button.
+ * 画像をフルスクリーンで表示するモーダルオーバーレイ
+ * 画像の外側クリック、Escキー、閉じるボタンで閉じる
+ * 画像配列が渡された場合、左右矢印で画像を切り替え可能
  */
-export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalProps) {
+export function ImageModal({
+	isOpen,
+	imageSrc,
+	imageAlt,
+	initialIndex = 0,
+	onClose,
+}: ImageModalProps) {
 	const [isClosing, setIsClosing] = useState(false)
+	const [currentIndex, setCurrentIndex] = useState(initialIndex)
+	const t = useI18nStore((state) => state.t)
+
+	// 配列かどうかを判定
+	const images = Array.isArray(imageSrc) ? imageSrc : [imageSrc]
+	const isMultiple = images.length > 1
+	const currentImage = images[currentIndex]
+
+	// initialIndexが変更されたらリセット
+	useEffect(() => {
+		setCurrentIndex(initialIndex)
+	}, [initialIndex])
 
 	const handleClose = useCallback(() => {
 		setIsClosing(true)
 		setTimeout(() => {
 			setIsClosing(false)
 			onClose()
-		}, 400) // Match animation duration
+		}, 400) // アニメーション時間に合わせる
 	}, [onClose])
+
+	const goNext = useCallback(() => {
+		setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
+	}, [images.length])
+
+	const goPrev = useCallback(() => {
+		setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
+	}, [images.length])
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				handleClose()
+			switch (e.key) {
+				case "Escape":
+					handleClose()
+					break
+				case "ArrowLeft":
+					if (isMultiple) {
+						e.preventDefault()
+						goPrev()
+					}
+					break
+				case "ArrowRight":
+					if (isMultiple) {
+						e.preventDefault()
+						goNext()
+					}
+					break
 			}
 		},
-		[handleClose],
+		[handleClose, goNext, goPrev, isMultiple],
 	)
 
 	useEffect(() => {
@@ -61,10 +104,26 @@ export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalPr
 				type="button"
 				className="image-modal-close"
 				onClick={handleClose}
-				aria-label="Close modal"
+				aria-label={t("imageModal.close")}
 			>
 				✕
 			</button>
+
+			{/* 前へボタン */}
+			{isMultiple && (
+				<button
+					type="button"
+					className="image-modal-nav image-modal-nav--prev"
+					onClick={(e) => {
+						e.stopPropagation()
+						goPrev()
+					}}
+					aria-label={t("imageModal.previousImage")}
+				>
+					‹
+				</button>
+			)}
+
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
 			<div
 				className="image-modal-content"
@@ -73,11 +132,35 @@ export function ImageModal({ isOpen, imageSrc, imageAlt, onClose }: ImageModalPr
 				role="presentation"
 			>
 				<img
-					src={imageSrc}
-					alt={imageAlt}
+					src={currentImage}
+					alt={`${imageAlt} ${currentIndex + 1}`}
 					className={`image-modal-img ${isClosing ? "closing" : ""}`}
 				/>
 			</div>
+
+			{/* 次へボタン */}
+			{isMultiple && (
+				<button
+					type="button"
+					className="image-modal-nav image-modal-nav--next"
+					onClick={(e) => {
+						e.stopPropagation()
+						goNext()
+					}}
+					aria-label={t("imageModal.nextImage")}
+				>
+					›
+				</button>
+			)}
+
+			{/* カウンター */}
+			{isMultiple && (
+				<div className="image-modal-counter">
+					{t("imageModal.counter")
+						.replace("{current}", String(currentIndex + 1))
+						.replace("{total}", String(images.length))}
+				</div>
+			)}
 		</dialog>
 	)
 }

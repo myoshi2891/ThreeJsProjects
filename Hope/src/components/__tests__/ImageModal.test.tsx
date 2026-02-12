@@ -24,7 +24,7 @@ describe("ImageModal", () => {
 		render(<ImageModal isOpen={true} imageSrc="test.jpg" imageAlt="Test Image" onClose={onClose} />)
 
 		expect(screen.getByRole("dialog")).toBeInTheDocument()
-		expect(screen.getByRole("img", { name: "Test Image" })).toHaveAttribute("src", "test.jpg")
+		expect(screen.getByRole("img", { name: "Test Image 1" })).toHaveAttribute("src", "test.jpg")
 		expect(document.body).toHaveClass("no-scroll")
 	})
 
@@ -32,7 +32,7 @@ describe("ImageModal", () => {
 		const onClose = vi.fn()
 		render(<ImageModal isOpen={true} imageSrc="test.jpg" imageAlt="Test Image" onClose={onClose} />)
 
-		const closeBtn = screen.getByRole("button", { name: "Close modal" })
+		const closeBtn = screen.getByRole("button", { name: "Close image" })
 		fireEvent.click(closeBtn)
 
 		// Check for closing class

@@ -57,6 +57,18 @@
 	},
 	"imageModal": {
 		"close": "Close image",
-		"viewImage": "View {title} image"
+		"viewImage": "View {title} image",
+		"counter": "{current} of {total}",
+		"previousImage": "Previous image",
+		"nextImage": "Next image"
+	},
+	"slider": {
+		"ariaLabel": "Image slider for {section}",
+		"slideLabel": "Slide {current} of {total}",
+		"viewImage": "View image {number}",
+		"previous": "Previous slide",
+		"next": "Next slide",
+		"dotsLabel": "Slide navigation",
+		"goToSlide": "Go to slide {number}"
 	}
 }
