@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { useHopeAnimation } from "../useHopeAnimation"
-import { resetAllStores } from "../../test/helpers/storeReset"
 import { useAppStore, useSceneStore } from "../../store"
+import { resetAllStores } from "../../test/helpers/storeReset"
+import { useHopeAnimation } from "../useHopeAnimation"
 
 // GSAPモジュール全体をモック化
 vi.mock("gsap", () => {

@@ -1,13 +1,13 @@
+import type { WebGLRenderer } from "three"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { HopeAnimation } from "../HopeAnimation"
-import type { SceneParams } from "../../types"
-import type { Rain } from "../../scene/objects/Rain"
+import type { GodRays } from "../../effects/GodRays"
 import type { PostProcessing } from "../../effects/PostProcessing"
 import type { AssetLoader } from "../../loaders/AssetLoader"
-import type { WebGLRenderer } from "three"
 import type { Fog } from "../../scene/objects/Fog"
 import type { LightParticles } from "../../scene/objects/LightParticles"
-import type { GodRays } from "../../effects/GodRays"
+import type { Rain } from "../../scene/objects/Rain"
+import type { SceneParams } from "../../types"
+import { HopeAnimation } from "../HopeAnimation"
 
 // GSAPモジュール全体をモック化
 vi.mock("gsap", () => {
@@ -44,11 +44,7 @@ vi.mock("gsap", () => {
 			timeline: () => timelineMock,
 			to: (target: unknown, config: unknown) => {
 				// gsap.to()も同様の動作
-				if (
-					config &&
-					typeof config === "object" &&
-					"filter" in config
-				) {
+				if (config && typeof config === "object" && "filter" in config) {
 					// 背景画像のフィルタアニメーション用
 					// DOM操作は実際には行わない（モック環境）
 				}
@@ -79,7 +75,8 @@ describe("HopeAnimation", () => {
 		// SceneParams初期化
 		params = {
 			hopeFactor: 0,
-			scrollProgress: 0,
+			bloomStrength: 0,
+			envIntensity: 0,
 		}
 
 		// Rainモック

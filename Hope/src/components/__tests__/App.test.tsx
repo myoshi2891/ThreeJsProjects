@@ -1,8 +1,8 @@
 import { act, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { App } from "../App"
-import { resetAllStores } from "../../test/helpers/storeReset"
 import { useAppStore } from "../../store"
+import { resetAllStores } from "../../test/helpers/storeReset"
+import { App } from "../App"
 
 // モック関数の呼び出し回数を追跡
 let mockStartAnimationCallCount = 0

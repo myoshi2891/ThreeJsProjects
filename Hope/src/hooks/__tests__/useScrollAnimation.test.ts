@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { useScrollAnimation } from "../useScrollAnimation"
-import { resetAllStores } from "../../test/helpers/storeReset"
 import { useSceneStore } from "../../store"
+import { resetAllStores } from "../../test/helpers/storeReset"
+import { useScrollAnimation } from "../useScrollAnimation"
 
 // ScrollTriggerインスタンスを保持（グローバルスコープ）
 const scrollTriggers: Array<{
@@ -34,7 +34,7 @@ vi.mock("gsap", () => {
 vi.mock("gsap/ScrollTrigger", () => {
 	return {
 		ScrollTrigger: {
-			create: (config: unknown) => {
+			create: (config: (typeof scrollTriggers)[number]["config"]) => {
 				const trigger = {
 					config,
 					killed: false,
