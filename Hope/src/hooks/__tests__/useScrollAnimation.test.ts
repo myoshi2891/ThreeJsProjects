@@ -9,7 +9,7 @@ import { useScrollAnimation } from "../useScrollAnimation"
 // 共通GSAPモック
 // テスト内で検証するためのグローバルな参照用変数
 interface MockScrollTrigger {
-	config: any
+	config: Record<string, unknown>
 	killed: boolean
 	kill: () => void
 }
@@ -99,13 +99,14 @@ describe("useScrollAnimation", () => {
 		expect(nav.classList.contains("scrolled")).toBe(false)
 
 		// ScrollTriggerのonUpdateコールバックをシミュレート
-		const navTrigger = scrollTriggersRef.find(
-			t => t.config.start === "top -80"
-		)
+		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		expect(navTrigger).toBeDefined()
 
 		if (navTrigger?.config.onUpdate) {
-			navTrigger.config.onUpdate({ progress: 0.5, direction: 1 })
+			;(navTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0.5,
+				direction: 1,
+			})
 		}
 
 		expect(nav.classList.contains("scrolled")).toBe(true)
@@ -117,11 +118,12 @@ describe("useScrollAnimation", () => {
 		// まずscrolledクラスを追加
 		nav.classList.add("scrolled")
 
-		const navTrigger = scrollTriggersRef.find(
-			t => t.config.start === "top -80"
-		)
+		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		if (navTrigger?.config.onUpdate) {
-			navTrigger.config.onUpdate({ progress: 0, direction: -1 })
+			;(navTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0,
+				direction: -1,
+			})
 		}
 
 		expect(nav.classList.contains("scrolled")).toBe(false)
@@ -133,15 +135,15 @@ describe("useScrollAnimation", () => {
 		// 修正: 確実にターゲットと一致するトリガーを見つける
 		// 実装では trigger: "body", start: "top top" が背景用
 		const bgTrigger = scrollTriggersRef.find(
-			t =>
-				t.config.trigger === "body" &&
-				t.config.start === "top top" &&
-				t.config.onUpdate
+			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 		expect(bgTrigger).toBeDefined()
 
 		if (bgTrigger?.config.onUpdate) {
-			bgTrigger.config.onUpdate({ progress: 0.5, direction: 1 })
+			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0.5,
+				direction: 1,
+			})
 		}
 
 		// brightness: 0.4 + 0.5 * 0.4 = 0.6
@@ -154,22 +156,25 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const bgTrigger = scrollTriggersRef.find(
-			t =>
-				t.config.trigger === "body" &&
-				t.config.start === "top top" &&
-				t.config.onUpdate
+			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
 		// 初回更新
 		if (bgTrigger?.config.onUpdate) {
-			bgTrigger.config.onUpdate({ progress: 0.5, direction: 1 })
+			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0.5,
+				direction: 1,
+			})
 		}
 
 		const initialFilter = bgImage.style.filter
 
 		// 微小な進捗変化（0.02未満）
 		if (bgTrigger?.config.onUpdate) {
-			bgTrigger.config.onUpdate({ progress: 0.501, direction: 1 })
+			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0.501,
+				direction: 1,
+			})
 		}
 
 		// フィルタは更新されない（スロットリング）
@@ -180,14 +185,14 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const bgTrigger = scrollTriggersRef.find(
-			t =>
-				t.config.trigger === "body" &&
-				t.config.start === "top top" &&
-				t.config.onUpdate
+			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
 		if (bgTrigger?.config.onUpdate) {
-			bgTrigger.config.onUpdate({ progress: 0.75, direction: 1 })
+			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
+				progress: 0.75,
+				direction: 1,
+			})
 		}
 
 		expect(useSceneStore.getState().scrollProgress).toBe(0.75)
@@ -197,9 +202,9 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const storyTriggers = scrollTriggersRef.filter(
-			t =>
+			(t) =>
 				t.config.trigger instanceof HTMLElement &&
-				t.config.trigger.classList.contains("story-content")
+				t.config.trigger.classList.contains("story-content"),
 		)
 
 		expect(storyTriggers.length).toBe(2)
@@ -207,28 +212,28 @@ describe("useScrollAnimation", () => {
 		// onEnterをシミュレート
 		const trigger = storyTriggers[0]
 		if (trigger.config.onEnter) {
-			trigger.config.onEnter()
+			;(trigger.config.onEnter as () => void)()
 		}
 
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
 		// onLeaveをシミュレート
 		if (trigger.config.onLeave) {
-			trigger.config.onLeave()
+			;(trigger.config.onLeave as () => void)()
 		}
 
 		expect(storyContent1.classList.contains("visible")).toBe(false)
 
 		// onEnterBackをシミュレート
 		if (trigger.config.onEnterBack) {
-			trigger.config.onEnterBack()
+			;(trigger.config.onEnterBack as () => void)()
 		}
 
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
 		// onLeaveBackをシミュレート
 		if (trigger.config.onLeaveBack) {
-			trigger.config.onLeaveBack()
+			;(trigger.config.onLeaveBack as () => void)()
 		}
 
 		expect(storyContent1.classList.contains("visible")).toBe(false)
@@ -238,23 +243,23 @@ describe("useScrollAnimation", () => {
 		renderHook(() => useScrollAnimation())
 
 		const experienceTrigger = scrollTriggersRef.find(
-			t =>
+			(t) =>
 				t.config.trigger instanceof HTMLElement &&
-				t.config.trigger.classList.contains("experience-content")
+				t.config.trigger.classList.contains("experience-content"),
 		)
 
 		expect(experienceTrigger).toBeDefined()
 
 		// onEnterをシミュレート
 		if (experienceTrigger?.config.onEnter) {
-			experienceTrigger.config.onEnter()
+			;(experienceTrigger.config.onEnter as () => void)()
 		}
 
 		expect(experienceContent.classList.contains("visible")).toBe(true)
 
 		// onLeaveBackをシミュレート
 		if (experienceTrigger?.config.onLeaveBack) {
-			experienceTrigger.config.onLeaveBack()
+			;(experienceTrigger.config.onLeaveBack as () => void)()
 		}
 
 		expect(experienceContent.classList.contains("visible")).toBe(false)
@@ -293,7 +298,7 @@ describe("useScrollAnimation", () => {
 		expect(bgImage).toBeTruthy()
 
 		const bgTrigger = scrollTriggersRef.find(
-			t => t.config.trigger === "body" && t.config.start === "top top"
+			(t) => t.config.trigger === "body" && t.config.start === "top top",
 		)
 
 		expect(bgTrigger).toBeDefined()

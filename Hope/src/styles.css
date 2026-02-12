@@ -759,6 +759,10 @@ body.hope-mode .story-thumbnail-image:hover {
 	transition: opacity 1.5s ease-out;
 }
 
+.experience-btn.hidden {
+	display: none;
+}
+
 /* =====================================================
    Hope Mode - Light Background Styles（ボタン押下後）
    ===================================================== */
@@ -1216,6 +1220,7 @@ body.hope-mode .hero-badge {
 	justify-content: center;
 	align-items: center;
 	opacity: 0;
+	visibility: hidden;
 	pointer-events: none;
 	transform: scale(1.05);
 	filter: blur(10px);
@@ -1223,15 +1228,23 @@ body.hope-mode .hero-badge {
 		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
 		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
 		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+		background 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		visibility 0.8s step-end;
 }
 
 .video-overlay.visible {
 	opacity: 1;
+	visibility: visible;
 	transform: scale(1);
 	filter: blur(0);
-	background: rgba(0, 0, 0, 0.95);
+	background: rgb(0 0 0 / 95%);
 	pointer-events: auto;
+	transition:
+		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		background 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		visibility 0s step-start;
 }
 
 .video-overlay.hidden {
@@ -1407,10 +1420,6 @@ body.hope-mode .video-thumbnail-wrapper {
 	outline: none;
 	/* スクロールアニメーションを遅くする */
 	scroll-timeline: --slider-scroll x;
-}
-
-.experience-btn.hidden {
-	display: none;
 }
 
 .image-slider-track::-webkit-scrollbar {
@@ -1593,7 +1602,14 @@ body.hope-mode .image-slider-dot.active {
 	}
 
 	.video-overlay {
-		background: rgba(0, 0, 0, 0.95);
+		background: rgb(0 0 0 / 95%);
+	}
+
+	.image-modal-overlay,
+	.image-modal-img {
+		transition: none;
+		transform: none;
+		opacity: 1;
 	}
 
 	.video-fullscreen-wrapper {

@@ -6,10 +6,10 @@ import { vi } from "vitest"
  */
 export const createGSAPMock = (
 	injectedScrollTriggers?: Array<{
-		config: any
+		config: Record<string, unknown>
 		kill: () => void
 		killed: boolean
-	}>
+	}>,
 ) => {
 	// ScrollTriggerインスタンスを保持
 	const scrollTriggers = injectedScrollTriggers || []
@@ -29,8 +29,7 @@ export const createGSAPMock = (
 					"hopeFactor" in target &&
 					"hopeFactor" in config
 				) {
-					;(target as { hopeFactor: number }).hopeFactor =
-						config.hopeFactor as number
+					;(target as { hopeFactor: number }).hopeFactor = config.hopeFactor as number
 				}
 				config.onUpdate()
 			}
@@ -61,7 +60,7 @@ export const createGSAPMock = (
 					resume: vi.fn(),
 					progress: vi.fn(),
 					// biome-ignore lint/suspicious/noThenProperty: Mocking a Thenable interface
-					then: vi.fn().mockImplementation(cb => {
+					then: vi.fn().mockImplementation((cb) => {
 						if (cb) cb()
 						return Promise.resolve()
 					}),
@@ -70,7 +69,7 @@ export const createGSAPMock = (
 			registerPlugin: vi.fn(),
 		},
 		ScrollTrigger: {
-			create: vi.fn(config => {
+			create: vi.fn((config) => {
 				const trigger = {
 					config,
 					killed: false,

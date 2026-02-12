@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { useAppStore } from "../../store/appStore"
+import { useAppStore } from "../../store"
 import { VideoThumbnail } from "../VideoThumbnail"
 
 describe("VideoThumbnail", () => {
@@ -44,6 +44,9 @@ describe("VideoThumbnail", () => {
 			name: "Expand to fullscreen",
 		})
 		fireEvent.click(expandBtn)
+
+		// requestFullscreen が呼ばれたことを確認
+		expect(document.documentElement.requestFullscreen).toHaveBeenCalled()
 
 		// Should remove visible class immediately (fade out)
 		const container = document.getElementById("video-thumbnail")

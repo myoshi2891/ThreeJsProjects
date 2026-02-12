@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useAppStore, useI18nStore } from "../store"
 import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
 
@@ -23,18 +23,36 @@ export function VideoOverlay() {
 	// Force re-evaluation when locale changes
 	void locale
 
+	const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+	const closingRef = useRef(false)
+
 	useEffect(() => {
+		let rafId: number
 		if (isVideoOverlayVisible) {
+			closingRef.current = false // Reset closing state on open
 			// Small delay to ensure render before adding visible class for transition
-			requestAnimationFrame(() => {
+			rafId = requestAnimationFrame(() => {
 				setIsVisible(true)
 			})
 		} else {
 			setIsVisible(false)
 		}
+		return () => {
+			if (rafId) cancelAnimationFrame(rafId)
+		}
 	}, [isVideoOverlayVisible])
 
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+		}
+	}, [])
+
 	const handleClose = useCallback(() => {
+		if (closingRef.current) return
+		closingRef.current = true
+
 		// Start fade out
 		setIsVisible(false)
 
@@ -46,9 +64,11 @@ export function VideoOverlay() {
 		}
 
 		// Wait for transition to finish before hiding/unmounting
-		setTimeout(() => {
+		if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+		closeTimeoutRef.current = setTimeout(() => {
 			hideVideoOverlay()
 			showVideoThumbnail()
+			closingRef.current = false
 		}, 500) // Matches CSS transition duration
 	}, [hideVideoOverlay, showVideoThumbnail])
 
