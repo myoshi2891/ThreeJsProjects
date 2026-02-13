@@ -37,7 +37,7 @@ export function VideoThumbnail() {
 	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
-			if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current)
+			if (expandTimeoutRef.current !== null) clearTimeout(expandTimeoutRef.current)
 		}
 	}, [])
 
@@ -51,7 +51,7 @@ export function VideoThumbnail() {
 			})
 		}
 
-		if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current)
+		if (expandTimeoutRef.current !== null) clearTimeout(expandTimeoutRef.current)
 		expandTimeoutRef.current = setTimeout(() => {
 			hideVideoThumbnail()
 			showVideoOverlay()

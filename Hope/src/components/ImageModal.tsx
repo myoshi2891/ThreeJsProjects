@@ -38,10 +38,11 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
-	// Refs for cleanup and focus trap
+	// Refs for cleanup, focus trap, and close guard
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const switchingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 	const closingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+	const closingRef = useRef(false)
 
 	// Trigger entry animation
 	useEffect(() => {
@@ -68,10 +69,14 @@ export function ImageModal({
 	}, [])
 
 	const handleClose = useCallback(() => {
+		if (closingRef.current) return
+		closingRef.current = true
+
 		setIsVisible(false)
-		if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current)
+		if (closingTimeoutRef.current !== null) clearTimeout(closingTimeoutRef.current)
 		closingTimeoutRef.current = setTimeout(() => {
 			onClose()
+			closingRef.current = false
 		}, 500) // アニメーション時間に合わせる (CSS transition matches VideoOverlay)
 	}, [onClose])
 
@@ -151,16 +156,12 @@ export function ImageModal({
 	if (!isOpen) return null
 
 	return (
+		// biome-ignore lint/a11y/useKeyWithClickEvents: グローバルkeydownリスナーでキーボード操作を処理済み
 		<dialog
 			ref={dialogRef}
 			open
 			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					handleClose()
-				}
-			}}
 			aria-modal="true"
 			aria-label="Image viewer"
 		>

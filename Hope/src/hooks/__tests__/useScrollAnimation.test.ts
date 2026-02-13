@@ -35,6 +35,14 @@ vi.mock("gsap/ScrollTrigger", async () => {
 	}
 })
 
+/** ScrollTriggerのonUpdateコールバックを型安全に呼び出すヘルパー */
+function invokeOnUpdate(trigger: MockScrollTrigger, args: { progress: number; direction: number }) {
+	const onUpdate = trigger.config.onUpdate as
+		| ((args: { progress: number; direction: number }) => void)
+		| undefined
+	if (onUpdate) onUpdate(args)
+}
+
 describe("useScrollAnimation", () => {
 	let nav: HTMLElement
 	let bgImage: HTMLElement
@@ -100,12 +108,7 @@ describe("useScrollAnimation", () => {
 		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		expect(navTrigger).toBeDefined()
 
-		if (navTrigger?.config.onUpdate) {
-			;(navTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (navTrigger) invokeOnUpdate(navTrigger, { progress: 0.5, direction: 1 })
 
 		expect(nav.classList.contains("scrolled")).toBe(true)
 	})
@@ -117,12 +120,7 @@ describe("useScrollAnimation", () => {
 		nav.classList.add("scrolled")
 
 		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
-		if (navTrigger?.config.onUpdate) {
-			;(navTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0,
-				direction: -1,
-			})
-		}
+		if (navTrigger) invokeOnUpdate(navTrigger, { progress: 0, direction: -1 })
 
 		expect(nav.classList.contains("scrolled")).toBe(false)
 	})
@@ -137,12 +135,7 @@ describe("useScrollAnimation", () => {
 		)
 		expect(bgTrigger).toBeDefined()
 
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.5, direction: 1 })
 
 		// brightness: 0.4 + 0.5 * 0.4 = 0.6
 		// saturation: 0.8 + 0.5 * 0.3 = 0.95
@@ -158,22 +151,12 @@ describe("useScrollAnimation", () => {
 		)
 
 		// 初回更新
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.5, direction: 1 })
 
 		const initialFilter = bgImage.style.filter
 
 		// 微小な進捗変化（0.02未満）
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.501,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.501, direction: 1 })
 
 		// フィルタは更新されない（スロットリング）
 		expect(bgImage.style.filter).toBe(initialFilter)
@@ -186,12 +169,7 @@ describe("useScrollAnimation", () => {
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.75,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.75, direction: 1 })
 
 		expect(useSceneStore.getState().scrollProgress).toBe(0.75)
 	})
