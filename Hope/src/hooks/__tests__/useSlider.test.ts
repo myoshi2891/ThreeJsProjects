@@ -170,4 +170,62 @@ describe("useSlider", () => {
 
 		expect(result.current.currentIndex).toBe(0)
 	})
+
+	it("totalSlides=0でgoNext/goPrevがクラッシュしない", () => {
+		const { result } = renderHook(() => useSlider({ totalSlides: 0 }))
+
+		expect(() => {
+			act(() => {
+				result.current.goNext()
+			})
+		}).not.toThrow()
+
+		expect(() => {
+			act(() => {
+				result.current.goPrev()
+			})
+		}).not.toThrow()
+
+		expect(result.current.currentIndex).toBe(0)
+	})
+
+	it("自動再生のpause→resumeサイクルでタイマーが正常に再開する", () => {
+		const { result } = renderHook(() =>
+			useSlider({ totalSlides: 3, autoPlay: true, autoPlayInterval: 1000 }),
+		)
+
+		// 500ms経過（まだ次に進まない）
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+		expect(result.current.currentIndex).toBe(0)
+
+		// 一時停止
+		act(() => {
+			result.current.pause()
+		})
+
+		// 2秒経過しても進まない
+		act(() => {
+			vi.advanceTimersByTime(2000)
+		})
+		expect(result.current.currentIndex).toBe(0)
+
+		// 再開
+		act(() => {
+			result.current.resume()
+		})
+
+		// 1秒後に進む
+		act(() => {
+			vi.advanceTimersByTime(1000)
+		})
+		expect(result.current.currentIndex).toBe(1)
+
+		// さらに1秒後に進む（タイマー継続確認）
+		act(() => {
+			vi.advanceTimersByTime(1000)
+		})
+		expect(result.current.currentIndex).toBe(2)
+	})
 })
