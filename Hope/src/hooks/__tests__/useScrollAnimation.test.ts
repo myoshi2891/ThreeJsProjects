@@ -43,6 +43,12 @@ function invokeOnUpdate(trigger: MockScrollTrigger, args: { progress: number; di
 	if (onUpdate) onUpdate(args)
 }
 
+/** ScrollTriggerのライフサイクルコールバックを型安全に呼び出すヘルパー */
+function invokeCallback(trigger: MockScrollTrigger, name: string) {
+	const cb = trigger.config[name] as (() => void) | undefined
+	if (cb) cb()
+}
+
 describe("useScrollAnimation", () => {
 	let nav: HTMLElement
 	let bgImage: HTMLElement
@@ -134,6 +140,7 @@ describe("useScrollAnimation", () => {
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 		expect(bgTrigger).toBeDefined()
+		expect(bgTrigger?.config.onUpdate).toBeDefined()
 
 		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.5, direction: 1 })
 
@@ -185,33 +192,18 @@ describe("useScrollAnimation", () => {
 
 		expect(storyTriggers.length).toBe(2)
 
-		// onEnterをシミュレート
 		const trigger = storyTriggers[0]
-		if (trigger.config.onEnter) {
-			;(trigger.config.onEnter as () => void)()
-		}
 
+		invokeCallback(trigger, "onEnter")
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
-		// onLeaveをシミュレート
-		if (trigger.config.onLeave) {
-			;(trigger.config.onLeave as () => void)()
-		}
-
+		invokeCallback(trigger, "onLeave")
 		expect(storyContent1.classList.contains("visible")).toBe(false)
 
-		// onEnterBackをシミュレート
-		if (trigger.config.onEnterBack) {
-			;(trigger.config.onEnterBack as () => void)()
-		}
-
+		invokeCallback(trigger, "onEnterBack")
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
-		// onLeaveBackをシミュレート
-		if (trigger.config.onLeaveBack) {
-			;(trigger.config.onLeaveBack as () => void)()
-		}
-
+		invokeCallback(trigger, "onLeaveBack")
 		expect(storyContent1.classList.contains("visible")).toBe(false)
 	})
 
@@ -226,19 +218,13 @@ describe("useScrollAnimation", () => {
 
 		expect(experienceTrigger).toBeDefined()
 
-		// onEnterをシミュレート
-		if (experienceTrigger?.config.onEnter) {
-			;(experienceTrigger.config.onEnter as () => void)()
+		if (experienceTrigger) {
+			invokeCallback(experienceTrigger, "onEnter")
+			expect(experienceContent.classList.contains("visible")).toBe(true)
+
+			invokeCallback(experienceTrigger, "onLeaveBack")
+			expect(experienceContent.classList.contains("visible")).toBe(false)
 		}
-
-		expect(experienceContent.classList.contains("visible")).toBe(true)
-
-		// onLeaveBackをシミュレート
-		if (experienceTrigger?.config.onLeaveBack) {
-			;(experienceTrigger.config.onLeaveBack as () => void)()
-		}
-
-		expect(experienceContent.classList.contains("visible")).toBe(false)
 	})
 
 	it("unmount時に全てのScrollTriggerがクリーンアップされる", () => {

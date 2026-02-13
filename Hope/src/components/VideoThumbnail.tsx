@@ -46,8 +46,12 @@ export function VideoThumbnail() {
 
 		// Request fullscreen for the document (iOS Safariなど未サポート環境を考慮)
 		if (document.documentElement.requestFullscreen) {
-			document.documentElement.requestFullscreen().catch((err) => {
-				console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
+			document.documentElement.requestFullscreen().catch((err: unknown) => {
+				if (err instanceof Error) {
+					console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
+				} else {
+					console.error("Error attempting to enable full-screen mode:", err)
+				}
 			})
 		}
 

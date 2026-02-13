@@ -14,6 +14,10 @@ describe("ExperienceSection", () => {
 
 	afterEach(() => {
 		vi.useRealTimers()
+		useAppStore.setState({
+			isHopeMode: false,
+			isVideoThumbnailVisible: false,
+		})
 	})
 
 	it("should render hope button", () => {

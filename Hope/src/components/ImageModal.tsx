@@ -38,6 +38,10 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
+	// 最新のimages配列をrefで保持（setTimeout内で参照するため）
+	const imagesRef = useRef(images)
+	imagesRef.current = images
+
 	// Refs for cleanup, focus trap, and close guard
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const switchingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
@@ -50,6 +54,8 @@ export function ImageModal({
 		if (isOpen) {
 			rafId = requestAnimationFrame(() => {
 				setIsVisible(true)
+				// モーダルオープン時にフォーカスをダイアログに移動
+				dialogRef.current?.focus()
 			})
 		} else {
 			setIsVisible(false)
@@ -85,20 +91,22 @@ export function ImageModal({
 		setIsSwitching(true)
 		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
 		switchingTimeoutRef.current = setTimeout(() => {
-			setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
+			const len = imagesRef.current.length
+			setCurrentIndex((prev) => (prev < len - 1 ? prev + 1 : 0))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
-	}, [images.length, isSwitching])
+	}, [isSwitching])
 
 	const goPrev = useCallback(() => {
 		if (isSwitching) return
 		setIsSwitching(true)
 		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
 		switchingTimeoutRef.current = setTimeout(() => {
-			setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
+			const len = imagesRef.current.length
+			setCurrentIndex((prev) => (prev > 0 ? prev - 1 : len - 1))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
-	}, [images.length, isSwitching])
+	}, [isSwitching])
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
@@ -160,6 +168,7 @@ export function ImageModal({
 		<dialog
 			ref={dialogRef}
 			open
+			tabIndex={-1}
 			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}
 			aria-modal="true"
@@ -189,13 +198,8 @@ export function ImageModal({
 				</button>
 			)}
 
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
-			<div
-				className="image-modal-content"
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
-				role="presentation"
-			>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: クリック伝播停止用のラッパー */}
+			<div className="image-modal-content" onClick={(e) => e.stopPropagation()} role="presentation">
 				<img
 					src={currentImage}
 					alt={`${imageAlt} ${currentIndex + 1}`}
