@@ -6,8 +6,6 @@ import { useScrollAnimation } from "../useScrollAnimation"
 
 // 共通GSAPモック
 // テスト内で検証するためのグローバルな参照用変数
-// 共通GSAPモック
-// テスト内で検証するためのグローバルな参照用変数
 interface MockScrollTrigger {
 	config: Record<string, unknown>
 	killed: boolean

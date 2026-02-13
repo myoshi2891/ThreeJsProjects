@@ -31,14 +31,13 @@ describe("ExperienceSection", () => {
 
 		// クリック直後はfadingクラスが適用される
 		expect(button).toHaveClass("fading")
-		expect(button).not.toHaveClass("hidden")
 
-		// 1500ms後にhiddenクラスが適用される
+		// 800ms後にボタンがDOMから削除される（条件付きレンダリング）
 		act(() => {
-			vi.advanceTimersByTime(1500)
+			vi.advanceTimersByTime(800)
 		})
 
-		expect(button).toHaveClass("hidden")
+		expect(screen.queryByRole("button", { name: /Watch the short Film/i })).not.toBeInTheDocument()
 	})
 
 	it("should enable hope mode when button is clicked", () => {
@@ -48,6 +47,14 @@ describe("ExperienceSection", () => {
 		})
 
 		fireEvent.click(button)
+
+		// クリック直後はまだhopeModeは変更されない
+		expect(useAppStore.getState().isHopeMode).toBe(false)
+
+		// 800ms後にhopeModeがtrueになる
+		act(() => {
+			vi.advanceTimersByTime(800)
+		})
 
 		expect(useAppStore.getState().isHopeMode).toBe(true)
 	})

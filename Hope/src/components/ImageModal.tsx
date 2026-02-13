@@ -38,13 +38,14 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
-	// Refs for cleanup
+	// Refs for cleanup and focus trap
+	const dialogRef = useRef<HTMLDialogElement>(null)
 	const switchingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 	const closingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 
 	// Trigger entry animation
 	useEffect(() => {
-		let rafId: number
+		let rafId: number | undefined
 		if (isOpen) {
 			rafId = requestAnimationFrame(() => {
 				setIsVisible(true)
@@ -54,7 +55,7 @@ export function ImageModal({
 			setIsSwitching(false)
 		}
 		return () => {
-			if (rafId) cancelAnimationFrame(rafId)
+			if (rafId !== undefined) cancelAnimationFrame(rafId)
 		}
 	}, [isOpen])
 
@@ -112,6 +113,25 @@ export function ImageModal({
 						goNext()
 					}
 					break
+				case "Tab": {
+					// フォーカストラップ: モーダル内でTabキーのフォーカスを循環させる
+					const dialog = dialogRef.current
+					if (!dialog) break
+					const focusable = dialog.querySelectorAll<HTMLElement>(
+						'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+					)
+					if (focusable.length === 0) break
+					const first = focusable[0]
+					const last = focusable[focusable.length - 1]
+					if (e.shiftKey && document.activeElement === first) {
+						e.preventDefault()
+						last.focus()
+					} else if (!e.shiftKey && document.activeElement === last) {
+						e.preventDefault()
+						first.focus()
+					}
+					break
+				}
 			}
 		},
 		[handleClose, goNext, goPrev, isMultiple],
@@ -132,6 +152,7 @@ export function ImageModal({
 
 	return (
 		<dialog
+			ref={dialogRef}
 			open
 			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}

@@ -27,7 +27,7 @@ export function VideoOverlay() {
 	const closingRef = useRef(false)
 
 	useEffect(() => {
-		let rafId: number
+		let rafId: number | undefined
 		if (isVideoOverlayVisible) {
 			closingRef.current = false // Reset closing state on open
 			// Small delay to ensure render before adding visible class for transition
@@ -38,7 +38,7 @@ export function VideoOverlay() {
 			setIsVisible(false)
 		}
 		return () => {
-			if (rafId) cancelAnimationFrame(rafId)
+			if (rafId !== undefined) cancelAnimationFrame(rafId)
 		}
 	}, [isVideoOverlayVisible])
 

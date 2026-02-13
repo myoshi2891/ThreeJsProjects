@@ -759,10 +759,6 @@ body.hope-mode .story-thumbnail-image:hover {
 	transition: opacity 1.5s ease-out;
 }
 
-.experience-btn.hidden {
-	display: none;
-}
-
 /* =====================================================
    Hope Mode - Light Background Styles（ボタン押下後）
    ===================================================== */

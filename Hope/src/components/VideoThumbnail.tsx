@@ -23,7 +23,7 @@ export function VideoThumbnail() {
 	// Force re-evaluation when locale changes
 	void locale
 
-	// Trigger fade-in animation after mount
+	// フルスクリーン遷移タイマーのref
 	const expandTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 
 	// Trigger fade-in animation after mount
@@ -44,10 +44,12 @@ export function VideoThumbnail() {
 	const handleExpand = () => {
 		setIsVisible(false)
 
-		// Request fullscreen for the document
-		document.documentElement.requestFullscreen().catch((err) => {
-			console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
-		})
+		// Request fullscreen for the document (iOS Safariなど未サポート環境を考慮)
+		if (document.documentElement.requestFullscreen) {
+			document.documentElement.requestFullscreen().catch((err) => {
+				console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`)
+			})
+		}
 
 		if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current)
 		expandTimeoutRef.current = setTimeout(() => {
