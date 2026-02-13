@@ -181,7 +181,6 @@ describe("Translation files consistency", () => {
 
 			const jaMap = new Map(jaValues.map((e) => [e.key, e.value]))
 
-			const mismatched: string[] = []
 			for (const { key, value } of enValues) {
 				const jaValue = jaMap.get(key)
 				if (!jaValue) continue
@@ -189,12 +188,8 @@ describe("Translation files consistency", () => {
 				const enPlaceholders = extractPlaceholders(value)
 				const jaPlaceholders = extractPlaceholders(jaValue)
 
-				if (JSON.stringify(enPlaceholders) !== JSON.stringify(jaPlaceholders)) {
-					mismatched.push(`${key}: en=${enPlaceholders.join(",")} ja=${jaPlaceholders.join(",")}`)
-				}
+				expect(enPlaceholders, `placeholder mismatch for key "${key}"`).toEqual(jaPlaceholders)
 			}
-
-			expect(mismatched).toEqual([])
 		})
 	})
 })
