@@ -112,4 +112,90 @@ describe("VideoOverlay", () => {
 
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 	})
+
+	it("exitFullscreen失敗時でもストア状態が正常遷移する", async () => {
+		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+
+		// fullscreenElementを設定してexitFullscreenが呼ばれるようにする
+		Object.defineProperty(document, "fullscreenElement", {
+			value: document.documentElement,
+			configurable: true,
+		})
+		document.exitFullscreen = vi.fn(() =>
+			Promise.reject(new Error("Exit fullscreen failed")),
+		)
+
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(500)
+		})
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("Exit fullscreen failed"),
+		)
+
+		// ストア状態は正常遷移
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
+
+		// クリーンアップ
+		Object.defineProperty(document, "fullscreenElement", {
+			value: null,
+			configurable: true,
+		})
+	})
+
+	it("closingRef二重発火防止: 連続クリックで1回のみ遷移する", () => {
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+
+		// 連続クリック
+		fireEvent.click(closeBtn)
+		fireEvent.click(closeBtn)
+		fireEvent.click(closeBtn)
+
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+
+		// ストア状態は1回のみ遷移
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
+	})
+
+	it("フルスクリーンでない時はexitFullscreenが呼ばれない", () => {
+		const exitFn = vi.fn(() => Promise.resolve())
+		document.exitFullscreen = exitFn
+
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		expect(exitFn).not.toHaveBeenCalled()
+	})
+
+	it("unmount時にcloseTimeoutRefがクリーンアップされる", () => {
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		const { unmount } = render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		// タイムアウト完了前にアンマウント
+		unmount()
+
+		// タイムアウト経過してもエラーが発生しない
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+	})
 })
