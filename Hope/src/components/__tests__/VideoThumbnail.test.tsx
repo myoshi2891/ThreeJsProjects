@@ -107,9 +107,7 @@ describe("VideoThumbnail", () => {
 		})
 
 		// Errorインスタンスの場合: メッセージとname付きのログ
-		expect(consoleSpy).toHaveBeenCalledWith(
-			expect.stringContaining("Fullscreen not allowed"),
-		)
+		expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Fullscreen not allowed"))
 
 		// ストア状態は正常遷移
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
@@ -157,9 +155,7 @@ describe("VideoThumbnail", () => {
 
 		// タイムアウト完了前にアンマウント
 		const { unmount } = render(<VideoThumbnail />)
-		fireEvent.click(
-			screen.getAllByRole("button", { name: "Expand to fullscreen" })[0],
-		)
+		fireEvent.click(screen.getAllByRole("button", { name: "Expand to fullscreen" })[0])
 		unmount()
 
 		// タイムアウト経過してもエラーが発生しないことを確認

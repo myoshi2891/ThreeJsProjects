@@ -121,9 +121,7 @@ describe("VideoOverlay", () => {
 			value: document.documentElement,
 			configurable: true,
 		})
-		document.exitFullscreen = vi.fn(() =>
-			Promise.reject(new Error("Exit fullscreen failed")),
-		)
+		document.exitFullscreen = vi.fn(() => Promise.reject(new Error("Exit fullscreen failed")))
 
 		useAppStore.setState({ isVideoOverlayVisible: true })
 		render(<VideoOverlay />)
@@ -135,9 +133,7 @@ describe("VideoOverlay", () => {
 			await vi.advanceTimersByTimeAsync(500)
 		})
 
-		expect(consoleSpy).toHaveBeenCalledWith(
-			expect.stringContaining("Exit fullscreen failed"),
-		)
+		expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Exit fullscreen failed"))
 
 		// ストア状態は正常遷移
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
