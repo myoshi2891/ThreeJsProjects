@@ -22,6 +22,11 @@ describe("VideoOverlay", () => {
 	afterEach(() => {
 		vi.useRealTimers()
 		vi.restoreAllMocks()
+		// fullscreenElement/exitFullscreenのリーク防止
+		Object.defineProperty(document, "fullscreenElement", {
+			value: null,
+			configurable: true,
+		})
 	})
 
 	it("should not render when isVideoOverlayVisible is false", () => {
@@ -138,12 +143,6 @@ describe("VideoOverlay", () => {
 		// ストア状態は正常遷移
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
-
-		// クリーンアップ
-		Object.defineProperty(document, "fullscreenElement", {
-			value: null,
-			configurable: true,
-		})
 	})
 
 	it("closingRef二重発火防止: 連続クリックで1回のみ遷移する", () => {
