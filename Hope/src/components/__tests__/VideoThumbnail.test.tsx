@@ -71,6 +71,7 @@ describe("VideoThumbnail", () => {
 			configurable: true,
 			writable: true,
 		})
+		useAppStore.setState({ isVideoThumbnailVisible: true })
 
 		render(<VideoThumbnail />)
 
@@ -93,6 +94,7 @@ describe("VideoThumbnail", () => {
 		document.documentElement.requestFullscreen = vi.fn(() =>
 			Promise.reject(new TypeError("Fullscreen not allowed")),
 		)
+		useAppStore.setState({ isVideoThumbnailVisible: true })
 
 		render(<VideoThumbnail />)
 
@@ -117,6 +119,7 @@ describe("VideoThumbnail", () => {
 	it("requestFullscreen失敗時（非Errorオブジェクト）にフォールバックログを出力する", async () => {
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
 		document.documentElement.requestFullscreen = vi.fn(() => Promise.reject("string error"))
+		useAppStore.setState({ isVideoThumbnailVisible: true })
 
 		render(<VideoThumbnail />)
 
@@ -146,7 +149,7 @@ describe("VideoThumbnail", () => {
 	})
 
 	it("unmount時にexpandTimeoutRefがクリーンアップされる", () => {
-		render(<VideoThumbnail />)
+		const { unmount } = render(<VideoThumbnail />)
 
 		const expandBtn = screen.getByRole("button", {
 			name: "Expand to fullscreen",
@@ -154,8 +157,6 @@ describe("VideoThumbnail", () => {
 		fireEvent.click(expandBtn)
 
 		// タイムアウト完了前にアンマウント
-		const { unmount } = render(<VideoThumbnail />)
-		fireEvent.click(screen.getAllByRole("button", { name: "Expand to fullscreen" })[0])
 		unmount()
 
 		// タイムアウト経過してもエラーが発生しないことを確認
