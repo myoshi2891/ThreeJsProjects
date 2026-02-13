@@ -81,4 +81,39 @@ describe("ExperienceSection", () => {
 
 		expect(useAppStore.getState().isHopeMode).toBe(true)
 	})
+
+	it("isFadingガード: フェード中の連続クリックが無視される", () => {
+		render(<ExperienceSection />)
+		const button = screen.getByRole("button", {
+			name: /Watch the short Film/i,
+		})
+
+		// 1回目クリック
+		fireEvent.click(button)
+		expect(button).toHaveClass("fading")
+
+		// 2回目クリック（フェード中のためisFadingガードで無視される）
+		fireEvent.click(button)
+
+		// 800ms後にhopeModeがtrueになる（1回のみ）
+		act(() => {
+			vi.advanceTimersByTime(800)
+		})
+
+		expect(useAppStore.getState().isHopeMode).toBe(true)
+	})
+
+	it("フェード中のボタンにdisabled属性が付与される", () => {
+		render(<ExperienceSection />)
+		const button = screen.getByRole("button", {
+			name: /Watch the short Film/i,
+		})
+
+		// クリック前はdisabledでない
+		expect(button).not.toBeDisabled()
+
+		// クリック後はdisabled
+		fireEvent.click(button)
+		expect(button).toBeDisabled()
+	})
 })
