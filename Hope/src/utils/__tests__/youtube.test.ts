@@ -6,7 +6,7 @@ describe("validateYouTubeVideoId", () => {
 		// 標準的なYouTube ID
 		expect(validateYouTubeVideoId("dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ")
 		// ハイフン含む
-		expect(validateYouTubeVideoId("x7BEDUGk6NI")).toBe("x7BEDUGk6NI")
+		expect(validateYouTubeVideoId("x7BE-UGk6NI")).toBe("x7BE-UGk6NI")
 		// アンダースコア含む
 		expect(validateYouTubeVideoId("abc_def-123")).toBe("abc_def-123")
 		// 全てハイフン/アンダースコア
