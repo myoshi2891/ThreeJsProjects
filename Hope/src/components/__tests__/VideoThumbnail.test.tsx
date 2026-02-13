@@ -63,4 +63,108 @@ describe("VideoThumbnail", () => {
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
+
+	it("requestFullscreen未対応環境でもストア状態が正常遷移する", () => {
+		// requestFullscreenをundefinedに設定（iOS Safari等）
+		Object.defineProperty(document.documentElement, "requestFullscreen", {
+			value: undefined,
+			configurable: true,
+			writable: true,
+		})
+
+		render(<VideoThumbnail />)
+
+		const expandBtn = screen.getByRole("button", {
+			name: "Expand to fullscreen",
+		})
+		fireEvent.click(expandBtn)
+
+		// 500ms後にストア状態が正常遷移する
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
+	})
+
+	it("requestFullscreen失敗時（Errorオブジェクト）にエラーログを出力しストアは正常遷移する", async () => {
+		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+		document.documentElement.requestFullscreen = vi.fn(() =>
+			Promise.reject(new TypeError("Fullscreen not allowed")),
+		)
+
+		render(<VideoThumbnail />)
+
+		const expandBtn = screen.getByRole("button", {
+			name: "Expand to fullscreen",
+		})
+		fireEvent.click(expandBtn)
+
+		// Promise rejectionのマイクロタスクを処理
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(500)
+		})
+
+		// Errorインスタンスの場合: メッセージとname付きのログ
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("Fullscreen not allowed"),
+		)
+
+		// ストア状態は正常遷移
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
+	})
+
+	it("requestFullscreen失敗時（非Errorオブジェクト）にフォールバックログを出力する", async () => {
+		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+		document.documentElement.requestFullscreen = vi.fn(() => Promise.reject("string error"))
+
+		render(<VideoThumbnail />)
+
+		const expandBtn = screen.getByRole("button", {
+			name: "Expand to fullscreen",
+		})
+		fireEvent.click(expandBtn)
+
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(500)
+		})
+
+		// 非Errorオブジェクトの場合: フォールバックログ
+		expect(consoleSpy).toHaveBeenCalledWith(
+			"Error attempting to enable full-screen mode:",
+			"string error",
+		)
+	})
+
+	it("expandボタンのaria-labelが正しく設定されている", () => {
+		render(<VideoThumbnail />)
+
+		const expandBtn = screen.getByRole("button", {
+			name: "Expand to fullscreen",
+		})
+		expect(expandBtn).toHaveAttribute("aria-label", "Expand to fullscreen")
+	})
+
+	it("unmount時にexpandTimeoutRefがクリーンアップされる", () => {
+		render(<VideoThumbnail />)
+
+		const expandBtn = screen.getByRole("button", {
+			name: "Expand to fullscreen",
+		})
+		fireEvent.click(expandBtn)
+
+		// タイムアウト完了前にアンマウント
+		const { unmount } = render(<VideoThumbnail />)
+		fireEvent.click(
+			screen.getAllByRole("button", { name: "Expand to fullscreen" })[0],
+		)
+		unmount()
+
+		// タイムアウト経過してもエラーが発生しないことを確認
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+	})
 })
