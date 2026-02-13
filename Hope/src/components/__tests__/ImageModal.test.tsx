@@ -213,8 +213,8 @@ describe("ImageModal", () => {
 			lastButton.focus()
 			expect(document.activeElement).toBe(lastButton)
 
-			// Tab押下
-			fireEvent.keyDown(document, { key: "Tab" })
+			// フォーカスされた要素からTab押下（イベントがdocumentまでバブルする）
+			fireEvent.keyDown(lastButton, { key: "Tab" })
 
 			// 最初のボタンにフォーカスが移る
 			expect(document.activeElement).toBe(buttons[0])
@@ -234,8 +234,8 @@ describe("ImageModal", () => {
 			firstButton.focus()
 			expect(document.activeElement).toBe(firstButton)
 
-			// Shift+Tab押下
-			fireEvent.keyDown(document, { key: "Tab", shiftKey: true })
+			// フォーカスされた要素からShift+Tab押下
+			fireEvent.keyDown(firstButton, { key: "Tab", shiftKey: true })
 
 			// 最後のボタンにフォーカスが移る
 			expect(document.activeElement).toBe(lastButton)
@@ -260,9 +260,11 @@ describe("ImageModal", () => {
 			</div>,
 		)
 
-		fireEvent.keyDown(document, { key: "Tab" })
+		// モーダル内のボタンからTabキーを発火（バブリングで親divに伝播する）
+		const closeBtn = screen.getByRole("button", { name: "Close image" })
+		fireEvent.keyDown(closeBtn, { key: "Tab" })
 
-		// グローバルリスナーで処理されるが、イベントは伝播を妨げない
-		// （document.addEventListenerなのでbubbling順序は異なる）
+		// stopPropagationが削除されたため、親のonKeyDownが呼ばれる
+		expect(parentHandler).toHaveBeenCalled()
 	})
 })
