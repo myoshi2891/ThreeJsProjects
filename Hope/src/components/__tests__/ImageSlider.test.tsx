@@ -94,7 +94,7 @@ describe("ImageSlider", () => {
 		expect(images[2]).toHaveAttribute("loading", "lazy")
 	})
 
-	it("矢印ボタンクリックで画像が切り替わる", () => {
+	it("should change active slide on arrow button click", () => {
 		render(<ImageSlider images={mockImages} sectionName="Test Section" />)
 
 		// 最初は1番目がactive
@@ -111,7 +111,7 @@ describe("ImageSlider", () => {
 		expect(updatedSlides[0]).not.toHaveClass("active")
 	})
 
-	it("ドットクリックで対象スライドに移動する", () => {
+	it("should navigate to target slide on dot click", () => {
 		render(<ImageSlider images={mockImages} sectionName="Test Section" />)
 
 		const dots = screen.getAllByRole("tab")
@@ -125,7 +125,7 @@ describe("ImageSlider", () => {
 		expect(dots[2]).toHaveAttribute("aria-selected", "true")
 	})
 
-	it("Enter/SpaceキーでonImageClickが呼ばれる", () => {
+	it("should call onImageClick on Enter/Space key", () => {
 		const handleClick = vi.fn()
 		render(
 			<ImageSlider images={mockImages} sectionName="Test Section" onImageClick={handleClick} />,
@@ -142,7 +142,7 @@ describe("ImageSlider", () => {
 		expect(handleClick).toHaveBeenCalledWith(1)
 	})
 
-	it("マウスホバーで自動再生が一時停止・再開する", () => {
+	it("should pause and resume autoplay on mouse hover", () => {
 		render(<ImageSlider images={mockImages} sectionName="Test Section" />)
 
 		const slider = screen.getByRole("region")
