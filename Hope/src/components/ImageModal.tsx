@@ -38,23 +38,31 @@ export function ImageModal({
 		setCurrentIndex(initialIndex)
 	}, [initialIndex])
 
-	// Refs for cleanup
+	// 最新のimages配列をrefで保持（setTimeout内で参照するため）
+	const imagesRef = useRef(images)
+	imagesRef.current = images
+
+	// Refs for cleanup, focus trap, and close guard
+	const dialogRef = useRef<HTMLDialogElement>(null)
 	const switchingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 	const closingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+	const closingRef = useRef(false)
 
 	// Trigger entry animation
 	useEffect(() => {
-		let rafId: number
+		let rafId: number | undefined
 		if (isOpen) {
 			rafId = requestAnimationFrame(() => {
 				setIsVisible(true)
+				// モーダルオープン時にフォーカスをダイアログに移動
+				dialogRef.current?.focus()
 			})
 		} else {
 			setIsVisible(false)
 			setIsSwitching(false)
 		}
 		return () => {
-			if (rafId) cancelAnimationFrame(rafId)
+			if (rafId !== undefined) cancelAnimationFrame(rafId)
 		}
 	}, [isOpen])
 
@@ -67,10 +75,14 @@ export function ImageModal({
 	}, [])
 
 	const handleClose = useCallback(() => {
+		if (closingRef.current) return
+		closingRef.current = true
+
 		setIsVisible(false)
-		if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current)
+		if (closingTimeoutRef.current !== null) clearTimeout(closingTimeoutRef.current)
 		closingTimeoutRef.current = setTimeout(() => {
 			onClose()
+			closingRef.current = false
 		}, 500) // アニメーション時間に合わせる (CSS transition matches VideoOverlay)
 	}, [onClose])
 
@@ -79,20 +91,22 @@ export function ImageModal({
 		setIsSwitching(true)
 		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
 		switchingTimeoutRef.current = setTimeout(() => {
-			setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
+			const len = imagesRef.current.length
+			setCurrentIndex((prev) => (prev < len - 1 ? prev + 1 : 0))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
-	}, [images.length, isSwitching])
+	}, [isSwitching])
 
 	const goPrev = useCallback(() => {
 		if (isSwitching) return
 		setIsSwitching(true)
 		if (switchingTimeoutRef.current) clearTimeout(switchingTimeoutRef.current)
 		switchingTimeoutRef.current = setTimeout(() => {
-			setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
+			const len = imagesRef.current.length
+			setCurrentIndex((prev) => (prev > 0 ? prev - 1 : len - 1))
 			setIsSwitching(false)
 		}, 300) // Wait for fade out
-	}, [images.length, isSwitching])
+	}, [isSwitching])
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
@@ -112,6 +126,25 @@ export function ImageModal({
 						goNext()
 					}
 					break
+				case "Tab": {
+					// フォーカストラップ: モーダル内でTabキーのフォーカスを循環させる
+					const dialog = dialogRef.current
+					if (!dialog) break
+					const focusable = dialog.querySelectorAll<HTMLElement>(
+						'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+					)
+					if (focusable.length === 0) break
+					const first = focusable[0]
+					const last = focusable[focusable.length - 1]
+					if (e.shiftKey && document.activeElement === first) {
+						e.preventDefault()
+						last.focus()
+					} else if (!e.shiftKey && document.activeElement === last) {
+						e.preventDefault()
+						first.focus()
+					}
+					break
+				}
 			}
 		},
 		[handleClose, goNext, goPrev, isMultiple],
@@ -131,15 +164,13 @@ export function ImageModal({
 	if (!isOpen) return null
 
 	return (
+		// biome-ignore lint/a11y/useKeyWithClickEvents: グローバルkeydownリスナーでキーボード操作を処理済み
 		<dialog
+			ref={dialogRef}
 			open
+			tabIndex={-1}
 			className={`image-modal-overlay ${isVisible ? "visible" : ""}`}
 			onClick={handleClose}
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					handleClose()
-				}
-			}}
 			aria-modal="true"
 			aria-label="Image viewer"
 		>
@@ -167,13 +198,8 @@ export function ImageModal({
 				</button>
 			)}
 
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: イベント伝播停止用のラッパー */}
-			<div
-				className="image-modal-content"
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
-				role="presentation"
-			>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: クリック伝播停止用のラッパー */}
+			<div className="image-modal-content" onClick={(e) => e.stopPropagation()} role="presentation">
 				<img
 					src={currentImage}
 					alt={`${imageAlt} ${currentIndex + 1}`}

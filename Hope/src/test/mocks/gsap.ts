@@ -69,7 +69,7 @@ export const createGSAPMock = (
 			registerPlugin: vi.fn(),
 		},
 		ScrollTrigger: {
-			create: vi.fn((config) => {
+			create: vi.fn((config: Record<string, unknown>) => {
 				const trigger = {
 					config,
 					killed: false,

@@ -42,20 +42,17 @@ export const useI18nStore = create<I18nState>()(
 		(set, get) => ({
 			locale: detectBrowserLocale(),
 
-			setLocale: locale => set({ locale }),
+			setLocale: (locale) => set({ locale }),
 
 			toggleLocale: () =>
-				set(state => ({
+				set((state) => ({
 					locale: state.locale === "ja" ? "en" : "ja",
 				})),
 
-			t: key => {
+			t: (key) => {
 				const { locale } = get()
 				const data = translations[locale]
-				return getNestedValue(
-					data as unknown as Record<string, unknown>,
-					key
-				)
+				return getNestedValue(data as unknown as Record<string, unknown>, key)
 			},
 
 			getTranslations: () => {
@@ -65,7 +62,7 @@ export const useI18nStore = create<I18nState>()(
 		}),
 		{
 			name: "hope-i18n",
-			partialize: state => ({ locale: state.locale }),
-		}
-	)
+			partialize: (state) => ({ locale: state.locale }),
+		},
+	),
 )

@@ -6,8 +6,6 @@ import { useScrollAnimation } from "../useScrollAnimation"
 
 // 共通GSAPモック
 // テスト内で検証するためのグローバルな参照用変数
-// 共通GSAPモック
-// テスト内で検証するためのグローバルな参照用変数
 interface MockScrollTrigger {
 	config: Record<string, unknown>
 	killed: boolean
@@ -36,6 +34,20 @@ vi.mock("gsap/ScrollTrigger", async () => {
 		ScrollTrigger: mocks.ScrollTrigger,
 	}
 })
+
+/** ScrollTriggerのonUpdateコールバックを型安全に呼び出すヘルパー */
+function invokeOnUpdate(trigger: MockScrollTrigger, args: { progress: number; direction: number }) {
+	const onUpdate = trigger.config.onUpdate as
+		| ((args: { progress: number; direction: number }) => void)
+		| undefined
+	if (onUpdate) onUpdate(args)
+}
+
+/** ScrollTriggerのライフサイクルコールバックを型安全に呼び出すヘルパー */
+function invokeCallback(trigger: MockScrollTrigger, name: string) {
+	const cb = trigger.config[name] as (() => void) | undefined
+	if (cb) cb()
+}
 
 describe("useScrollAnimation", () => {
 	let nav: HTMLElement
@@ -102,12 +114,7 @@ describe("useScrollAnimation", () => {
 		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
 		expect(navTrigger).toBeDefined()
 
-		if (navTrigger?.config.onUpdate) {
-			;(navTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (navTrigger) invokeOnUpdate(navTrigger, { progress: 0.5, direction: 1 })
 
 		expect(nav.classList.contains("scrolled")).toBe(true)
 	})
@@ -119,12 +126,7 @@ describe("useScrollAnimation", () => {
 		nav.classList.add("scrolled")
 
 		const navTrigger = scrollTriggersRef.find((t) => t.config.start === "top -80")
-		if (navTrigger?.config.onUpdate) {
-			;(navTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0,
-				direction: -1,
-			})
-		}
+		if (navTrigger) invokeOnUpdate(navTrigger, { progress: 0, direction: -1 })
 
 		expect(nav.classList.contains("scrolled")).toBe(false)
 	})
@@ -138,13 +140,9 @@ describe("useScrollAnimation", () => {
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 		expect(bgTrigger).toBeDefined()
+		expect(bgTrigger?.config.onUpdate).toBeDefined()
 
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.5, direction: 1 })
 
 		// brightness: 0.4 + 0.5 * 0.4 = 0.6
 		// saturation: 0.8 + 0.5 * 0.3 = 0.95
@@ -160,22 +158,12 @@ describe("useScrollAnimation", () => {
 		)
 
 		// 初回更新
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.5,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.5, direction: 1 })
 
 		const initialFilter = bgImage.style.filter
 
 		// 微小な進捗変化（0.02未満）
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.501,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.501, direction: 1 })
 
 		// フィルタは更新されない（スロットリング）
 		expect(bgImage.style.filter).toBe(initialFilter)
@@ -188,12 +176,7 @@ describe("useScrollAnimation", () => {
 			(t) => t.config.trigger === "body" && t.config.start === "top top" && t.config.onUpdate,
 		)
 
-		if (bgTrigger?.config.onUpdate) {
-			;(bgTrigger.config.onUpdate as (args: unknown) => void)({
-				progress: 0.75,
-				direction: 1,
-			})
-		}
+		if (bgTrigger) invokeOnUpdate(bgTrigger, { progress: 0.75, direction: 1 })
 
 		expect(useSceneStore.getState().scrollProgress).toBe(0.75)
 	})
@@ -209,33 +192,18 @@ describe("useScrollAnimation", () => {
 
 		expect(storyTriggers.length).toBe(2)
 
-		// onEnterをシミュレート
 		const trigger = storyTriggers[0]
-		if (trigger.config.onEnter) {
-			;(trigger.config.onEnter as () => void)()
-		}
 
+		invokeCallback(trigger, "onEnter")
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
-		// onLeaveをシミュレート
-		if (trigger.config.onLeave) {
-			;(trigger.config.onLeave as () => void)()
-		}
-
+		invokeCallback(trigger, "onLeave")
 		expect(storyContent1.classList.contains("visible")).toBe(false)
 
-		// onEnterBackをシミュレート
-		if (trigger.config.onEnterBack) {
-			;(trigger.config.onEnterBack as () => void)()
-		}
-
+		invokeCallback(trigger, "onEnterBack")
 		expect(storyContent1.classList.contains("visible")).toBe(true)
 
-		// onLeaveBackをシミュレート
-		if (trigger.config.onLeaveBack) {
-			;(trigger.config.onLeaveBack as () => void)()
-		}
-
+		invokeCallback(trigger, "onLeaveBack")
 		expect(storyContent1.classList.contains("visible")).toBe(false)
 	})
 
@@ -250,19 +218,13 @@ describe("useScrollAnimation", () => {
 
 		expect(experienceTrigger).toBeDefined()
 
-		// onEnterをシミュレート
-		if (experienceTrigger?.config.onEnter) {
-			;(experienceTrigger.config.onEnter as () => void)()
+		if (experienceTrigger) {
+			invokeCallback(experienceTrigger, "onEnter")
+			expect(experienceContent.classList.contains("visible")).toBe(true)
+
+			invokeCallback(experienceTrigger, "onLeaveBack")
+			expect(experienceContent.classList.contains("visible")).toBe(false)
 		}
-
-		expect(experienceContent.classList.contains("visible")).toBe(true)
-
-		// onLeaveBackをシミュレート
-		if (experienceTrigger?.config.onLeaveBack) {
-			;(experienceTrigger.config.onLeaveBack as () => void)()
-		}
-
-		expect(experienceContent.classList.contains("visible")).toBe(false)
 	})
 
 	it("unmount時に全てのScrollTriggerがクリーンアップされる", () => {
