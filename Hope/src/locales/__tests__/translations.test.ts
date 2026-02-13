@@ -22,6 +22,34 @@ function getAllKeys(obj: Record<string, unknown>, prefix = ""): string[] {
 	return keys
 }
 
+/**
+ * Helper function to get all leaf values from a nested object
+ */
+function getAllValues(obj: Record<string, unknown>, prefix = ""): { key: string; value: string }[] {
+	const entries: { key: string; value: string }[] = []
+
+	for (const key of Object.keys(obj)) {
+		const fullKey = prefix ? `${prefix}.${key}` : key
+		const value = obj[key]
+
+		if (value && typeof value === "object" && !Array.isArray(value)) {
+			entries.push(...getAllValues(value as Record<string, unknown>, fullKey))
+		} else if (typeof value === "string") {
+			entries.push({ key: fullKey, value })
+		}
+	}
+
+	return entries
+}
+
+/**
+ * Helper function to extract placeholders ({name}) from a string
+ */
+function extractPlaceholders(str: string): string[] {
+	const matches = str.match(/\{[^}]+\}/g)
+	return matches ? matches.sort() : []
+}
+
 describe("Translation files consistency", () => {
 	const enKeys = getAllKeys(en as Record<string, unknown>)
 	const jaKeys = getAllKeys(ja as Record<string, unknown>)
@@ -132,6 +160,41 @@ describe("Translation files consistency", () => {
 		it("should have imageModal.viewImage in both languages", () => {
 			expect(en.imageModal.viewImage).toBeDefined()
 			expect(ja.imageModal.viewImage).toBeDefined()
+		})
+	})
+
+	describe("データ品質", () => {
+		it("全翻訳値が空文字列でない", () => {
+			const enValues = getAllValues(en as Record<string, unknown>)
+			const jaValues = getAllValues(ja as Record<string, unknown>)
+
+			const emptyEn = enValues.filter((e) => e.value.trim() === "")
+			const emptyJa = jaValues.filter((e) => e.value.trim() === "")
+
+			expect(emptyEn.map((e) => e.key)).toEqual([])
+			expect(emptyJa.map((e) => e.key)).toEqual([])
+		})
+
+		it("プレースホルダー（{current}, {total}等）が英日で一致する", () => {
+			const enValues = getAllValues(en as Record<string, unknown>)
+			const jaValues = getAllValues(ja as Record<string, unknown>)
+
+			const jaMap = new Map(jaValues.map((e) => [e.key, e.value]))
+
+			const mismatched: string[] = []
+			for (const { key, value } of enValues) {
+				const jaValue = jaMap.get(key)
+				if (!jaValue) continue
+
+				const enPlaceholders = extractPlaceholders(value)
+				const jaPlaceholders = extractPlaceholders(jaValue)
+
+				if (JSON.stringify(enPlaceholders) !== JSON.stringify(jaPlaceholders)) {
+					mismatched.push(`${key}: en=${enPlaceholders.join(",")} ja=${jaPlaceholders.join(",")}`)
+				}
+			}
+
+			expect(mismatched).toEqual([])
 		})
 	})
 })
