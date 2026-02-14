@@ -137,6 +137,10 @@ describe("VideoThumbnail", () => {
 			"Error attempting to enable full-screen mode:",
 			"string error",
 		)
+
+		// ストア状態は正常遷移
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
 
 	it("expandボタンのaria-labelが正しく設定されている", () => {

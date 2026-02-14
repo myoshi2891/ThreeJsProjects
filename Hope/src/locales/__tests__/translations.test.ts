@@ -163,8 +163,8 @@ describe("Translation files consistency", () => {
 		})
 	})
 
-	describe("データ品質", () => {
-		it("全翻訳値が空文字列でない", () => {
+	describe("data quality", () => {
+		it("should have no empty translation values", () => {
 			const enValues = getAllValues(en as Record<string, unknown>)
 			const jaValues = getAllValues(ja as Record<string, unknown>)
 
@@ -175,7 +175,7 @@ describe("Translation files consistency", () => {
 			expect(emptyJa.map((e) => e.key)).toEqual([])
 		})
 
-		it("プレースホルダー（{current}, {total}等）が英日で一致する", () => {
+		it("should have matching placeholders between en and ja", () => {
 			const enValues = getAllValues(en as Record<string, unknown>)
 			const jaValues = getAllValues(ja as Record<string, unknown>)
 

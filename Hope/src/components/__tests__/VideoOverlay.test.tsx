@@ -188,9 +188,12 @@ describe("VideoOverlay", () => {
 		// タイムアウト完了前にアンマウント
 		unmount()
 
-		// タイムアウト経過してもエラーが発生しない
+		// タイムアウト経過してもストア状態が変化しない
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
+
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 	})
 })

@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { StorySection } from "../StorySection"
 
+const HOPE_IMAGE_COUNT = 9
+
 describe("StorySection", () => {
 	it("should render correct content for 'hope' section", () => {
 		render(<StorySection type="hope" />)
@@ -32,9 +34,8 @@ describe("StorySection", () => {
 		expect(slider).toBeInTheDocument()
 		expect(slider).toHaveAttribute("aria-roledescription", "carousel")
 
-		// 9枚の画像（Hopeセクション）
 		const images = screen.getAllByRole("img")
-		expect(images.length).toBe(9)
+		expect(images.length).toBe(HOPE_IMAGE_COUNT)
 	})
 
 	it("should open modal when slider image is clicked", () => {
@@ -63,6 +64,6 @@ describe("StorySection", () => {
 		expect(screen.getByLabelText("Next image")).toBeInTheDocument()
 
 		// カウンターが表示される
-		expect(screen.getByText(/1 of 9/)).toBeInTheDocument()
+		expect(screen.getByText(new RegExp(`1 of ${HOPE_IMAGE_COUNT}`))).toBeInTheDocument()
 	})
 })
