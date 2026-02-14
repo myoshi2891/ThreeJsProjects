@@ -6,10 +6,7 @@ import ja from "../ja.json"
  * Walk all leaf entries of a nested object using dot-notation keys.
  * Used by getAllKeys and getAllValues to avoid duplicate recursion.
  */
-function walkLeaves(
-	obj: Record<string, unknown>,
-	prefix = "",
-): { key: string; value: string }[] {
+function walkLeaves(obj: Record<string, unknown>, prefix = ""): { key: string; value: string }[] {
 	const entries: { key: string; value: string }[] = []
 
 	for (const key of Object.keys(obj)) {
