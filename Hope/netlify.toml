@@ -15,3 +15,6 @@
 [context.production.environment]
   # Ensure Bun is used if needed, though usually auto-detected with bun.lock
   # NODE_VERSION = "20" 
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "VITE_YOUTUBE_VIDEO_ID" 
