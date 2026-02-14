@@ -14,7 +14,8 @@ describe("VideoThumbnail", () => {
 		// Mock requestFullscreen API
 		document.documentElement.requestFullscreen = vi.fn(() => Promise.resolve())
 		useAppStore.setState({
-			isVideoThumbnailVisible: false, // Note: Component ignores this prop and renders if parent mounts it, but good to reset logic
+			isVideoThumbnailVisible: false,
+			isVideoOverlayVisible: false,
 		})
 	})
 
@@ -45,7 +46,7 @@ describe("VideoThumbnail", () => {
 		})
 		fireEvent.click(expandBtn)
 
-		// requestFullscreen が呼ばれたことを確認
+		// Verify requestFullscreen was called
 		expect(document.documentElement.requestFullscreen).toHaveBeenCalled()
 
 		// Should remove visible class immediately (fade out)
@@ -55,7 +56,7 @@ describe("VideoThumbnail", () => {
 		// Store state shouldn't change yet
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 
-		// Fast forward (500msはコンポーネントのtimeout値と一致)
+		// Fast forward 500ms (matches the component's timeout value)
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -64,8 +65,8 @@ describe("VideoThumbnail", () => {
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
 
-	it("requestFullscreen未対応環境でもストア状態が正常遷移する", () => {
-		// requestFullscreenをundefinedに設定（iOS Safari等）
+	it("should transition store state correctly when requestFullscreen is unsupported", () => {
+		// Set requestFullscreen to undefined (e.g. iOS Safari)
 		Object.defineProperty(document.documentElement, "requestFullscreen", {
 			value: undefined,
 			configurable: true,
@@ -80,7 +81,7 @@ describe("VideoThumbnail", () => {
 		})
 		fireEvent.click(expandBtn)
 
-		// 500ms後にストア状態が正常遷移する
+		// Store state transitions correctly after 500ms
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -89,7 +90,7 @@ describe("VideoThumbnail", () => {
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
 
-	it("requestFullscreen失敗時（Errorオブジェクト）にエラーログを出力しストアは正常遷移する", async () => {
+	it("should log error and transition store when requestFullscreen rejects with Error", async () => {
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
 		document.documentElement.requestFullscreen = vi.fn(() =>
 			Promise.reject(new TypeError("Fullscreen not allowed")),
@@ -103,20 +104,20 @@ describe("VideoThumbnail", () => {
 		})
 		fireEvent.click(expandBtn)
 
-		// Promise rejectionのマイクロタスクを処理
+		// Flush promise rejection microtask
 		await act(async () => {
 			await vi.advanceTimersByTimeAsync(500)
 		})
 
-		// Errorインスタンスの場合: メッセージとname付きのログ
+		// Error instance: log with message and name
 		expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Fullscreen not allowed"))
 
-		// ストア状態は正常遷移
+		// Store should transition correctly
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
 
-	it("requestFullscreen失敗時（非Errorオブジェクト）にフォールバックログを出力する", async () => {
+	it("should log fallback message when requestFullscreen rejects with non-Error", async () => {
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
 		document.documentElement.requestFullscreen = vi.fn(() => Promise.reject("string error"))
 		useAppStore.setState({ isVideoThumbnailVisible: true })
@@ -132,18 +133,18 @@ describe("VideoThumbnail", () => {
 			await vi.advanceTimersByTimeAsync(500)
 		})
 
-		// 非Errorオブジェクトの場合: フォールバックログ
+		// Non-Error object: fallback log
 		expect(consoleSpy).toHaveBeenCalledWith(
 			"Error attempting to enable full-screen mode:",
 			"string error",
 		)
 
-		// ストア状態は正常遷移
+		// Store should transition correctly
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 	})
 
-	it("expandボタンのaria-labelが正しく設定されている", () => {
+	it("should have correct aria-label on expand button", () => {
 		render(<VideoThumbnail />)
 
 		const expandBtn = screen.getByRole("button", {
@@ -152,7 +153,7 @@ describe("VideoThumbnail", () => {
 		expect(expandBtn).toHaveAttribute("aria-label", "Expand to fullscreen")
 	})
 
-	it("unmount時にexpandTimeoutRefがクリーンアップされる", () => {
+	it("should clean up expandTimeoutRef on unmount", () => {
 		const { unmount } = render(<VideoThumbnail />)
 
 		const expandBtn = screen.getByRole("button", {
@@ -160,10 +161,10 @@ describe("VideoThumbnail", () => {
 		})
 		fireEvent.click(expandBtn)
 
-		// タイムアウト完了前にアンマウント
+		// Unmount before timeout completes
 		unmount()
 
-		// タイムアウト経過してもエラーが発生しないことを確認
+		// No error should occur after timeout elapses
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})

@@ -22,10 +22,15 @@ describe("VideoOverlay", () => {
 	afterEach(() => {
 		vi.useRealTimers()
 		vi.restoreAllMocks()
-		// fullscreenElement/exitFullscreenのリーク防止
+		// Prevent fullscreenElement / exitFullscreen leaking between tests
 		Object.defineProperty(document, "fullscreenElement", {
 			value: null,
 			configurable: true,
+		})
+		Object.defineProperty(document, "exitFullscreen", {
+			value: undefined,
+			configurable: true,
+			writable: true,
 		})
 	})
 
@@ -62,11 +67,11 @@ describe("VideoOverlay", () => {
 		const closeBtn = screen.getByRole("button", { name: "Close video" })
 		fireEvent.click(closeBtn)
 
-		// フェードアウト中はストア状態はまだ変更されていない
+		// Store state should not change during fade-out
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 
-		// 500ms後にストア状態が更新される
+		// Store state updates after 500ms
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -81,10 +86,10 @@ describe("VideoOverlay", () => {
 
 		fireEvent.keyDown(document, { key: "Escape" })
 
-		// フェードアウト中はストア状態はまだ変更されていない
+		// Store state should not change during fade-out
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 
-		// 500ms後にストア状態が更新される
+		// Store state updates after 500ms
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -118,10 +123,10 @@ describe("VideoOverlay", () => {
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 	})
 
-	it("exitFullscreen失敗時でもストア状態が正常遷移する", async () => {
+	it("should transition store state correctly even when exitFullscreen fails", async () => {
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
 
-		// fullscreenElementを設定してexitFullscreenが呼ばれるようにする
+		// Set fullscreenElement so exitFullscreen is called
 		Object.defineProperty(document, "fullscreenElement", {
 			value: document.documentElement,
 			configurable: true,
@@ -140,18 +145,18 @@ describe("VideoOverlay", () => {
 
 		expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Exit fullscreen failed"))
 
-		// ストア状態は正常遷移
+		// Store should transition correctly
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 	})
 
-	it("closingRef二重発火防止: 連続クリックで1回のみ遷移する", () => {
+	it("should transition only once on rapid consecutive close clicks", () => {
 		useAppStore.setState({ isVideoOverlayVisible: true })
 		render(<VideoOverlay />)
 
 		const closeBtn = screen.getByRole("button", { name: "Close video" })
 
-		// 連続クリック
+		// Rapid consecutive clicks
 		fireEvent.click(closeBtn)
 		fireEvent.click(closeBtn)
 		fireEvent.click(closeBtn)
@@ -160,12 +165,12 @@ describe("VideoOverlay", () => {
 			vi.advanceTimersByTime(500)
 		})
 
-		// ストア状態は1回のみ遷移
+		// Store should transition only once
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
 	})
 
-	it("フルスクリーンでない時はexitFullscreenが呼ばれない", () => {
+	it("should not call exitFullscreen when not in fullscreen mode", () => {
 		const exitFn = vi.fn(() => Promise.resolve())
 		document.exitFullscreen = exitFn
 
@@ -178,17 +183,17 @@ describe("VideoOverlay", () => {
 		expect(exitFn).not.toHaveBeenCalled()
 	})
 
-	it("unmount時にcloseTimeoutRefがクリーンアップされる", () => {
+	it("should clean up closeTimeoutRef on unmount", () => {
 		useAppStore.setState({ isVideoOverlayVisible: true })
 		const { unmount } = render(<VideoOverlay />)
 
 		const closeBtn = screen.getByRole("button", { name: "Close video" })
 		fireEvent.click(closeBtn)
 
-		// タイムアウト完了前にアンマウント
+		// Unmount before timeout completes
 		unmount()
 
-		// タイムアウト経過してもストア状態が変化しない
+		// Store state should not change after timeout elapses
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})

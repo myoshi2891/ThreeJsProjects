@@ -29,7 +29,7 @@ describe("StorySection", () => {
 	it("should render ImageSlider with all section images", () => {
 		render(<StorySection type="hope" />)
 
-		// スライダーのカルーセルが表示されている
+		// Slider carousel should be rendered
 		const slider = screen.getByRole("region", { name: /Hope/i })
 		expect(slider).toBeInTheDocument()
 		expect(slider).toHaveAttribute("aria-roledescription", "carousel")
@@ -41,13 +41,13 @@ describe("StorySection", () => {
 	it("should open modal when slider image is clicked", () => {
 		render(<StorySection type="hope" />)
 
-		// 最初の画像をクリック
+		// Click the first image
 		const buttons = screen.getAllByRole("button", { name: /View image/i })
 		expect(buttons.length).toBeGreaterThan(0)
 
 		fireEvent.click(buttons[0])
 
-		// モーダルが開く
+		// Modal should open
 		const modal = screen.getByRole("dialog", { name: /Image viewer/i })
 		expect(modal).toBeInTheDocument()
 	})
@@ -55,15 +55,15 @@ describe("StorySection", () => {
 	it("should show navigation in modal when multiple images", () => {
 		render(<StorySection type="hope" />)
 
-		// 画像をクリックしてモーダルを開く
+		// Click an image to open modal
 		const buttons = screen.getAllByRole("button", { name: /View image/i })
 		fireEvent.click(buttons[0])
 
-		// ナビゲーションボタンが表示される
+		// Navigation buttons should be visible
 		expect(screen.getByLabelText("Previous image")).toBeInTheDocument()
 		expect(screen.getByLabelText("Next image")).toBeInTheDocument()
 
-		// カウンターが表示される
+		// Counter should be displayed
 		expect(screen.getByText(new RegExp(`1 of ${HOPE_IMAGE_COUNT}`))).toBeInTheDocument()
 	})
 })

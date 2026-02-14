@@ -3,29 +3,13 @@ import en from "../en.json"
 import ja from "../ja.json"
 
 /**
- * Helper function to get all keys from a nested object using dot notation
+ * Walk all leaf entries of a nested object using dot-notation keys.
+ * Used by getAllKeys and getAllValues to avoid duplicate recursion.
  */
-function getAllKeys(obj: Record<string, unknown>, prefix = ""): string[] {
-	const keys: string[] = []
-
-	for (const key of Object.keys(obj)) {
-		const fullKey = prefix ? `${prefix}.${key}` : key
-		const value = obj[key]
-
-		if (value && typeof value === "object" && !Array.isArray(value)) {
-			keys.push(...getAllKeys(value as Record<string, unknown>, fullKey))
-		} else {
-			keys.push(fullKey)
-		}
-	}
-
-	return keys
-}
-
-/**
- * Helper function to get all leaf values from a nested object
- */
-function getAllValues(obj: Record<string, unknown>, prefix = ""): { key: string; value: string }[] {
+function walkLeaves(
+	obj: Record<string, unknown>,
+	prefix = "",
+): { key: string; value: string }[] {
 	const entries: { key: string; value: string }[] = []
 
 	for (const key of Object.keys(obj)) {
@@ -33,13 +17,21 @@ function getAllValues(obj: Record<string, unknown>, prefix = ""): { key: string;
 		const value = obj[key]
 
 		if (value && typeof value === "object" && !Array.isArray(value)) {
-			entries.push(...getAllValues(value as Record<string, unknown>, fullKey))
+			entries.push(...walkLeaves(value as Record<string, unknown>, fullKey))
 		} else if (typeof value === "string") {
 			entries.push({ key: fullKey, value })
 		}
 	}
 
 	return entries
+}
+
+function getAllKeys(obj: Record<string, unknown>): string[] {
+	return walkLeaves(obj).map((e) => e.key)
+}
+
+function getAllValues(obj: Record<string, unknown>): { key: string; value: string }[] {
+	return walkLeaves(obj)
 }
 
 /**
