@@ -706,6 +706,7 @@ body.hope-mode .language-toggle:hover {
 	letter-spacing: 0.3em;
 	color: var(--color-accent);
 	margin-bottom: var(--space-lg);
+	padding: var(--space-sm) var(--space-lg);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius-full);
 	transition:
@@ -718,6 +719,12 @@ body.hope-mode .language-toggle:hover {
 	.story-section {
 		padding: var(--space-2xl) var(--space-md);
 		min-height: auto; /* Allow content to dictate height if needed, or keep 100vh if strict */
+	}
+
+	.story-thumbnail,
+	.video-thumbnail-wrapper,
+	.experience-cta {
+		margin-top: var(--space-lg); /* Reduce from var(--space-2xl) */
 	}
 }
 
