@@ -32,9 +32,9 @@ describe("StorySection", () => {
 		expect(slider).toBeInTheDocument()
 		expect(slider).toHaveAttribute("aria-roledescription", "carousel")
 
-		// 7枚の画像（Hopeセクション）
+		// 9枚の画像（Hopeセクション）
 		const images = screen.getAllByRole("img")
-		expect(images.length).toBe(7)
+		expect(images.length).toBe(9)
 	})
 
 	it("should open modal when slider image is clicked", () => {
@@ -63,6 +63,6 @@ describe("StorySection", () => {
 		expect(screen.getByLabelText("Next image")).toBeInTheDocument()
 
 		// カウンターが表示される
-		expect(screen.getByText(/1 of 7/)).toBeInTheDocument()
+		expect(screen.getByText(/1 of 9/)).toBeInTheDocument()
 	})
 })
