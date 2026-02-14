@@ -36,9 +36,9 @@ describe("ExperienceSection", () => {
 		// クリック直後はfadingクラスが適用される
 		expect(button).toHaveClass("fading")
 
-		// 800ms後にボタンがDOMから削除される（条件付きレンダリング）
+		// 300ms後にボタンがDOMから削除される（条件付きレンダリング）
 		act(() => {
-			vi.advanceTimersByTime(800)
+			vi.advanceTimersByTime(300)
 		})
 
 		expect(screen.queryByRole("button", { name: /Watch the short Film/i })).not.toBeInTheDocument()
@@ -55,9 +55,9 @@ describe("ExperienceSection", () => {
 		// フェード中にアンマウント
 		unmount()
 
-		// 800ms経過してもストア状態が変更されないことを確認
+		// 300ms経過してもストア状態が変更されないことを確認
 		act(() => {
-			vi.advanceTimersByTime(800)
+			vi.advanceTimersByTime(300)
 		})
 
 		expect(useAppStore.getState().isHopeMode).toBe(false)
@@ -74,9 +74,9 @@ describe("ExperienceSection", () => {
 		// クリック直後はまだhopeModeは変更されない
 		expect(useAppStore.getState().isHopeMode).toBe(false)
 
-		// 800ms後にhopeModeがtrueになる
+		// 300ms後にhopeModeがtrueになる
 		act(() => {
-			vi.advanceTimersByTime(800)
+			vi.advanceTimersByTime(300)
 		})
 
 		expect(useAppStore.getState().isHopeMode).toBe(true)
@@ -98,9 +98,9 @@ describe("ExperienceSection", () => {
 		// 2回目クリック（フェード中のためisFadingガードで無視される）
 		fireEvent.click(button)
 
-		// 800ms後にsetHopeModeが1回のみ呼ばれる
+		// 300ms後にsetHopeModeが1回のみ呼ばれる
 		act(() => {
-			vi.advanceTimersByTime(800)
+			vi.advanceTimersByTime(300)
 		})
 
 		expect(setHopeModeSpy).toHaveBeenCalledTimes(1)

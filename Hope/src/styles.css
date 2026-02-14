@@ -716,6 +716,10 @@ body.hope-mode .story-thumbnail-image:hover {
 	transform: translateY(0);
 }
 
+.experience-cta {
+	margin-top: var(--space-2xl);
+}
+
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
 	background: linear-gradient(135deg, rgba(10, 15, 26, 0.8) 0%, rgba(26, 37, 53, 0.9) 100%);
@@ -756,7 +760,7 @@ body.hope-mode .story-thumbnail-image:hover {
 .experience-btn.fading {
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 1.5s ease-out;
+	transition: opacity 0.5s ease-out;
 }
 
 .experience-btn.hidden {
@@ -1240,10 +1244,10 @@ body.hope-mode .hero-badge {
 	background: rgb(0 0 0 / 95%);
 	pointer-events: auto;
 	transition:
-		opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		filter 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-		background 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+		opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+		background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
 		visibility 0s step-start;
 }
 
@@ -1263,8 +1267,8 @@ body.hope-mode .hero-badge {
 	opacity: 0;
 	transform: scale(0.9);
 	transition:
-		opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
-		transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+		opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
 }
 
 .video-overlay.visible .video-fullscreen-wrapper {

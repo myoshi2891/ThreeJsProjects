@@ -40,7 +40,7 @@ export function ExperienceSection() {
 		fadeTimeoutRef.current = setTimeout(() => {
 			setHopeMode(true)
 			setIsButtonHidden(true)
-		}, 800) // Match CSS transition duration
+		}, 300) // Match CSS transition duration
 	}, [setHopeMode, isFading])
 
 	// Cleanup on unmount
