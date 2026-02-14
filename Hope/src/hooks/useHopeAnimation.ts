@@ -25,15 +25,15 @@ export function useHopeAnimation() {
 		// Phase 1: Initial dramatic pause
 		timeline.to(params, {
 			hopeFactor: 0.1,
-			duration: 2,
-			ease: "power1.out",
+			duration: 1.2,
+			ease: "power2.out",
 			onUpdate: () => setHopeFactor(params.hopeFactor),
 		})
 
 		// Phase 2: Storm calming, rain stopping
 		timeline.to(params, {
 			hopeFactor: 0.4,
-			duration: 3,
+			duration: 1.8,
 			ease: "power2.inOut",
 			onUpdate: () => setHopeFactor(params.hopeFactor),
 		})
@@ -41,16 +41,16 @@ export function useHopeAnimation() {
 		// Phase 3: Light breaking through
 		timeline.to(params, {
 			hopeFactor: 0.8,
-			duration: 4,
-			ease: "power2.inOut",
+			duration: 2,
+			ease: "power3.inOut",
 			onUpdate: () => setHopeFactor(params.hopeFactor),
 		})
 
 		// Phase 4: Full hope
 		timeline.to(params, {
 			hopeFactor: 1,
-			duration: 3,
-			ease: "power1.out",
+			duration: 1,
+			ease: "power2.out",
 			onUpdate: () => setHopeFactor(params.hopeFactor),
 			onComplete: () => {
 				// Show video after animation completes
