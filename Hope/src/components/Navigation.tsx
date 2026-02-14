@@ -9,8 +9,8 @@ import { LanguageToggle } from "./LanguageToggle"
  */
 export function Navigation() {
 	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore(state => state.locale)
-	const t = useI18nStore(state => state.t)
+	const locale = useI18nStore((state) => state.locale)
+	const t = useI18nStore((state) => state.t)
 
 	// Force re-evaluation when locale changes
 	void locale
@@ -32,6 +32,7 @@ export function Navigation() {
 				{t("nav.skipLink")}
 			</a>
 			<nav className={`nav ${isOpen ? "nav-open" : ""}`} id="nav">
+				{/* biome-ignore lint/a11y/useValidAnchor: Navigation links for single page scroll */}
 				<a href="#hero" className="nav-logo" onClick={closeMenu}>
 					<span className="nav-logo-icon">✧</span>
 					<span>HOPE</span>
@@ -52,29 +53,20 @@ export function Navigation() {
 				<div className={`nav-menu ${isOpen ? "active" : ""}`}>
 					<ul className="nav-links">
 						<li>
-							<a
-								href="#hope"
-								className="nav-link"
-								onClick={closeMenu}
-							>
+							{/* biome-ignore lint/a11y/useValidAnchor: Navigation links for single page scroll */}
+							<a href="#hope" className="nav-link" onClick={closeMenu}>
 								{t("nav.hope")}
 							</a>
 						</li>
 						<li>
-							<a
-								href="#experience"
-								className="nav-link"
-								onClick={closeMenu}
-							>
+							{/* biome-ignore lint/a11y/useValidAnchor: Navigation links for single page scroll */}
+							<a href="#experience" className="nav-link" onClick={closeMenu}>
 								{t("nav.shortFilm")}
 							</a>
 						</li>
 						<li>
-							<a
-								href="#light"
-								className="nav-link"
-								onClick={closeMenu}
-							>
+							{/* biome-ignore lint/a11y/useValidAnchor: Navigation links for single page scroll */}
+							<a href="#light" className="nav-link" onClick={closeMenu}>
 								{t("nav.light")}
 							</a>
 						</li>
