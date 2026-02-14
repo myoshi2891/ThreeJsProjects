@@ -3,23 +3,40 @@ import en from "../en.json"
 import ja from "../ja.json"
 
 /**
- * Helper function to get all keys from a nested object using dot notation
+ * Walk all leaf entries of a nested object using dot-notation keys.
+ * Used by getAllKeys and getAllValues to avoid duplicate recursion.
  */
-function getAllKeys(obj: Record<string, unknown>, prefix = ""): string[] {
-	const keys: string[] = []
+function walkLeaves(obj: Record<string, unknown>, prefix = ""): { key: string; value: string }[] {
+	const entries: { key: string; value: string }[] = []
 
 	for (const key of Object.keys(obj)) {
 		const fullKey = prefix ? `${prefix}.${key}` : key
 		const value = obj[key]
 
 		if (value && typeof value === "object" && !Array.isArray(value)) {
-			keys.push(...getAllKeys(value as Record<string, unknown>, fullKey))
-		} else {
-			keys.push(fullKey)
+			entries.push(...walkLeaves(value as Record<string, unknown>, fullKey))
+		} else if (typeof value === "string") {
+			entries.push({ key: fullKey, value })
 		}
 	}
 
-	return keys
+	return entries
+}
+
+function getAllKeys(obj: Record<string, unknown>): string[] {
+	return walkLeaves(obj).map((e) => e.key)
+}
+
+function getAllValues(obj: Record<string, unknown>): { key: string; value: string }[] {
+	return walkLeaves(obj)
+}
+
+/**
+ * Helper function to extract placeholders ({name}) from a string
+ */
+function extractPlaceholders(str: string): string[] {
+	const matches = str.match(/\{[^}]+\}/g)
+	return matches ? matches.sort() : []
 }
 
 describe("Translation files consistency", () => {
@@ -132,6 +149,36 @@ describe("Translation files consistency", () => {
 		it("should have imageModal.viewImage in both languages", () => {
 			expect(en.imageModal.viewImage).toBeDefined()
 			expect(ja.imageModal.viewImage).toBeDefined()
+		})
+	})
+
+	describe("data quality", () => {
+		it("should have no empty translation values", () => {
+			const enValues = getAllValues(en as Record<string, unknown>)
+			const jaValues = getAllValues(ja as Record<string, unknown>)
+
+			const emptyEn = enValues.filter((e) => e.value.trim() === "")
+			const emptyJa = jaValues.filter((e) => e.value.trim() === "")
+
+			expect(emptyEn.map((e) => e.key)).toEqual([])
+			expect(emptyJa.map((e) => e.key)).toEqual([])
+		})
+
+		it("should have matching placeholders between en and ja", () => {
+			const enValues = getAllValues(en as Record<string, unknown>)
+			const jaValues = getAllValues(ja as Record<string, unknown>)
+
+			const jaMap = new Map(jaValues.map((e) => [e.key, e.value]))
+
+			for (const { key, value } of enValues) {
+				const jaValue = jaMap.get(key)
+				if (!jaValue) continue
+
+				const enPlaceholders = extractPlaceholders(value)
+				const jaPlaceholders = extractPlaceholders(jaValue)
+
+				expect(enPlaceholders, `placeholder mismatch for key "${key}"`).toEqual(jaPlaceholders)
+			}
 		})
 	})
 })

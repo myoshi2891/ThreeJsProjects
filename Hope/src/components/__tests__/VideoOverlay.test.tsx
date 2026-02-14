@@ -22,6 +22,16 @@ describe("VideoOverlay", () => {
 	afterEach(() => {
 		vi.useRealTimers()
 		vi.restoreAllMocks()
+		// Prevent fullscreenElement / exitFullscreen leaking between tests
+		Object.defineProperty(document, "fullscreenElement", {
+			value: null,
+			configurable: true,
+		})
+		Object.defineProperty(document, "exitFullscreen", {
+			value: undefined,
+			configurable: true,
+			writable: true,
+		})
 	})
 
 	it("should not render when isVideoOverlayVisible is false", () => {
@@ -57,11 +67,11 @@ describe("VideoOverlay", () => {
 		const closeBtn = screen.getByRole("button", { name: "Close video" })
 		fireEvent.click(closeBtn)
 
-		// フェードアウト中はストア状態はまだ変更されていない
+		// Store state should not change during fade-out
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 
-		// 500ms後にストア状態が更新される
+		// Store state updates after 500ms
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -76,10 +86,10 @@ describe("VideoOverlay", () => {
 
 		fireEvent.keyDown(document, { key: "Escape" })
 
-		// フェードアウト中はストア状態はまだ変更されていない
+		// Store state should not change during fade-out
 		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 
-		// 500ms後にストア状態が更新される
+		// Store state updates after 500ms
 		act(() => {
 			vi.advanceTimersByTime(500)
 		})
@@ -110,6 +120,85 @@ describe("VideoOverlay", () => {
 			vi.advanceTimersByTime(500)
 		})
 
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
+	})
+
+	it("should transition store state correctly even when exitFullscreen fails", async () => {
+		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+
+		// Set fullscreenElement so exitFullscreen is called
+		Object.defineProperty(document, "fullscreenElement", {
+			value: document.documentElement,
+			configurable: true,
+		})
+		document.exitFullscreen = vi.fn(() => Promise.reject(new Error("Exit fullscreen failed")))
+
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(500)
+		})
+
+		expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Exit fullscreen failed"))
+
+		// Store should transition correctly
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
+	})
+
+	it("should transition only once on rapid consecutive close clicks", () => {
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+
+		// Rapid consecutive clicks
+		fireEvent.click(closeBtn)
+		fireEvent.click(closeBtn)
+		fireEvent.click(closeBtn)
+
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+
+		// Store should transition only once
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(false)
+		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(true)
+	})
+
+	it("should not call exitFullscreen when not in fullscreen mode", () => {
+		const exitFn = vi.fn(() => Promise.resolve())
+		document.exitFullscreen = exitFn
+
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		expect(exitFn).not.toHaveBeenCalled()
+	})
+
+	it("should clean up closeTimeoutRef on unmount", () => {
+		useAppStore.setState({ isVideoOverlayVisible: true })
+		const { unmount } = render(<VideoOverlay />)
+
+		const closeBtn = screen.getByRole("button", { name: "Close video" })
+		fireEvent.click(closeBtn)
+
+		// Unmount before timeout completes
+		unmount()
+
+		// Store state should not change after timeout elapses
+		act(() => {
+			vi.advanceTimersByTime(500)
+		})
+
+		expect(useAppStore.getState().isVideoOverlayVisible).toBe(true)
 		expect(useAppStore.getState().isVideoThumbnailVisible).toBe(false)
 	})
 })

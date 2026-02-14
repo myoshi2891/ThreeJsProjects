@@ -15,9 +15,9 @@ RUN groupadd -g 1001 nodejs && \
 # wget, ca-certificatesはヘルスチェック用
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    wget=1.21.3-1+b1 \
-    ca-certificates=20230311 \
-    gosu=1.14-1+b6 && \
+    wget \
+    ca-certificates \
+    gosu=1.17-* && \
     rm -rf /var/lib/apt/lists/*
 
 # 作業ディレクトリ設定
