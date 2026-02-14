@@ -159,7 +159,11 @@ body {
 	right: 0;
 	width: 80px;
 	height: 80px;
-	background: linear-gradient(135deg, transparent 0%, var(--color-bg-dark) 60%);
+	background: linear-gradient(
+		135deg,
+		transparent 0%,
+		var(--color-bg-dark) 60%
+	);
 	pointer-events: none;
 }
 
@@ -272,6 +276,105 @@ body {
 }
 
 /* =====================================================
+   Mobile Navigation (Hamburger Menu)
+   ===================================================== */
+.nav-toggle {
+	display: none;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 30px;
+	height: 21px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	z-index: calc(var(--z-nav) + 1);
+}
+
+.nav-toggle-bar {
+	width: 100%;
+	height: 3px;
+	background-color: var(--color-text-secondary);
+	border-radius: 3px;
+	transition:
+		transform 0.3s ease,
+		opacity 0.3s ease,
+		background-color 0.3s ease;
+}
+
+.nav-toggle:hover .nav-toggle-bar {
+	background-color: var(--color-accent);
+}
+
+/* Mobile Styling */
+@media (max-width: 768px) {
+	.nav {
+		padding: var(--space-md) var(--space-lg);
+	}
+
+	.nav-toggle {
+		display: flex;
+	}
+
+	.nav-menu {
+		position: fixed;
+		top: 0;
+		right: -100%;
+		width: 100%;
+		height: 100vh;
+		background-color: rgba(10, 15, 26, 0.95);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		z-index: var(--z-nav);
+	}
+
+	.nav-menu.active {
+		right: 0;
+	}
+
+	.nav-links {
+		flex-direction: column;
+		gap: var(--space-2xl);
+	}
+
+	.nav-link {
+		font-size: 1.5rem;
+		letter-spacing: 0.1em;
+	}
+
+	/* Hamburger Animation when Active */
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+		transform: translateY(9px) rotate(45deg);
+	}
+
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+		opacity: 0;
+	}
+
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+		transform: translateY(-9px) rotate(-45deg);
+	}
+}
+
+/* Hope Mode Mobile Adjustments */
+body.hope-mode .nav-menu {
+	background-color: rgba(255, 255, 255, 0.95);
+}
+
+body.hope-mode .nav-toggle-bar {
+	background-color: var(--color-text-secondary-light);
+}
+
+body.hope-mode .nav-toggle[aria-expanded="true"] .nav-toggle-bar {
+	background-color: var(--color-accent-light);
+}
+
+/* =====================================================
    Language Toggle Button
    ===================================================== */
 .language-toggle {
@@ -328,7 +431,9 @@ body.hope-mode .language-toggle:hover {
 	align-items: center;
 	text-align: center;
 	padding: var(--space-4xl) var(--space-xl);
-	padding-bottom: calc(var(--space-4xl) + 120px); /* Extra space for scroll indicator */
+	padding-bottom: calc(
+		var(--space-4xl) + 120px
+	); /* Extra space for scroll indicator */
 	z-index: var(--z-ui);
 }
 
@@ -555,7 +660,11 @@ body.hope-mode .language-toggle:hover {
 
 .loading-progress-bar {
 	height: 100%;
-	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
+	background: linear-gradient(
+		90deg,
+		var(--color-accent-dim),
+		var(--color-accent-bright)
+	);
 	width: var(--progress-width, 0%);
 	transition: width var(--transition-slow);
 }
@@ -597,12 +706,19 @@ body.hope-mode .language-toggle:hover {
 	letter-spacing: 0.3em;
 	color: var(--color-accent);
 	margin-bottom: var(--space-lg);
-	padding: var(--space-sm) var(--space-lg);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius-full);
 	transition:
 		color 2s ease,
 		border-color 2s ease;
+}
+
+/* Mobile Story Section Adjustments */
+@media (max-width: 768px) {
+	.story-section {
+		padding: var(--space-2xl) var(--space-md);
+		min-height: auto; /* Allow content to dictate height if needed, or keep 100vh if strict */
+	}
 }
 
 .story-title {
@@ -722,7 +838,11 @@ body.hope-mode .story-thumbnail-image:hover {
 
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
-	background: linear-gradient(135deg, rgba(10, 15, 26, 0.8) 0%, rgba(26, 37, 53, 0.9) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(10, 15, 26, 0.8) 0%,
+		rgba(26, 37, 53, 0.9) 100%
+	);
 	border: 2px solid var(--color-accent);
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
