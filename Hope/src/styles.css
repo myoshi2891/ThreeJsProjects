@@ -272,6 +272,105 @@ body {
 }
 
 /* =====================================================
+   Mobile Navigation (Hamburger Menu)
+   ===================================================== */
+.nav-toggle {
+	display: none;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 30px;
+	height: 21px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	z-index: calc(var(--z-nav) + 1);
+}
+
+.nav-toggle-bar {
+	width: 100%;
+	height: 3px;
+	background-color: var(--color-text-secondary);
+	border-radius: 3px;
+	transition:
+		transform 0.3s ease,
+		opacity 0.3s ease,
+		background-color 0.3s ease;
+}
+
+.nav-toggle:hover .nav-toggle-bar {
+	background-color: var(--color-accent);
+}
+
+/* Mobile Styling */
+@media (max-width: 768px) {
+	.nav {
+		padding: var(--space-md) var(--space-lg);
+	}
+
+	.nav-toggle {
+		display: flex;
+	}
+
+	.nav-menu {
+		position: fixed;
+		top: 0;
+		right: -100%;
+		width: 100%;
+		height: 100vh;
+		background-color: rgba(10, 15, 26, 0.95);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		z-index: var(--z-nav);
+	}
+
+	.nav-menu.active {
+		right: 0;
+	}
+
+	.nav-links {
+		flex-direction: column;
+		gap: var(--space-2xl);
+	}
+
+	.nav-link {
+		font-size: 1.5rem;
+		letter-spacing: 0.1em;
+	}
+
+	/* Hamburger Animation when Active */
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+		transform: translateY(9px) rotate(45deg);
+	}
+
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+		opacity: 0;
+	}
+
+	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+		transform: translateY(-9px) rotate(-45deg);
+	}
+}
+
+/* Hope Mode Mobile Adjustments */
+body.hope-mode .nav-menu {
+	background-color: rgba(255, 255, 255, 0.95);
+}
+
+body.hope-mode .nav-toggle-bar {
+	background-color: var(--color-text-secondary-light);
+}
+
+body.hope-mode .nav-toggle[aria-expanded="true"] .nav-toggle-bar {
+	background-color: var(--color-accent-light);
+}
+
+/* =====================================================
    Language Toggle Button
    ===================================================== */
 .language-toggle {
@@ -603,6 +702,20 @@ body.hope-mode .language-toggle:hover {
 	transition:
 		color 2s ease,
 		border-color 2s ease;
+}
+
+/* Mobile Story Section Adjustments */
+@media (max-width: 768px) {
+	.story-section {
+		padding: var(--space-2xl) var(--space-md);
+		min-height: auto; /* Allow content to dictate height if needed, or keep 100vh if strict */
+	}
+
+	.story-thumbnail,
+	.video-thumbnail-wrapper,
+	.experience-cta {
+		margin-top: var(--space-lg); /* Reduce from var(--space-2xl) */
+	}
 }
 
 .story-title {
