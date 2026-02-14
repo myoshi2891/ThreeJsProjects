@@ -1,0 +1,17 @@
+[build]
+  # Netlify UI settings:
+  # Base directory: Hope
+  # Build command: bun install && bun run build
+  # Publish directory: dist
+  
+  command = "bun install && bun run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  # Ensure Bun is used if needed, though usually auto-detected with bun.lock
+  # NODE_VERSION = "20" 
