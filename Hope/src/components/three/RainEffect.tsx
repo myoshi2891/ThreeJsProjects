@@ -70,7 +70,6 @@ export function RainEffect() {
 
 	return (
 		<points ref={pointsRef} geometry={geometry}>
-			{/* @ts-expect-error - React Three Fiber type definition issue */}
 			<pointsMaterial color={0xaaaaaa} size={0.05} transparent opacity={opacity} map={texture} />
 		</points>
 	)
