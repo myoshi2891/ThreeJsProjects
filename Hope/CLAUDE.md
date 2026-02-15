@@ -241,16 +241,16 @@ Hope/
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
 - **i18nStore**: 言語設定(`locale`)と翻訳関数(`t`)を提供。Zustand persistで永続化。
 
-**i18n再レンダリングパターン**:
+**i18n再レンダリングパターン**: `useTranslation` フックを使用:
 
 ```tsx
-// locale購読で言語変更時の再レンダリングを保証
-useI18nStore((state) => state.locale)
-const t = useI18nStore((state) => state.t)
+import { useTranslation } from "../hooks"
+
+const { t } = useTranslation()
 ```
 
-`t` 関数は参照が変わらないため、`locale` のサブスクリプションが再レンダリングに必要。
-`void locale` や変数代入は不要。
+`useTranslation` は内部で locale を購読し、言語変更時の再レンダリングを保証。
+直接 `useI18nStore` を呼ぶ必要はない。
 
 ### Animation Classes (`src/animation/`)
 
