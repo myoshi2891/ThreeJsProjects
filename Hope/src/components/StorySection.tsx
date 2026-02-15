@@ -7,13 +7,13 @@ interface StorySectionProps {
 	type: "hope" | "life" | "possibility" | "light"
 }
 
-const sectionIdMap: Record<string, string | undefined> = {
+const sectionIdMap: Partial<Record<StorySectionProps["type"], string>> = {
 	hope: "hope",
 	light: "light",
 }
 
 // 各セクションの画像配列
-const imageMap: Record<string, string[]> = {
+const imageMap: Record<StorySectionProps["type"], string[]> = {
 	hope: [
 		"/images/Hope/hope-01-city-gaze.webp",
 		"/images/Hope/hope-02-pillar.webp",
