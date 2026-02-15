@@ -4,12 +4,10 @@ import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
 import { calculateRainCount } from "../../utils"
 
-const RAIN_COUNT = calculateRainCount()
-
 /**
  * Renders a Three.js Points-based rain particle system that fades as the scene's hope factor increases.
  *
- * The component creates a static buffer geometry of RAIN_COUNT particles with randomized positions,
+ * The component creates a static buffer geometry with a dynamic particle count based on device performance,
  * animates their downward movement each frame (recycling particles that fall below a threshold),
  * and updates the geometry in-place. Opacity is linearly interpolated from 1 to 0 using the scene's `hopeFactor`.
  *
@@ -19,17 +17,20 @@ export function RainEffect() {
 	const pointsRef = useRef<THREE.Points>(null)
 	const hopeFactor = useSceneStore((state) => state.hopeFactor)
 
+	// デバイス性能に基づいて最適なパーティクル数を計算（ランタイムのみ実行）
+	const rainCount = useMemo(() => calculateRainCount(), [])
+
 	const geometry = useMemo(() => {
 		const geo = new THREE.BufferGeometry()
-		const positions = new Float32Array(RAIN_COUNT * 3)
+		const positions = new Float32Array(rainCount * 3)
 
-		for (let i = 0; i < RAIN_COUNT * 3; i++) {
+		for (let i = 0; i < rainCount * 3; i++) {
 			positions[i] = (Math.random() - 0.5) * 60
 		}
 
 		geo.setAttribute("position", new THREE.BufferAttribute(positions, 3))
 		return geo
-	}, [])
+	}, [rainCount])
 
 	const texture = useMemo(() => {
 		const canvas = document.createElement("canvas")
@@ -63,7 +64,7 @@ export function RainEffect() {
 
 		const positions = pointsRef.current.geometry.attributes.position.array as Float32Array
 
-		for (let i = 1; i < RAIN_COUNT * 3; i += 3) {
+		for (let i = 1; i < rainCount * 3; i += 3) {
 			positions[i] -= 0.2 // Rain falling speed
 			if (positions[i] < -10) {
 				positions[i] = 20
