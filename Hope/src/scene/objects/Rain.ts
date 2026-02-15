@@ -1,12 +1,16 @@
 import * as THREE from "three"
+import { calculateRainCount } from "../../utils"
 
 export class Rain {
 	private readonly points: THREE.Points
 	private readonly geometry: THREE.BufferGeometry
 	private readonly material: THREE.PointsMaterial
-	private readonly rainCount = 3000 // Reduced from 10000
+	private readonly rainCount: number
 
-	constructor() {
+	constructor(rainCount?: number) {
+		// コンストラクタ内で一度だけ代入（readonly 制約を満たす）
+		// デバイス性能に基づいて動的に調整（低性能: 1500、中性能: 3000、高性能: 5000）
+		this.rainCount = rainCount ?? calculateRainCount()
 		this.geometry = this.createGeometry()
 		this.material = this.createMaterial()
 		this.points = new THREE.Points(this.geometry, this.material)
