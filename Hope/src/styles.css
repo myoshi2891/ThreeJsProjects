@@ -1427,6 +1427,11 @@ body.hope-mode .hero-badge {
 	transform: scale(0.95);
 }
 
+.video-close-btn:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.8);
+	outline-offset: 2px;
+}
+
 /* =====================================================
    Thumbnail Video Player (in-page)
    ===================================================== */
@@ -1507,6 +1512,11 @@ body.hope-mode .hero-badge {
 
 .video-expand-btn:active {
 	transform: scale(0.95);
+}
+
+.video-expand-btn:focus-visible {
+	outline: 2px solid var(--color-accent-light-bright);
+	outline-offset: 2px;
 }
 
 /* Hope Mode adjustments for thumbnail */
