@@ -1,4 +1,4 @@
-import { useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
 
 /**
  * Renders the page hero section containing a badge, title, subtitle, call-to-action button, and scroll indicator.
@@ -8,9 +8,7 @@ import { useI18nStore } from "../store"
  * @returns The hero section as a JSX element.
  */
 export function Hero() {
-	// locale購読で言語変更時の再レンダリングを保証
-	useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
+	const { t } = useTranslation()
 
 	const handleStartClick = () => {
 		const experienceSection = document.getElementById("experience")
@@ -34,7 +32,9 @@ export function Hero() {
 				</p>
 				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
 					<span>{t("hero.cta")}</span>
-					<span className="hero-cta-icon">→</span>
+					<span className="hero-cta-icon" aria-hidden="true">
+						→
+					</span>
 				</button>
 			</div>
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useAppStore, useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
+import { useAppStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
 /**
@@ -20,9 +21,7 @@ export function ExperienceSection() {
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
-	// locale購読で言語変更時の再レンダリングを保証
-	useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
+	const { t } = useTranslation()
 
 	const handleHopeClick = useCallback(() => {
 		if (isFading) return

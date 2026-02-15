@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
 import { ImageModal } from "./ImageModal"
 import { ImageSlider } from "./ImageSlider"
 
@@ -71,9 +71,7 @@ export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-	// locale購読で言語変更時の再レンダリングを保証
-	useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
+	const { t } = useTranslation()
 
 	const sectionId = sectionIdMap[type]
 	const images = imageMap[type]
