@@ -71,12 +71,9 @@ export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-	// 言語変更時に再レンダリングするため両方を購読
-	const locale = useI18nStore((state) => state.locale)
+	// locale購読で言語変更時の再レンダリングを保証
+	useI18nStore((state) => state.locale)
 	const t = useI18nStore((state) => state.t)
-
-	// localeの変更で再評価を強制
-	void locale
 
 	const sectionId = sectionIdMap[type]
 	const images = imageMap[type]

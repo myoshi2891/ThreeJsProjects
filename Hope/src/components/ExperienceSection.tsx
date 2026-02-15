@@ -20,12 +20,9 @@ export function ExperienceSection() {
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
+	// locale購読で言語変更時の再レンダリングを保証
+	useI18nStore((state) => state.locale)
 	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
 
 	const handleHopeClick = useCallback(() => {
 		if (isFading) return

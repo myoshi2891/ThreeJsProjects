@@ -8,12 +8,9 @@ import { LanguageToggle } from "./LanguageToggle"
  * @returns A JSX element: a <nav> with a logo anchor and links to `#story`, `#experience`, and `#about`.
  */
 export function Navigation() {
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
+	// locale購読で言語変更時の再レンダリングを保証
+	useI18nStore((state) => state.locale)
 	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
 
 	// Mobile menu state
 	const [isOpen, setIsOpen] = useState(false)

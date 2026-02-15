@@ -16,12 +16,9 @@ export function VideoThumbnail() {
 	const showVideoOverlay = useAppStore((state) => state.showVideoOverlay)
 	const hideVideoThumbnail = useAppStore((state) => state.hideVideoThumbnail)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
+	// locale購読で言語変更時の再レンダリングを保証
+	useI18nStore((state) => state.locale)
 	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
 
 	// フルスクリーン遷移タイマーのref
 	const expandTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
