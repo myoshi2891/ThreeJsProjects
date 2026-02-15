@@ -1,4 +1,4 @@
-import { useI18nStore } from "../store/i18nStore"
+import { useI18nStore } from "../store"
 
 /**
  * Language toggle button for switching between Japanese and English.
