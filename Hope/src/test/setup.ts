@@ -9,7 +9,8 @@ afterEach(() => {
 
 // グローバルなrequestAnimationFrameのモック（アニメーション系テスト用）
 globalThis.requestAnimationFrame = (callback: FrameRequestCallback) => {
-	return setTimeout(() => callback(Date.now()), 0) as unknown as number
+	// 16ms遅延でGSAP ScrollTriggerの再帰的RAF呼び出しによるスタックオーバーフローを防止
+	return setTimeout(() => callback(Date.now()), 16) as unknown as number
 }
 
 globalThis.cancelAnimationFrame = (id: number) => {

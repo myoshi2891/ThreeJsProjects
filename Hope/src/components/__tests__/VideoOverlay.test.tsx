@@ -3,7 +3,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore } from "../../store"
 import { VideoOverlay } from "../VideoOverlay"
 
-// Time utilities
+// happy-domがiframe srcをfetchしないようモック
+vi.mock("../../utils/youtube", () => ({
+	YOUTUBE_VIDEO_ID: "test-video-id",
+}))
+
+// barrelインポート経由でScrollTriggerが読み込まれ、_rafBugFixが
+// 同期RAFモックと無限再帰を起こすのを防止
+vi.mock("gsap/ScrollTrigger", () => ({
+	ScrollTrigger: {
+		create: vi.fn(),
+		getAll: vi.fn(() => []),
+		refresh: vi.fn(),
+	},
+}))
+
+vi.mock("gsap", () => ({
+	gsap: {
+		timeline: vi.fn(),
+		to: vi.fn(),
+		registerPlugin: vi.fn(),
+	},
+}))
 
 describe("VideoOverlay", () => {
 	beforeEach(() => {
@@ -19,7 +40,7 @@ describe("VideoOverlay", () => {
 		})
 	})
 
-	afterEach(() => {
+	afterEach(async () => {
 		vi.useRealTimers()
 		vi.restoreAllMocks()
 		// Prevent fullscreenElement / exitFullscreen leaking between tests
@@ -32,6 +53,12 @@ describe("VideoOverlay", () => {
 			configurable: true,
 			writable: true,
 		})
+		// happy-domのpending非同期タスク（iframe navigation等）をクリーンアップ
+		// biome-ignore lint/suspicious/noExplicitAny: happy-dom internal API
+		const happyDOM = (window as any).happyDOM
+		if (happyDOM?.abort) {
+			await happyDOM.abort()
+		}
 	})
 
 	it("should not render when isVideoOverlayVisible is false", () => {
