@@ -1,8 +1,8 @@
 import { useFrame } from "@react-three/fiber"
-import { useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
-import { calculateRainCount } from "../../utils/performance"
+import { calculateRainCount } from "../../utils"
 
 const RAIN_COUNT = calculateRainCount()
 
@@ -50,6 +50,13 @@ export function RainEffect() {
 
 		return new THREE.CanvasTexture(canvas)
 	}, [])
+
+	// GPU メモリリーク防止: コンポーネントアンマウント時にテクスチャを破棄
+	useEffect(() => {
+		return () => {
+			texture.dispose()
+		}
+	}, [texture])
 
 	useFrame(() => {
 		if (!pointsRef.current || hopeFactor >= 0.99) return

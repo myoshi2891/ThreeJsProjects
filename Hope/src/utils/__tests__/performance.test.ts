@@ -166,7 +166,7 @@ describe("calculateRainCount", () => {
 			expect(calculateRainCount()).toBe(3000)
 		})
 
-		it("should return 5000 for Gaming PC (dpr=1, cores=16)", () => {
+		it("should return 3000 for Gaming PC (dpr=1, cores=16)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 1,
 				configurable: true,
@@ -198,7 +198,7 @@ describe("calculateRainCount", () => {
 	})
 
 	describe("Fallback handling", () => {
-		it("should return 3000 when devicePixelRatio is undefined", () => {
+		it("should return 1500 when devicePixelRatio is undefined", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: undefined,
 				configurable: true,
@@ -230,7 +230,7 @@ describe("calculateRainCount", () => {
 			expect(calculateRainCount()).toBe(3000)
 		})
 
-		it("should return 3000 when both values are undefined", () => {
+		it("should return 1500 when both values are undefined", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: undefined,
 				configurable: true,

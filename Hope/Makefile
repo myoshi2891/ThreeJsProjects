@@ -10,13 +10,13 @@ help:
 	@echo "  make dev           - 開発環境を起動 (ホットリロード有効)"
 	@echo "  make prod          - 本番環境を起動 (Nginx静的配信)"
 	@echo "  make down          - コンテナとネットワークを停止・削除"
-	@echo "  make clean         - コンテナ、ネットワーク、ボリューム、イメージを完全に削除 (強力なクリーンアップ)"
+	@echo "  make clean         - プロジェクトのコンテナ、ボリューム、ローカルイメージを削除"
 	@echo "  make logs          - ログを表示 (フォローモード)"
 	@echo "  make shell         - 実行中のコンテナに入る (/bin/sh)"
 	@echo "  make format        - コードのフォーマット (Biome)"
 	@echo "  make lint          - コードのLint (Biome)"
-	@echo "  make restart-dev   - クリーンアップして開発環境を再起動"
-	@echo "  make restart-prod  - クリーンアップして本番環境を再起動"
+	@echo "  make restart-dev   - 開発環境を再起動 (停止 → 起動)"
+	@echo "  make restart-prod  - 本番環境を再起動 (停止 → 起動)"
 
 # -----------------------------------------------------------------------------
 # 実行コマンド
@@ -38,11 +38,11 @@ down:
 	docker compose -f docker-compose.dev.yml down --remove-orphans || true
 	docker compose down --remove-orphans || true
 
-# 完全なクリーンアップ (エラー解決用)
+# プロジェクトのクリーンアップ (コンテナ、ボリューム、ローカルイメージを削除)
 clean: down
-	@echo "Cleaning up Docker resources..."
-	docker system prune -f
-	docker volume prune -f
+	@echo "Cleaning up project Docker resources..."
+	docker compose -f docker-compose.dev.yml down --volumes --rmi local || true
+	docker compose down --volumes --rmi local || true
 	@echo "Cleanup complete."
 
 # ログ表示
@@ -63,6 +63,7 @@ format:
 lint:
 	docker compose -f docker-compose.dev.yml exec hope-dev npm run lint
 
-# 再起動ショートカット
-restart-dev: clean dev
-restart-prod: clean prod
+# 再起動ショートカット (停止 → 起動)
+restart-dev: down dev
+
+restart-prod: down prod

@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { calculateRainCount } from "../../utils/performance"
+import { calculateRainCount } from "../../utils"
 
 export class Rain {
 	private readonly points: THREE.Points
