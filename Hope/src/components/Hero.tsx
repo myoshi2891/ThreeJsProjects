@@ -8,12 +8,9 @@ import { useI18nStore } from "../store"
  * @returns The hero section as a JSX element.
  */
 export function Hero() {
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
+	// locale購読で言語変更時の再レンダリングを保証
+	useI18nStore((state) => state.locale)
 	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
 
 	const handleStartClick = () => {
 		const experienceSection = document.getElementById("experience")
@@ -40,8 +37,7 @@ export function Hero() {
 					className="hero-cta"
 					id="start-btn"
 					onClick={handleStartClick}
-					aria-label={t("hero.cta")}
-				>
+					>
 					<span>{t("hero.cta")}</span>
 					<span className="hero-cta-icon">→</span>
 				</button>
