@@ -1,30 +1,21 @@
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useAppStore } from "../../store"
+import { cleanupFullscreenAPI, commonCleanup } from "../../test/helpers/cleanup"
 import { VideoOverlay } from "../VideoOverlay"
 
-// happy-domがiframe srcをfetchしないようモック
-vi.mock("../../utils/youtube", () => ({
-	YOUTUBE_VIDEO_ID: "test-video-id",
-}))
-
-// barrelインポート経由でScrollTriggerが読み込まれ、_rafBugFixが
-// 同期RAFモックと無限再帰を起こすのを防止
-vi.mock("gsap/ScrollTrigger", () => ({
-	ScrollTrigger: {
-		create: vi.fn(),
-		getAll: vi.fn(() => []),
-		refresh: vi.fn(),
-	},
-}))
-
-vi.mock("gsap", () => ({
-	gsap: {
-		timeline: vi.fn(),
-		to: vi.fn(),
-		registerPlugin: vi.fn(),
-	},
-}))
+vi.mock("../../utils/youtube", async () => {
+	const { mockYoutubeUtils } = await import("../../test/mocks/video")
+	return mockYoutubeUtils()
+})
+vi.mock("gsap/ScrollTrigger", async () => {
+	const { mockScrollTrigger } = await import("../../test/mocks/video")
+	return mockScrollTrigger()
+})
+vi.mock("gsap", async () => {
+	const { mockGSAP } = await import("../../test/mocks/video")
+	return mockGSAP()
+})
 
 describe("VideoOverlay", () => {
 	beforeEach(() => {
@@ -41,24 +32,8 @@ describe("VideoOverlay", () => {
 	})
 
 	afterEach(async () => {
-		vi.useRealTimers()
-		vi.restoreAllMocks()
-		// Prevent fullscreenElement / exitFullscreen leaking between tests
-		Object.defineProperty(document, "fullscreenElement", {
-			value: null,
-			configurable: true,
-		})
-		Object.defineProperty(document, "exitFullscreen", {
-			value: undefined,
-			configurable: true,
-			writable: true,
-		})
-		// happy-domのpending非同期タスク（iframe navigation等）をクリーンアップ
-		// biome-ignore lint/suspicious/noExplicitAny: happy-dom internal API
-		const happyDOM = (window as any).happyDOM
-		if (happyDOM?.abort) {
-			await happyDOM.abort()
-		}
+		await commonCleanup()
+		cleanupFullscreenAPI()
 	})
 
 	it("should not render when isVideoOverlayVisible is false", () => {
