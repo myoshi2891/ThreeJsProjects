@@ -108,6 +108,20 @@ describe("Translation files consistency", () => {
 				expect(ja.story[type].author).toBeDefined()
 			})
 		}
+
+		it("should have quote keys for hope, possibility, light", () => {
+			for (const type of ["hope", "possibility", "light"] as const) {
+				expect(en.story[type].quote).toBeDefined()
+				expect(ja.story[type].quote).toBeDefined()
+			}
+		})
+
+		it("should have quote1 and quote2 keys for life", () => {
+			expect(en.story.life.quote1).toBeDefined()
+			expect(en.story.life.quote2).toBeDefined()
+			expect(ja.story.life.quote1).toBeDefined()
+			expect(ja.story.life.quote2).toBeDefined()
+		})
 	})
 
 	describe("experience section", () => {
