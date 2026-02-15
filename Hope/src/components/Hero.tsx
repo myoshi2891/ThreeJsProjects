@@ -32,12 +32,7 @@ export function Hero() {
 					<br />
 					{t("hero.subtitle2")}
 				</p>
-				<button
-					type="button"
-					className="hero-cta"
-					id="start-btn"
-					onClick={handleStartClick}
-					>
+				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
 					<span>{t("hero.cta")}</span>
 					<span className="hero-cta-icon">→</span>
 				</button>
