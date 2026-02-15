@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useAppStore, useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
+import { useAppStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
 /**
@@ -20,12 +21,7 @@ export function ExperienceSection() {
 	const setHopeMode = useAppStore((state) => state.setHopeMode)
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
+	const { t } = useTranslation()
 
 	const handleHopeClick = useCallback(() => {
 		if (isFading) return
@@ -40,7 +36,7 @@ export function ExperienceSection() {
 		fadeTimeoutRef.current = setTimeout(() => {
 			setHopeMode(true)
 			setIsButtonHidden(true)
-		}, 300) // Match CSS transition duration
+		}, 500) // CSS transition: opacity 0.5s ease-out
 	}, [setHopeMode, isFading])
 
 	// Cleanup on unmount

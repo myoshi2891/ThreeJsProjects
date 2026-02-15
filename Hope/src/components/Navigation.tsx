@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
 import { LanguageToggle } from "./LanguageToggle"
 
 /**
@@ -8,12 +8,7 @@ import { LanguageToggle } from "./LanguageToggle"
  * @returns A JSX element: a <nav> with a logo anchor and links to `#story`, `#experience`, and `#about`.
  */
 export function Navigation() {
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
+	const { t } = useTranslation()
 
 	// Mobile menu state
 	const [isOpen, setIsOpen] = useState(false)

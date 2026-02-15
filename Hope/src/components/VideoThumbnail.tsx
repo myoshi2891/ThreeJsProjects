@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { useAppStore, useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
+import { useAppStore } from "../store"
 import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
 
 /**
@@ -16,12 +17,7 @@ export function VideoThumbnail() {
 	const showVideoOverlay = useAppStore((state) => state.showVideoOverlay)
 	const hideVideoThumbnail = useAppStore((state) => state.hideVideoThumbnail)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
+	const { t } = useTranslation()
 
 	// フルスクリーン遷移タイマーのref
 	const expandTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)

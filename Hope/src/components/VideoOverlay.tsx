@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useAppStore, useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
+import { useAppStore } from "../store"
 import { YOUTUBE_VIDEO_ID } from "../utils/youtube"
 
 /**
@@ -16,12 +17,7 @@ export function VideoOverlay() {
 	// Local state for fade animation
 	const [isVisible, setIsVisible] = useState(false)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
+	const { t } = useTranslation()
 
 	const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 	const closingRef = useRef(false)

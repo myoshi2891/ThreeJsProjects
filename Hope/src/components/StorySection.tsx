@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
 import { ImageModal } from "./ImageModal"
 import { ImageSlider } from "./ImageSlider"
 
@@ -7,13 +7,13 @@ interface StorySectionProps {
 	type: "hope" | "life" | "possibility" | "light"
 }
 
-const sectionIdMap: Record<string, string | undefined> = {
+const sectionIdMap: Partial<Record<StorySectionProps["type"], string>> = {
 	hope: "hope",
 	light: "light",
 }
 
 // 各セクションの画像配列
-const imageMap: Record<string, string[]> = {
+const imageMap: Record<StorySectionProps["type"], string[]> = {
 	hope: [
 		"/images/Hope/hope-01-city-gaze.webp",
 		"/images/Hope/hope-02-pillar.webp",
@@ -71,12 +71,7 @@ export function StorySection({ type }: StorySectionProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-	// 言語変更時に再レンダリングするため両方を購読
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// localeの変更で再評価を強制
-	void locale
+	const { t } = useTranslation()
 
 	const sectionId = sectionIdMap[type]
 	const images = imageMap[type]

@@ -1,4 +1,5 @@
-import { useAppStore, useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
+import { useAppStore } from "../store"
 
 /**
  * Renders a loading UI that reflects application loading progress.
@@ -10,12 +11,7 @@ import { useAppStore, useI18nStore } from "../store"
 export function Loading() {
 	const loadingProgress = useAppStore((state) => state.loadingProgress)
 
-	// Subscribe to both locale and t to ensure re-render on language change
-	const locale = useI18nStore((state) => state.locale)
-	const t = useI18nStore((state) => state.t)
-
-	// Force re-evaluation when locale changes
-	void locale
+	const { t } = useTranslation()
 
 	return (
 		<div id="loading">

@@ -4,7 +4,7 @@
 
 希望（Hope）をテーマにした没入型3D Webエクスペリエンス。React 19, React Three Fiber, Zustandを使用したモダンなアーキテクチャで構築されています。
 
-## ⚠️ Agent Rules (IMPORTANT)
+## Agent Rules (IMPORTANT)
 
 > [!CAUTION]
 > **Git Repository Root**: このプロジェクトは親リポジトリ（`ThreeJsProjects`）の一部です。
@@ -12,27 +12,37 @@
 > **Git コマンド（add, commit, push等）は必ず親ディレクトリ `ThreeJsProjects/` から実行すること！**
 >
 > ```bash
-> # ✅ 正しい実行場所
+> # 正しい実行場所
 > cd ../  # Hope → ThreeJsProjects に移動
 > git add -A && git commit -m "message"
 >
-> # ❌ 間違い（Hope/ディレクトリから実行しない）
+> # 間違い（Hope/ディレクトリから実行しない）
 > git commit  # Hopeサブディレクトリからは実行しないこと
 > ```
 
-## ⚠️ Commit Procedure (REQUIRED)
+## Commit Procedure (REQUIRED)
 
 > [!IMPORTANT]
-> **コミット前に必ずLint修正を実行してください**
->
-> 繰り返し発生するLintエラー（特にCSSのフォーマット問題）を防ぐため、以下のコマンドをコミット前に実行することを必須とします。
+> **コミット前に必ず以下の手順を実行してください。CIでlintエラーが発生するのを防ぎます。**
 >
 > ```bash
+> # 1. Lint自動修正（フォーマット含む）
 > cd Hope
-> bun run lint:fix  # Biomeによる自動修正とフォーマット
-> cd ..             # 親ディレクトリに戻る
-> # その後、git add / git commit を実行
+> bun run lint:fix
+>
+> # 2. Lintエラーがないことを確認
+> bun run lint
+>
+> # 3. 型チェック
+> bunx tsc --noEmit
+>
+> # 4. 親ディレクトリに戻ってコミット
+> cd ..
+> git add <files> && git commit -m "message"
 > ```
+>
+> **よくあるエラー**: Biomeフォーマッタがコード整形を要求するケース（特にJSX属性の折り返し）。
+> `bun run lint:fix` で自動修正されます。手動編集後は必ず実行してください。
 
 ## Quick Start
 
@@ -42,7 +52,7 @@ bun install
 bun dev
 ```
 
-## ⚠️ Lockfile Management (IMPORTANT)
+## Lockfile Management (IMPORTANT)
 
 > [!WARNING]
 > **CIで `bun ci` を使用しているため、`bun.lock` は常に最新である必要があります。**
@@ -67,12 +77,13 @@ bun dev
 
 ```
 Hope/
-├── Dockerfile            # Production multi-stage build
-├── Dockerfile.dev        # Development container
+├── Dockerfile            # Production multi-stage build (Bun → Nginx)
+├── Dockerfile.dev        # Development container (Bun + hot reload)
 ├── docker-compose.yml    # Production configuration
 ├── docker-compose.dev.yml # Development configuration
-├── nginx/nginx.conf      # Nginx configuration
-├── nginx/security-headers.conf # Shared security headers
+├── docker-entrypoint.sh  # Health checks, user switching
+├── nginx/nginx.conf      # Nginx configuration (SPA routing, caching)
+├── nginx/security-headers.conf # CSP, HSTS, X-Frame-Options等
 └── .dockerignore         # Docker exclude files
 ```
 
@@ -88,45 +99,58 @@ docker compose -f docker-compose.dev.yml up
 
 ```
 Hope/
-├── index.html            # React root
+├── index.html            # React root (LCP preload links含む)
 ├── package.json          # Deps: React 19, R3F, Zustand, Vitest
 ├── biome.json            # Biome linter/formatter config
+├── netlify.toml          # Netlify deploy config
+├── .env.example          # 環境変数テンプレート
 ├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml        # Lint, TypeScript, Tests, Build
-│   │   └── deploy.yml    # Netlify deployment (main→prod, dev→preview)
-│   └── dependabot.yml    # Weekly dependency updates
+│   └── workflows/
+│       ├── ci.yml        # Lint, TypeScript, Tests, Build
+│       ├── deploy.yml    # Netlify deployment (main→prod, dev→preview)
+│       └── docker.yml    # Docker build/push to ghcr.io + Trivy scan
 ├── src/
 │   ├── main.tsx          # React Entry point
+│   ├── styles.css        # Global Styles (テーマ変数、アニメーション)
 │   ├── components/       # UI & 3D Components
 │   │   ├── App.tsx       # Main Application Component
 │   │   ├── ThreeCanvas.tsx # R3F Canvas Wrapper
+│   │   ├── Hero.tsx      # Hero section (CTA → experience scroll)
+│   │   ├── Navigation.tsx # Nav bar (skip link, mobile toggle)
+│   │   ├── Loading.tsx   # Loading progress UI
 │   │   ├── StorySection.tsx # Story sections with quotes & thumbnails
 │   │   ├── ExperienceSection.tsx # Video section with StorySection-style layout
+│   │   ├── ImageSlider.tsx # Horizontal image slider for story sections
+│   │   ├── ImageModal.tsx # Fullscreen image modal viewer
 │   │   ├── VideoThumbnail.tsx # In-page YouTube thumbnail player
 │   │   ├── VideoOverlay.tsx # Fullscreen YouTube player overlay
-│   │   ├── ImageModal.tsx # Fullscreen image modal viewer
 │   │   ├── LanguageToggle.tsx # i18n language switcher
 │   │   ├── BackgroundLayer.tsx # Decorative background layer
-│   │   ├── three/        # 3D Effect Components (Rain, Fog, etc.)
-│   │   ├── __tests__/    # Component Tests
-│   │   └── [UI Components] # Hero, Navigation (skip link), Loading, etc.
+│   │   ├── index.ts      # Barrel export
+│   │   ├── three/        # 3D Effect Components
+│   │   │   ├── RainEffect.tsx, FogEffect.tsx
+│   │   │   ├── LightParticlesEffect.tsx, GodRaysEffect.tsx
+│   │   │   ├── SceneSetup.tsx, MouseParallax.tsx
+│   │   │   └── index.ts
+│   │   └── __tests__/    # Component Tests (13 files)
 │   ├── store/            # Global State Management (Zustand)
 │   │   ├── index.ts      # Barrel export (use this for imports)
-│   │   ├── appStore.ts   # UI State
-│   │   ├── sceneStore.ts # 3D Scene State
-│   │   ├── i18nStore.ts  # Internationalization State
+│   │   ├── appStore.ts   # UI State (loading, hopeMode, video flags)
+│   │   ├── sceneStore.ts # 3D Scene State (hopeFactor, scrollProgress)
+│   │   ├── i18nStore.ts  # i18n State (locale, t function, persist)
 │   │   └── __tests__/    # Store Tests
 │   ├── locales/          # Translation Files
-│   │   ├── index.ts      # Translation export
+│   │   ├── index.ts      # Translation export & Locale type
 │   │   ├── en.json       # English translations
-│   │   └── ja.json       # Japanese translations
+│   │   ├── ja.json       # Japanese translations
+│   │   └── __tests__/    # Translation consistency tests
 │   ├── hooks/            # Custom Hooks (React)
 │   │   ├── useHopeAnimation.ts # GSAP Timeline Hook
 │   │   └── useScrollAnimation.ts # ScrollTrigger Hook
-│   ├── animation/        # Animation Classes (非React)
+│   ├── animation/        # Animation Classes (non-React)
 │   │   ├── HopeAnimation.ts # Hope animation logic class
-│   │   └── ScrollAnimation.ts # Scroll animation logic class
+│   │   ├── ScrollAnimation.ts # Scroll animation logic class
+│   │   └── __tests__/
 │   ├── scene/            # 3D Scene Management (Three.js)
 │   │   ├── SceneManager.ts # Scene lifecycle & rendering
 │   │   └── objects/      # Scene objects
@@ -138,9 +162,19 @@ Hope/
 │   │   └── AssetLoader.ts # HDRI texture & environment loading
 │   ├── types/            # TypeScript Type Definitions
 │   │   └── index.ts      # Shared types (SceneParams, LoadingCallbacks)
-│   └── styles.css        # Global Styles
+│   ├── utils/            # Utility Functions
+│   │   ├── youtube.ts    # YouTube video ID utility
+│   │   └── __tests__/
+│   └── test/             # Test Infrastructure
+│       ├── setup.ts      # Vitest setup (mocks: rAF, ResizeObserver, WebGL)
+│       ├── helpers/
+│       │   └── storeReset.ts
+│       └── mocks/
+│           └── gsap.ts
 └── public/
-    └── images/           # Story section thumbnail images (WebP format)
+    ├── images/           # Story section thumbnail images (WebP format)
+    ├── textures/         # 3D textures
+    └── favicon.*         # Favicon files
 ```
 
 ## Key Components
@@ -159,8 +193,15 @@ Hope/
 ### StorySection (`components/StorySection.tsx`)
 
 - 4つのストーリーセクション（Hope, Life, Possibility, Light）
-- 各セクションに名言とサムネイル画像を表示
+- 各セクションに名言とサムネイル画像スライダーを表示
 - クリックでImageModalによる拡大表示
+- 厳密な型定義: `Record<StorySectionProps["type"], string[]>`
+
+### ImageSlider (`components/ImageSlider.tsx`)
+
+- 横スクロール画像スライダー
+- StorySection内に配置
+- クリックでImageModal表示
 
 ### ImageModal (`components/ImageModal.tsx`)
 
@@ -173,6 +214,7 @@ Hope/
 
 - StorySection風のレイアウト（number, title, description）を持つビデオセクション
 - 「Watch the short Film」ボタンでHopeアニメーション開始
+- フェードアウト: 500ms（CSS transition: opacity 0.5s ease-out と一致）
 - アニメーション完了後にVideoThumbnailを表示
 
 ### VideoThumbnail (`components/VideoThumbnail.tsx`)
@@ -198,6 +240,17 @@ Hope/
 - **appStore**: ローディング、UI表示フラグ(`isHopeMode`等)を管理
 - **sceneStore**: 3Dシーンパラメータ(`hopeFactor`, `scrollProgress`)を管理
 - **i18nStore**: 言語設定(`locale`)と翻訳関数(`t`)を提供。Zustand persistで永続化。
+
+**i18n再レンダリングパターン**: `useTranslation` フックを使用:
+
+```tsx
+import { useTranslation } from "../hooks"
+
+const { t } = useTranslation()
+```
+
+`useTranslation` は内部で locale を購読し、言語変更時の再レンダリングを保証。
+直接 `useI18nStore` を呼ぶ必要はない。
 
 ### Animation Classes (`src/animation/`)
 
@@ -236,10 +289,14 @@ Hope/
 ## Development Commands
 
 ```bash
-bun dev           # Start dev server (localhost:5173)
-bun run test      # Run tests (Vitest)
-bun run build     # Production build
-bun run preview   # Preview production build
+bun dev              # Start dev server (localhost:5173)
+bun run test         # Run tests (Vitest, watch mode)
+bun run test -- --run # Run tests once (CI mode)
+bun run build        # Production build (tsc + vite build)
+bun run preview      # Preview production build
+bun run lint         # Biome lint check
+bun run lint:fix     # Biome lint + auto-fix
+bun run format       # Biome format
 ```
 
 ## Performance Optimization
@@ -255,6 +312,12 @@ bun run preview   # Preview production build
 - `font-display: swap` で FOUT (Flash of Unstyled Text) を許容
 - `preconnect` で fonts.googleapis.com への接続を事前確立
 
+### Accessibility
+
+- スキップリンク（Navigation）
+- キーボードナビゲーション: video ボタンに `:focus-visible` スタイル
+- aria-label: ボタン内テキストと重複する場合は不要（スクリーンリーダーが自動読み上げ）
+
 ## Tech Stack
 
 - **React** (19.0.0): UI Library
@@ -263,10 +326,10 @@ bun run preview   # Preview production build
 - **Three.js** (0.182.0): 3D Core
 - **@react-three/drei** (10.7.7): R3F Utilities
 - **GSAP** (3.12.5): Animations
-- **Vitest** (4.x): Testing Framework
+- **Vitest** (4.0.18): Testing Framework
 - **@testing-library/user-event** (14.6.1): User interaction testing
-- **Vite** (7.x): Build Tool
-- **Biome** (2.x): Linter & Formatter
+- **Vite** (7.3.1): Build Tool
+- **Biome** (2.3.11): Linter & Formatter
 
 ### Tools & Runtime
 
@@ -276,13 +339,20 @@ bun run preview   # Preview production build
 
 GitHub Actionsによる自動化:
 
-- **ci.yml**: PR/pushでLint、TypeScript、テスト、ビルドを実行
-- **docker.yml**: DockerイメージのビルドとCI
+- **ci.yml**: PR/pushでLint（Biome）、TypeScript型チェック、Vitestテスト、ビルドを実行
 - **deploy.yml**: mainブランチ→本番、developmentブランチ→プレビューをNetlifyにデプロイ
-- **dependabot.yml**: 週次で依存関係の更新PRを作成
+- **docker.yml**: DockerイメージのビルドとGitHub Container Registry (ghcr.io) へのpush、Trivy脆弱性スキャン
+
+## Environment Variables
 
 ```bash
-# ローカルでのLint/Format
-bun run lint        # Biome lint
-bun run format      # Biome format
+VITE_YOUTUBE_VIDEO_ID=<YouTube動画ID>  # .env に設定（.env.example参照）
 ```
+
+## Known Issues / TODO
+
+以下のissueは設計判断が必要なため保留中:
+
+- **#76**: backdrop-filter (`blur(8px)`) のモバイルパフォーマンス影響
+- **#54**: デバイス性能に応じた Rain パーティクル数の動的調整
+- **#130**: StorySection `renderDescription` のi18n構造改善（`<br />` 結合→翻訳ファイル側でフォーマット）
