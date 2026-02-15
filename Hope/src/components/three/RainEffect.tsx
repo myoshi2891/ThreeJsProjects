@@ -2,8 +2,9 @@ import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
+import { calculateRainCount } from "../../utils/performance"
 
-const RAIN_COUNT = 3000
+const RAIN_COUNT = calculateRainCount()
 
 /**
  * Renders a Three.js Points-based rain particle system that fades as the scene's hope factor increases.
@@ -30,6 +31,26 @@ export function RainEffect() {
 		return geo
 	}, [])
 
+	const texture = useMemo(() => {
+		const canvas = document.createElement("canvas")
+		canvas.width = 32
+		canvas.height = 32
+		const ctx = canvas.getContext("2d")
+
+		if (ctx) {
+			// 円形のグラデーション（中心が明るく、外側に向かって透明に）
+			const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16)
+			gradient.addColorStop(0, "rgba(255, 255, 255, 1)")
+			gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)")
+			gradient.addColorStop(1, "rgba(255, 255, 255, 0)")
+
+			ctx.fillStyle = gradient
+			ctx.fillRect(0, 0, 32, 32)
+		}
+
+		return new THREE.CanvasTexture(canvas)
+	}, [])
+
 	useFrame(() => {
 		if (!pointsRef.current || hopeFactor >= 0.99) return
 
@@ -49,7 +70,8 @@ export function RainEffect() {
 
 	return (
 		<points ref={pointsRef} geometry={geometry}>
-			<pointsMaterial color={0xaaaaaa} size={0.05} transparent opacity={opacity} />
+			{/* @ts-expect-error - React Three Fiber type definition issue */}
+			<pointsMaterial color={0xaaaaaa} size={0.05} transparent opacity={opacity} map={texture} />
 		</points>
 	)
 }
