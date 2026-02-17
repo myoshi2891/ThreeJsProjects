@@ -1,5 +1,6 @@
 import { useSlider } from "../hooks"
 import { useI18nStore } from "../store"
+import { HoverParticles } from "./HoverParticles"
 
 interface ImageSliderProps {
 	images: string[]
@@ -82,6 +83,7 @@ export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderPr
 								className="image-slider-image"
 								loading={index === 0 ? "eager" : "lazy"}
 							/>
+							<HoverParticles />
 						</button>
 					</div>
 				))}

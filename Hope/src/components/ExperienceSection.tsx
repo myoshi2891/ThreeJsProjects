@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useTranslation } from "../hooks"
+import { useRipple, useTranslation } from "../hooks"
 import { useAppStore } from "../store"
 import { VideoThumbnail } from "./VideoThumbnail"
 
@@ -22,6 +22,7 @@ export function ExperienceSection() {
 	const isVideoThumbnailVisible = useAppStore((state) => state.isVideoThumbnailVisible)
 
 	const { t } = useTranslation()
+	const { createRipple } = useRipple()
 
 	const handleHopeClick = useCallback(() => {
 		if (isFading) return
@@ -63,7 +64,10 @@ export function ExperienceSection() {
 							type="button"
 							className={`experience-btn ${isFading ? "fading" : ""}`}
 							id="hope-btn"
-							onClick={handleHopeClick}
+							onClick={(e) => {
+								createRipple(e)
+								handleHopeClick()
+							}}
 							aria-label={t("experience.cta")}
 							disabled={isFading}
 						>

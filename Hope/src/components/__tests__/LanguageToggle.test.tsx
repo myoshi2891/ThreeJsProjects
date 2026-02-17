@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useI18nStore } from "../../store"
 import { LanguageToggle } from "../LanguageToggle"
 
@@ -34,7 +34,10 @@ describe("LanguageToggle", () => {
 
 		expect(useI18nStore.getState().locale).toBe("en")
 		await user.click(button)
-		expect(useI18nStore.getState().locale).toBe("ja")
+		// フリップアニメーション中に200msの遅延でlocaleが切り替わる
+		await vi.waitFor(() => {
+			expect(useI18nStore.getState().locale).toBe("ja")
+		})
 	})
 
 	it("should toggle locale from 'ja' to 'en' when clicked", async () => {
@@ -45,7 +48,9 @@ describe("LanguageToggle", () => {
 
 		expect(useI18nStore.getState().locale).toBe("ja")
 		await user.click(button)
-		expect(useI18nStore.getState().locale).toBe("en")
+		await vi.waitFor(() => {
+			expect(useI18nStore.getState().locale).toBe("en")
+		})
 	})
 
 	it("should have correct aria-label when locale is 'ja'", () => {

@@ -1,4 +1,4 @@
-import { useTranslation } from "../hooks"
+import { useRipple, useTranslation } from "../hooks"
 
 /**
  * Renders the page hero section containing a badge, title, subtitle, call-to-action button, and scroll indicator.
@@ -9,6 +9,7 @@ import { useTranslation } from "../hooks"
  */
 export function Hero() {
 	const { t } = useTranslation()
+	const { createRipple } = useRipple()
 
 	const handleStartClick = () => {
 		const experienceSection = document.getElementById("experience")
@@ -30,7 +31,15 @@ export function Hero() {
 					<br />
 					{t("hero.subtitle2")}
 				</p>
-				<button type="button" className="hero-cta" id="start-btn" onClick={handleStartClick}>
+				<button
+					type="button"
+					className="hero-cta"
+					id="start-btn"
+					onClick={(e) => {
+						createRipple(e)
+						handleStartClick()
+					}}
+				>
 					<span>{t("hero.cta")}</span>
 					<span className="hero-cta-icon" aria-hidden="true">
 						→

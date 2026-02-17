@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import {
 	BackgroundLayer,
+	CursorGlow,
 	ExperienceSection,
 	Hero,
 	Loading,
@@ -11,7 +12,7 @@ import {
 import { ThreeCanvas } from "../components/ThreeCanvas"
 import { useHopeAnimation } from "../hooks/useHopeAnimation"
 import { useScrollAnimation } from "../hooks/useScrollAnimation"
-import { useAppStore } from "../store"
+import { useAppStore, useSceneStore } from "../store"
 
 /**
  * Root application component that composes the UI and coordinates initial loading and hope-mode animation.
@@ -26,6 +27,8 @@ export function App() {
 	const setLoadingProgress = useAppStore((state) => state.setLoadingProgress)
 	const isHopeMode = useAppStore((state) => state.isHopeMode)
 	const [isHopeButtonClicked, setIsHopeButtonClicked] = useState(false)
+
+	const scrollProgress = useSceneStore((state) => state.scrollProgress)
 
 	const { startAnimation } = useHopeAnimation()
 	useScrollAnimation()
@@ -59,6 +62,11 @@ export function App() {
 	return (
 		<div className={isHopeMode ? "hope-mode" : ""}>
 			{isLoading && <Loading />}
+			<div
+				className="scroll-progress-bar"
+				style={{ width: `${scrollProgress * 100}%` }}
+				aria-hidden="true"
+			/>
 			<BackgroundLayer />
 			<Navigation />
 			<Hero />
@@ -69,6 +77,7 @@ export function App() {
 			<StorySection type="light" />
 			<VideoOverlay />
 			<ThreeCanvas />
+			<CursorGlow />
 		</div>
 	)
 }
