@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useI18nStore } from "../store"
 
 /**
@@ -10,21 +10,39 @@ import { useI18nStore } from "../store"
 export function LanguageToggle() {
 	const { locale, toggleLocale } = useI18nStore()
 	const [isFlipping, setIsFlipping] = useState(false)
+	const flipTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+	// アンマウント時にタイマーをクリーンアップ
+	useEffect(() => {
+		return () => {
+			for (const id of flipTimersRef.current) {
+				clearTimeout(id)
+			}
+		}
+	}, [])
 
 	const handleClick = useCallback(() => {
 		if (isFlipping) return
 
+		// 既存のタイマーをクリア（重複防止）
+		for (const id of flipTimersRef.current) {
+			clearTimeout(id)
+		}
+		flipTimersRef.current = []
+
 		setIsFlipping(true)
 
 		// フリップの50%地点（0.2s）でlocaleを切り替え
-		setTimeout(() => {
+		const localeTimer = setTimeout(() => {
 			toggleLocale()
 		}, 200)
 
 		// フリップ完了（0.4s）で状態リセット
-		setTimeout(() => {
+		const flipTimer = setTimeout(() => {
 			setIsFlipping(false)
 		}, 400)
+
+		flipTimersRef.current = [localeTimer, flipTimer]
 	}, [isFlipping, toggleLocale])
 
 	return (

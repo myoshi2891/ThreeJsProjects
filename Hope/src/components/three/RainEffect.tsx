@@ -52,12 +52,13 @@ export function RainEffect() {
 		return new THREE.CanvasTexture(canvas)
 	}, [])
 
-	// GPU メモリリーク防止: コンポーネントアンマウント時にテクスチャを破棄
+	// GPU メモリリーク防止: コンポーネントアンマウント時にリソースを破棄
 	useEffect(() => {
 		return () => {
 			texture.dispose()
+			geometry.dispose()
 		}
-	}, [texture])
+	}, [texture, geometry])
 
 	useFrame(() => {
 		if (!pointsRef.current || hopeFactor >= 0.99) return

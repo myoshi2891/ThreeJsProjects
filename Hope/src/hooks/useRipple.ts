@@ -5,9 +5,15 @@ import { useCallback } from "react"
  *
  * クリック位置から有機的な光のグロー拡散アニメーションを作成。
  * animationend で自動的にDOM要素を削除。
+ * prefers-reduced-motion 時はアニメーションをスキップ。
  */
 export function useRipple() {
 	const createRipple = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+		// prefers-reduced-motion チェック
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			return
+		}
+
 		const button = e.currentTarget
 		const rect = button.getBoundingClientRect()
 		const x = e.clientX - rect.left
@@ -19,7 +25,13 @@ export function useRipple() {
 		ripple.style.top = `${y}px`
 		button.appendChild(ripple)
 
-		ripple.addEventListener("animationend", () => ripple.remove())
+		// animationend が発火しない場合のフォールバック削除
+		const fallbackTimer = setTimeout(() => ripple.remove(), 400)
+
+		ripple.addEventListener("animationend", () => {
+			clearTimeout(fallbackTimer)
+			ripple.remove()
+		})
 	}, [])
 
 	return { createRipple }

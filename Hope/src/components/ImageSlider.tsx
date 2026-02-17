@@ -1,5 +1,4 @@
-import { useSlider } from "../hooks"
-import { useI18nStore } from "../store"
+import { useSlider, useTranslation } from "../hooks"
 import { HoverParticles } from "./HoverParticles"
 
 interface ImageSliderProps {
@@ -16,7 +15,7 @@ interface ImageSliderProps {
  * @param onImageClick - 画像クリック時のコールバック
  */
 export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderProps) {
-	const t = useI18nStore((state) => state.t)
+	const { t } = useTranslation()
 
 	const { currentIndex, goToSlide, goNext, goPrev, containerRef, pause, resume } = useSlider({
 		totalSlides: images.length,
@@ -83,7 +82,7 @@ export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderPr
 								className="image-slider-image"
 								loading={index === 0 ? "eager" : "lazy"}
 							/>
-							<HoverParticles />
+							{index === currentIndex && <HoverParticles />}
 						</button>
 					</div>
 				))}

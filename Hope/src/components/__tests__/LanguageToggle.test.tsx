@@ -1,6 +1,5 @@
-import { render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { useI18nStore } from "../../store"
 import { LanguageToggle } from "../LanguageToggle"
 
@@ -8,6 +7,11 @@ describe("LanguageToggle", () => {
 	beforeEach(() => {
 		// Reset locale to default before each test
 		useI18nStore.setState({ locale: "en" })
+		vi.useFakeTimers()
+	})
+
+	afterEach(() => {
+		vi.useRealTimers()
 	})
 
 	it("should render button with correct aria-label when locale is 'en'", () => {
@@ -27,30 +31,32 @@ describe("LanguageToggle", () => {
 		expect(screen.getByText("EN")).toBeInTheDocument()
 	})
 
-	it("should toggle locale from 'en' to 'ja' when clicked", async () => {
-		const user = userEvent.setup()
+	it("should toggle locale from 'en' to 'ja' when clicked", () => {
 		render(<LanguageToggle />)
 		const button = screen.getByRole("button")
 
 		expect(useI18nStore.getState().locale).toBe("en")
-		await user.click(button)
-		// フリップアニメーション中に200msの遅延でlocaleが切り替わる
-		await vi.waitFor(() => {
-			expect(useI18nStore.getState().locale).toBe("ja")
+		fireEvent.click(button)
+
+		// フリップアニメーションの50%地点（200ms）でlocaleが切り替わる
+		act(() => {
+			vi.advanceTimersByTime(250)
 		})
+		expect(useI18nStore.getState().locale).toBe("ja")
 	})
 
-	it("should toggle locale from 'ja' to 'en' when clicked", async () => {
-		const user = userEvent.setup()
+	it("should toggle locale from 'ja' to 'en' when clicked", () => {
 		useI18nStore.setState({ locale: "ja" })
 		render(<LanguageToggle />)
 		const button = screen.getByRole("button")
 
 		expect(useI18nStore.getState().locale).toBe("ja")
-		await user.click(button)
-		await vi.waitFor(() => {
-			expect(useI18nStore.getState().locale).toBe("en")
+		fireEvent.click(button)
+
+		act(() => {
+			vi.advanceTimersByTime(250)
 		})
+		expect(useI18nStore.getState().locale).toBe("en")
 	})
 
 	it("should have correct aria-label when locale is 'ja'", () => {
