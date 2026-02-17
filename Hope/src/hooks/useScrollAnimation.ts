@@ -18,6 +18,7 @@ export function useScrollAnimation() {
 	const isInitialized = useRef(false)
 	const lastBrightness = useRef(0)
 	const lastSaturation = useRef(0)
+	const lastScrollProgress = useRef(0)
 
 	useEffect(() => {
 		if (isInitialized.current) return
@@ -61,14 +62,22 @@ export function useScrollAnimation() {
 				scrub: 3,
 				onUpdate: (self) => {
 					const progress = self.progress
+
+					// scrollProgress は差分が十分な場合のみ更新（React再レンダリング抑制）
+					const progressDiff = Math.abs(progress - lastScrollProgress.current)
+					if (progressDiff >= 0.005) {
+						lastScrollProgress.current = progress
+						setScrollProgress(progress)
+					}
+
 					const brightness = 0.4 + progress * 0.4
 					const saturation = 0.8 + progress * 0.3
 
 					const brightnessDiff = Math.abs(brightness - lastBrightness.current)
 					const saturationDiff = Math.abs(saturation - lastSaturation.current)
 
-					if (brightnessDiff < 0.02 && saturationDiff < 0.02) {
-						setScrollProgress(progress)
+					// フィルタ更新も差分が十分な場合のみ（GPUラスタライズ抑制）
+					if (brightnessDiff < 0.05 && saturationDiff < 0.05) {
 						return
 					}
 
@@ -76,7 +85,6 @@ export function useScrollAnimation() {
 					lastSaturation.current = saturation
 
 					bgImage.style.filter = `brightness(${brightness.toFixed(2)}) saturate(${saturation.toFixed(2)})`
-					setScrollProgress(progress)
 				},
 			})
 		}

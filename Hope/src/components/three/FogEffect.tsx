@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber"
-import { useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 import { useSceneStore } from "../../store/sceneStore"
 
@@ -111,6 +111,14 @@ export function FogEffect() {
 
 		return { geometry: geo, material: mat }
 	}, [])
+
+	// GPU メモリリーク防止: アンマウント時にリソースを破棄
+	useEffect(() => {
+		return () => {
+			geometry.dispose()
+			material.dispose()
+		}
+	}, [geometry, material])
 
 	useFrame(({ clock }) => {
 		if (!pointsRef.current) return

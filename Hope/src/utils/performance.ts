@@ -6,27 +6,45 @@
 export type PerformanceTier = "low" | "medium" | "high"
 
 const RAIN_COUNT_MAP: Record<PerformanceTier, number> = {
-	low: 1500, // 低性能デバイス
-	medium: 3000, // 中性能デバイス（デフォルト）
-	high: 5000, // 高性能デバイス
+	low: 800, // 低性能デバイス（モバイル含む）
+	medium: 2000, // 中性能デバイス
+	high: 4000, // 高性能デバイス
 }
 
-const DEFAULT_RAIN_COUNT = 3000
+const DEFAULT_RAIN_COUNT = 2000
+
+/**
+ * タッチデバイス（モバイル）かどうかを判定
+ *
+ * @returns タッチデバイスの場合 true
+ */
+export function isMobileDevice(): boolean {
+	if (typeof window === "undefined") return false
+	const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0
+	const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches
+	return hasTouch || hasCoarsePointer
+}
 
 /**
  * デバイス性能に基づいて最適な Rain パーティクル数を計算
  *
- * @returns 最適なパーティクル数 (1500 | 3000 | 5000)
+ * @returns 最適なパーティクル数 (800 | 2000 | 4000)
  *
  * @remarks
+ * - モバイルデバイスは常に "low" ティア（GPUメモリ・バッテリー保護）
  * - devicePixelRatio: GPU 性能の指標（60% の重み）
  * - hardwareConcurrency: CPU 並列処理能力の指標（40% の重み）
- * - 性能スコア < 0.75: 低性能（1500 パーティクル）
- * - 性能スコア 0.75 ~ 1.5: 中性能（3000 パーティクル）
- * - 性能スコア >= 1.5: 高性能（5000 パーティクル）
+ * - 性能スコア < 0.75: 低性能（800 パーティクル）
+ * - 性能スコア 0.75 ~ 1.5: 中性能（2000 パーティクル）
+ * - 性能スコア >= 1.5: 高性能（4000 パーティクル）
  */
 export function calculateRainCount(): number {
 	try {
+		// モバイルデバイスは常に低性能ティアにフォールバック
+		if (isMobileDevice()) {
+			return RAIN_COUNT_MAP.low
+		}
+
 		const dpr = window?.devicePixelRatio ?? 1
 		const cores = navigator?.hardwareConcurrency ?? 4
 

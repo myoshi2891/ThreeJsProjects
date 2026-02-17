@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
 	BackgroundLayer,
 	CursorGlow,
@@ -27,11 +27,27 @@ export function App() {
 	const setLoadingProgress = useAppStore((state) => state.setLoadingProgress)
 	const isHopeMode = useAppStore((state) => state.isHopeMode)
 	const [isHopeButtonClicked, setIsHopeButtonClicked] = useState(false)
-
-	const scrollProgress = useSceneStore((state) => state.scrollProgress)
+	const progressBarRef = useRef<HTMLDivElement>(null)
 
 	const { startAnimation } = useHopeAnimation()
 	useScrollAnimation()
+
+	// scroll-progress-bar をDOM直接操作で更新（React再レンダリングを回避）
+	useEffect(() => {
+		const bar = progressBarRef.current
+		if (!bar) return
+
+		let lastProgress = 0
+		const unsubscribe = useSceneStore.subscribe((state) => {
+			const progress = state.scrollProgress
+			if (progress !== lastProgress) {
+				lastProgress = progress
+				bar.style.width = `${progress * 100}%`
+			}
+		})
+
+		return unsubscribe
+	}, [])
 
 	// Simulate loading progress
 	useEffect(() => {
@@ -62,11 +78,7 @@ export function App() {
 	return (
 		<div className={isHopeMode ? "hope-mode" : ""}>
 			{isLoading && <Loading />}
-			<div
-				className="scroll-progress-bar"
-				style={{ width: `${scrollProgress * 100}%` }}
-				aria-hidden="true"
-			/>
+			<div ref={progressBarRef} className="scroll-progress-bar" aria-hidden="true" />
 			<BackgroundLayer />
 			<Navigation />
 			<Hero />

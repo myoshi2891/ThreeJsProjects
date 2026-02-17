@@ -2116,3 +2116,66 @@ body.no-scroll #canvas-container,
 body.no-scroll .background-layer {
 	filter: blur(4px) saturate(0.7);
 }
+
+/* =====================================================
+   Mobile Performance: backdrop-filter 無効化
+   iOS Safari では backdrop-filter: blur() が要素ごとにGPUメモリを
+   大量消費し、WebGLコンテキスト喪失→クラッシュの原因になるため、
+   タッチデバイスおよび小画面では半透明背景に置換する
+   ===================================================== */
+@media (hover: none), (max-width: 768px) {
+	.nav.scrolled {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background-color: rgba(10, 10, 15, 0.92);
+	}
+
+	.nav-menu {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background-color: rgba(10, 10, 15, 0.95);
+	}
+
+	.experience-btn {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.image-slider-arrow {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background-color: rgba(10, 10, 15, 0.85);
+	}
+
+	.image-slider-dot {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.image-modal-close,
+	.image-modal-overlay {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.video-thumbnail {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	/* モーダル背景ブラーもモバイルでは無効化（GPU負荷軽減） */
+	body.no-scroll #canvas-container,
+	body.no-scroll .background-layer {
+		filter: none;
+		transition: none;
+	}
+
+	/* Loading SVG の drop-shadow もモバイルでは無効化 */
+	.loading-rays-line {
+		filter: none;
+	}
+
+	.loading-rays-center {
+		filter: none;
+	}
+}

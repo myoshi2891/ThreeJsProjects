@@ -10,7 +10,7 @@ interface Particle {
 	life: number
 }
 
-const MAX_PARTICLES = 15
+const MAX_PARTICLES = 10
 const THROTTLE_MS = 50
 
 /**
@@ -77,13 +77,15 @@ export function HoverParticles() {
 
 					if (p.life <= 0 || p.opacity < 0.01) return false
 
+					// radialGradient で発光表現（shadowBlurはiOS Safariで重いため不使用）
+					const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2)
+					gradient.addColorStop(0, `rgba(${color}, ${p.opacity})`)
+					gradient.addColorStop(1, `rgba(${color}, 0)`)
+
 					ctx.beginPath()
-					ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-					ctx.fillStyle = `rgba(${color}, ${p.opacity})`
-					ctx.shadowColor = `rgba(${color}, ${p.opacity * 0.5})`
-					ctx.shadowBlur = p.size * 3
+					ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2)
+					ctx.fillStyle = gradient
 					ctx.fill()
-					ctx.shadowBlur = 0
 
 					return true
 				})

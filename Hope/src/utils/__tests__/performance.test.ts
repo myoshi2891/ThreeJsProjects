@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { calculateRainCount } from "../performance"
+import { calculateRainCount, isMobileDevice } from "../performance"
+
+describe("isMobileDevice", () => {
+	it("should return false in test environment (no touch support)", () => {
+		expect(isMobileDevice()).toBe(false)
+	})
+})
 
 describe("calculateRainCount", () => {
 	let originalDPR: number
@@ -25,7 +31,7 @@ describe("calculateRainCount", () => {
 	})
 
 	describe("Performance tier: low (score < 0.75)", () => {
-		it("should return 1500 for low-end device (dpr=1, cores=2)", () => {
+		it("should return 800 for low-end device (dpr=1, cores=2)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 1,
 				configurable: true,
@@ -37,10 +43,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (1/2) * 0.6 + (2/8) * 0.4 = 0.3 + 0.1 = 0.4
-			expect(calculateRainCount()).toBe(1500)
+			expect(calculateRainCount()).toBe(800)
 		})
 
-		it("should return 1500 for boundary case (dpr=1, cores=4)", () => {
+		it("should return 800 for boundary case (dpr=1, cores=4)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 1,
 				configurable: true,
@@ -52,12 +58,12 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (1/2) * 0.6 + (4/8) * 0.4 = 0.3 + 0.2 = 0.5
-			expect(calculateRainCount()).toBe(1500)
+			expect(calculateRainCount()).toBe(800)
 		})
 	})
 
 	describe("Performance tier: medium (0.75 <= score < 1.5)", () => {
-		it("should return 3000 for mid-range device (dpr=2, cores=4)", () => {
+		it("should return 2000 for mid-range device (dpr=2, cores=4)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -69,10 +75,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2/2) * 0.6 + (4/8) * 0.4 = 0.6 + 0.2 = 0.8
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 
-		it("should return 3000 for lower boundary (dpr=2.5, cores=4)", () => {
+		it("should return 2000 for lower boundary (dpr=2.5, cores=4)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2.5,
 				configurable: true,
@@ -84,10 +90,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2.5/2) * 0.6 + (4/8) * 0.4 = 0.75 + 0.2 = 0.95
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 
-		it("should return 3000 for upper boundary (dpr=2, cores=16)", () => {
+		it("should return 2000 for upper boundary (dpr=2, cores=16)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -99,12 +105,12 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2/2) * 0.6 + (16/8) * 0.4 = 0.6 + 0.8 = 1.4
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 	})
 
 	describe("Performance tier: high (1.5 <= score)", () => {
-		it("should return 5000 for high-end device (dpr=3, cores=16)", () => {
+		it("should return 4000 for high-end device (dpr=3, cores=16)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 3,
 				configurable: true,
@@ -116,10 +122,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (3/2) * 0.6 + (16/8) * 0.4 = 0.9 + 0.8 = 1.7
-			expect(calculateRainCount()).toBe(5000)
+			expect(calculateRainCount()).toBe(4000)
 		})
 
-		it("should return 5000 for boundary case (dpr=4, cores=8)", () => {
+		it("should return 4000 for boundary case (dpr=4, cores=8)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 4,
 				configurable: true,
@@ -131,12 +137,12 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (4/2) * 0.6 + (8/8) * 0.4 = 1.2 + 0.4 = 1.6
-			expect(calculateRainCount()).toBe(5000)
+			expect(calculateRainCount()).toBe(4000)
 		})
 	})
 
 	describe("Real device scenarios", () => {
-		it("should return 1500 for iPhone SE (dpr=2, cores=2)", () => {
+		it("should return 800 for iPhone SE (dpr=2, cores=2)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -148,10 +154,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2/2) * 0.6 + (2/8) * 0.4 = 0.6 + 0.1 = 0.7
-			expect(calculateRainCount()).toBe(1500)
+			expect(calculateRainCount()).toBe(800)
 		})
 
-		it("should return 3000 for MacBook Pro (dpr=2, cores=8)", () => {
+		it("should return 2000 for MacBook Pro (dpr=2, cores=8)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -163,10 +169,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2/2) * 0.6 + (8/8) * 0.4 = 0.6 + 0.4 = 1.0
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 
-		it("should return 3000 for Gaming PC (dpr=1, cores=16)", () => {
+		it("should return 2000 for Gaming PC (dpr=1, cores=16)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 1,
 				configurable: true,
@@ -178,10 +184,10 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (1/2) * 0.6 + (16/8) * 0.4 = 0.3 + 0.8 = 1.1
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 
-		it("should return 5000 for high-spec workstation (dpr=2, cores=32)", () => {
+		it("should return 4000 for high-spec workstation (dpr=2, cores=32)", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -193,12 +199,12 @@ describe("calculateRainCount", () => {
 			})
 
 			// score = (2/2) * 0.6 + (32/8) * 0.4 = 0.6 + 1.6 = 2.2
-			expect(calculateRainCount()).toBe(5000)
+			expect(calculateRainCount()).toBe(4000)
 		})
 	})
 
 	describe("Fallback handling", () => {
-		it("should return 1500 when devicePixelRatio is undefined", () => {
+		it("should return 800 when devicePixelRatio is undefined", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: undefined,
 				configurable: true,
@@ -211,10 +217,10 @@ describe("calculateRainCount", () => {
 
 			// デフォルト値 dpr=1 が使われる
 			// score = (1/2) * 0.6 + (4/8) * 0.4 = 0.3 + 0.2 = 0.5
-			expect(calculateRainCount()).toBe(1500)
+			expect(calculateRainCount()).toBe(800)
 		})
 
-		it("should return 3000 when hardwareConcurrency is undefined", () => {
+		it("should return 2000 when hardwareConcurrency is undefined", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: 2,
 				configurable: true,
@@ -227,10 +233,10 @@ describe("calculateRainCount", () => {
 
 			// デフォルト値 cores=4 が使われる
 			// score = (2/2) * 0.6 + (4/8) * 0.4 = 0.6 + 0.2 = 0.8
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 
-		it("should return 1500 when both values are undefined", () => {
+		it("should return 800 when both values are undefined", () => {
 			Object.defineProperty(globalThis, "devicePixelRatio", {
 				value: undefined,
 				configurable: true,
@@ -243,16 +249,16 @@ describe("calculateRainCount", () => {
 
 			// デフォルト値 dpr=1, cores=4 が使われる
 			// score = (1/2) * 0.6 + (4/8) * 0.4 = 0.3 + 0.2 = 0.5
-			expect(calculateRainCount()).toBe(1500)
+			expect(calculateRainCount()).toBe(800)
 		})
 
-		it("should return 3000 when exception occurs", () => {
+		it("should return 2000 when exception occurs", () => {
 			// globalThis アクセスで例外を発生させる
 			vi.spyOn(globalThis, "devicePixelRatio", "get").mockImplementation(() => {
 				throw new Error("Test error")
 			})
 
-			expect(calculateRainCount()).toBe(3000)
+			expect(calculateRainCount()).toBe(2000)
 		})
 	})
 })
