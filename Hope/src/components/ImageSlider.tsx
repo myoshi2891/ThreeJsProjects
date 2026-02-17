@@ -14,22 +14,10 @@ interface ImageSliderProps {
  * @param sectionName - セクション名（アクセシビリティ用）
  * @param onImageClick - 画像クリック時のコールバック
  */
-export function ImageSlider({
-	images,
-	sectionName,
-	onImageClick,
-}: ImageSliderProps) {
+export function ImageSlider({ images, sectionName, onImageClick }: ImageSliderProps) {
 	const { t } = useTranslation()
 
-	const {
-		currentIndex,
-		goToSlide,
-		goNext,
-		goPrev,
-		containerRef,
-		pause,
-		resume,
-	} = useSlider({
+	const { currentIndex, goToSlide, goNext, goPrev, containerRef, pause, resume } = useSlider({
 		totalSlides: images.length,
 		autoPlay: true,
 		autoPlayInterval: 5000,
@@ -72,10 +60,7 @@ export function ImageSlider({
 					// biome-ignore lint/a11y/useSemanticElements: WAI-ARIA Carousel slide pattern
 					<div
 						key={image}
-						className={[
-							"image-slider-slide",
-							index === currentIndex && "active",
-						]
+						className={["image-slider-slide", index === currentIndex && "active"]
 							.filter(Boolean)
 							.join(" ")}
 						role="group"
@@ -88,11 +73,8 @@ export function ImageSlider({
 							type="button"
 							className="image-slider-btn"
 							onClick={() => handleImageClick(index)}
-							onKeyDown={e => handleKeyDown(e, index)}
-							aria-label={t("slider.viewImage").replace(
-								"{number}",
-								String(index + 1)
-							)}
+							onKeyDown={(e) => handleKeyDown(e, index)}
+							aria-label={t("slider.viewImage").replace("{number}", String(index + 1))}
 						>
 							<img
 								src={image}
@@ -130,11 +112,7 @@ export function ImageSlider({
 
 			{/* ドットインジケーター */}
 			{images.length > 1 && (
-				<div
-					className="image-slider-dots"
-					role="tablist"
-					aria-label={t("slider.dotsLabel")}
-				>
+				<div className="image-slider-dots" role="tablist" aria-label={t("slider.dotsLabel")}>
 					{images.map((image, index) => (
 						<button
 							key={`dot-${image}`}
@@ -143,10 +121,7 @@ export function ImageSlider({
 							onClick={() => goToSlide(index)}
 							role="tab"
 							aria-selected={index === currentIndex}
-							aria-label={t("slider.goToSlide").replace(
-								"{number}",
-								String(index + 1)
-							)}
+							aria-label={t("slider.goToSlide").replace("{number}", String(index + 1))}
 						/>
 					))}
 				</div>

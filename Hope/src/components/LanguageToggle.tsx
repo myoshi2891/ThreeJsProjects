@@ -50,9 +50,7 @@ export function LanguageToggle() {
 			type="button"
 			className={`language-toggle ${isFlipping ? "flipping" : ""}`}
 			onClick={handleClick}
-			aria-label={
-				locale === "ja" ? "Switch to English" : "日本語に切り替え"
-			}
+			aria-label={locale === "ja" ? "Switch to English" : "日本語に切り替え"}
 		>
 			{locale === "ja" ? "EN" : "日本語"}
 		</button>

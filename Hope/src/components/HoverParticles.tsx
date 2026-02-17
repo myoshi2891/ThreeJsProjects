@@ -19,9 +19,7 @@ const THROTTLE_MS = 50
 function evaluateCanShow(): boolean {
 	if (typeof window === "undefined") return false
 	const hasHover = window.matchMedia("(hover: hover)").matches
-	const prefersReducedMotion = window.matchMedia(
-		"(prefers-reduced-motion: reduce)"
-	).matches
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 	return hasHover && !prefersReducedMotion
 }
 
@@ -38,7 +36,7 @@ export function HoverParticles() {
 	const rafId = useRef<number | null>(null)
 	const lastSpawn = useRef<number>(0)
 
-	const isHopeMode = useAppStore(state => state.isHopeMode)
+	const isHopeMode = useAppStore((state) => state.isHopeMode)
 
 	const [canShow, setCanShow] = useState(evaluateCanShow)
 
@@ -71,7 +69,7 @@ export function HoverParticles() {
 
 				const color = isHopeMode ? "13, 148, 136" : "244, 162, 97"
 
-				particles.current = particles.current.filter(p => {
+				particles.current = particles.current.filter((p) => {
 					p.y += p.vy
 					p.x += (Math.random() - 0.5) * 0.3
 					p.life--
@@ -101,16 +99,11 @@ export function HoverParticles() {
 
 			rafId.current = requestAnimationFrame(animate)
 		},
-		[isHopeMode]
+		[isHopeMode],
 	)
 
 	const spawnParticle = useCallback(
-		(
-			x: number,
-			y: number,
-			ctx: CanvasRenderingContext2D,
-			canvas: HTMLCanvasElement
-		) => {
+		(x: number, y: number, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
 			if (particles.current.length >= MAX_PARTICLES) return
 
 			particles.current.push({
@@ -125,7 +118,7 @@ export function HoverParticles() {
 			// RAFが停止していれば再開
 			startAnimationLoop(ctx, canvas)
 		},
-		[startAnimationLoop]
+		[startAnimationLoop],
 	)
 
 	useEffect(() => {

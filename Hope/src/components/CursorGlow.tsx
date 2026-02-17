@@ -15,9 +15,7 @@ function evaluateCanShowCursor(): boolean {
 	if (typeof window === "undefined") return false
 	const hasHover = window.matchMedia("(hover: hover)").matches
 	const hasFinePointer = window.matchMedia("(pointer: fine)").matches
-	const prefersReducedMotion = window.matchMedia(
-		"(prefers-reduced-motion: reduce)"
-	).matches
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 	return hasHover && hasFinePointer && !prefersReducedMotion
 }
 
@@ -32,7 +30,7 @@ export function CursorGlow() {
 	const trailRefs = useRef<(HTMLDivElement | null)[]>([])
 	const mousePos = useRef<TrailDot>({ x: -100, y: -100 })
 	const trailPositions = useRef<TrailDot[]>(
-		Array.from({ length: TRAIL_COUNT }, () => ({ x: -100, y: -100 }))
+		Array.from({ length: TRAIL_COUNT }, () => ({ x: -100, y: -100 })),
 	)
 	const rafId = useRef<number>(0)
 	const isVisible = useRef(false)
@@ -82,8 +80,7 @@ export function CursorGlow() {
 
 			// トレイルをlerp補間で追従
 			for (let i = 0; i < TRAIL_COUNT; i++) {
-				const target =
-					i === 0 ? mousePos.current : trailPositions.current[i - 1]
+				const target = i === 0 ? mousePos.current : trailPositions.current[i - 1]
 				const current = trailPositions.current[i]
 				const speed = LERP_SPEED * (1 - i * 0.08)
 
@@ -129,7 +126,7 @@ export function CursorGlow() {
 						// biome-ignore lint/suspicious/noArrayIndexKey: トレイルドットは固定数のため
 						i
 					}`}
-					ref={el => {
+					ref={(el) => {
 						trailRefs.current[i] = el
 					}}
 					className="cursor-glow-dot cursor-glow-trail"

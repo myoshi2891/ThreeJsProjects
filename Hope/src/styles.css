@@ -160,11 +160,7 @@ body {
 	right: 0;
 	width: 80px;
 	height: 80px;
-	background: linear-gradient(
-		135deg,
-		transparent 0%,
-		var(--color-bg-dark) 60%
-	);
+	background: linear-gradient(135deg, transparent 0%, var(--color-bg-dark) 60%);
 	pointer-events: none;
 }
 
@@ -432,9 +428,7 @@ body.hope-mode .language-toggle:hover {
 	align-items: center;
 	text-align: center;
 	padding: var(--space-4xl) var(--space-xl);
-	padding-bottom: calc(
-		var(--space-4xl) + 120px
-	); /* Extra space for scroll indicator */
+	padding-bottom: calc(var(--space-4xl) + 120px); /* Extra space for scroll indicator */
 	z-index: var(--z-ui);
 }
 
@@ -664,11 +658,7 @@ body.hope-mode .language-toggle:hover {
 
 .loading-progress-bar {
 	height: 100%;
-	background: linear-gradient(
-		90deg,
-		var(--color-accent-dim),
-		var(--color-accent-bright)
-	);
+	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
 	width: var(--progress-width, 0%);
 	transition: width var(--transition-slow);
 	box-shadow: 0 0 8px var(--color-accent-glow);
@@ -905,11 +895,7 @@ body.hope-mode .story-thumbnail-image:hover {
 
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
-	background: linear-gradient(
-		135deg,
-		rgba(10, 15, 26, 0.8) 0%,
-		rgba(26, 37, 53, 0.9) 100%
-	);
+	background: linear-gradient(135deg, rgba(10, 15, 26, 0.8) 0%, rgba(26, 37, 53, 0.9) 100%);
 	border: 2px solid var(--color-accent);
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
@@ -1968,11 +1954,7 @@ body.hope-mode .image-slider-dot.active {
 	top: 0;
 	left: 0;
 	height: 2px;
-	background: linear-gradient(
-		90deg,
-		var(--color-accent-dim),
-		var(--color-accent-bright)
-	);
+	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
 	z-index: calc(var(--z-nav) + 1);
 	transition: width 100ms linear;
 	pointer-events: none;
@@ -2023,37 +2005,21 @@ body.hope-mode .scroll-progress-bar {
 .cursor-glow-main {
 	width: 12px;
 	height: 12px;
-	background: radial-gradient(
-		circle,
-		var(--color-accent) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
 	box-shadow: 0 0 20px var(--color-accent-glow);
 }
 
 .cursor-glow-trail {
-	background: radial-gradient(
-		circle,
-		var(--color-accent) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
 }
 
 body.hope-mode .cursor-glow-main {
-	background: radial-gradient(
-		circle,
-		var(--color-accent-light) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
 	box-shadow: 0 0 20px var(--color-accent-light-glow);
 }
 
 body.hope-mode .cursor-glow-trail {
-	background: radial-gradient(
-		circle,
-		var(--color-accent-light) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
 }
 
 /* =====================================================
@@ -2068,11 +2034,7 @@ body.hope-mode .cursor-glow-trail {
 .ripple-effect {
 	position: absolute;
 	border-radius: 50%;
-	background: radial-gradient(
-		circle,
-		rgba(255, 255, 255, 0.4) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
 	width: 200px;
 	height: 200px;
 	margin-left: -100px;
