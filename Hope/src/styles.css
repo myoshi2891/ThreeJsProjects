@@ -475,7 +475,9 @@ body.hope-mode .language-toggle:hover {
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
-	animation: shimmer 4s ease-in-out infinite;
+	animation:
+		shimmer 4s ease-in-out infinite,
+		breathe 6s ease-in-out infinite;
 }
 
 .hero-subtitle {
@@ -485,6 +487,7 @@ body.hope-mode .language-toggle:hover {
 	letter-spacing: 0.1em;
 	margin-bottom: var(--space-3xl);
 	line-height: 1.8;
+	animation: breatheOpacity 8s ease-in-out 1s infinite;
 	transition:
 		color 2s ease,
 		text-shadow 2s ease;
@@ -676,17 +679,72 @@ body.hope-mode .language-toggle:hover {
 .story-content {
 	max-width: 600px;
 	text-align: center;
-	opacity: 0;
-	transform: translateY(50px);
-	/* フェードイン/フェードアウト効果 */
-	transition:
-		opacity 0.3s ease,
-		transform 0.3s ease;
 }
 
-.story-content.visible {
+/* スタッガードアニメーション: 子要素が段階的に出現 */
+.story-content .story-number {
+	opacity: 0;
+	transform: translateX(-20px);
+	transition:
+		opacity 0.6s ease,
+		transform 0.6s ease,
+		color 2s ease,
+		border-color 2s ease;
+}
+
+.story-content .story-title {
+	opacity: 0;
+	transform: translateY(15px);
+	transition:
+		opacity 0.6s ease 0.15s,
+		transform 0.6s ease 0.15s,
+		color 2s ease,
+		text-shadow 2s ease;
+}
+
+.story-content .story-description {
+	opacity: 0;
+	transform: translateY(15px);
+	transition:
+		opacity 0.6s ease 0.3s,
+		transform 0.6s ease 0.3s,
+		color 2s ease,
+		text-shadow 2s ease;
+}
+
+.story-content .story-thumbnail {
+	opacity: 0;
+	transform: translateY(20px);
+	transition:
+		opacity 0.8s ease 0.45s,
+		transform 0.8s ease 0.45s;
+}
+
+.story-content.visible .story-number,
+.story-content.visible .story-title,
+.story-content.visible .story-description,
+.story-content.visible .story-thumbnail {
 	opacity: 1;
-	transform: translateY(0);
+	transform: translateX(0) translateY(0);
+}
+
+/* 装飾ライン: タイトル前に伸びるアクセントカラーのライン */
+.story-title::before {
+	content: "";
+	display: block;
+	width: 0;
+	height: 1px;
+	background: var(--color-accent);
+	margin: 0 auto var(--space-md);
+	transition: width 0.8s ease 0.2s;
+}
+
+.story-content.visible .story-title::before {
+	width: 60px;
+}
+
+body.hope-mode .story-title::before {
+	background: var(--color-accent-light);
 }
 
 .story-number {
@@ -1072,6 +1130,58 @@ body.hope-mode .hero-badge {
 	}
 	50% {
 		opacity: 0.5;
+	}
+}
+
+@keyframes breathe {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.005);
+	}
+}
+
+@keyframes breatheOpacity {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.85;
+	}
+}
+
+@keyframes rippleExpand {
+	from {
+		transform: scale(0);
+		opacity: 1;
+	}
+	to {
+		transform: scale(3);
+		opacity: 0;
+	}
+}
+
+@keyframes languageFlip {
+	0% {
+		transform: rotateX(0deg);
+	}
+	50% {
+		transform: rotateX(90deg);
+	}
+	100% {
+		transform: rotateX(0deg);
+	}
+}
+
+@keyframes rayGrow {
+	from {
+		stroke-dashoffset: 40;
+	}
+	to {
+		stroke-dashoffset: 0;
 	}
 }
 
@@ -1742,6 +1852,54 @@ body.hope-mode .image-slider-dot.active {
 	.video-fullscreen-wrapper {
 		opacity: 1;
 	}
+
+	/* Hero breathing アニメーション無効化 */
+	.hero-title {
+		animation: shimmer 4s ease-in-out infinite;
+	}
+
+	.hero-subtitle {
+		animation: none;
+	}
+
+	/* Story スタッガードアニメーション無効化 */
+	.story-content .story-number,
+	.story-content .story-title,
+	.story-content .story-description,
+	.story-content .story-thumbnail {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+
+	.story-title::before {
+		transition: none;
+		width: 60px;
+	}
+
+	/* リップル無効化 */
+	.ripple-effect {
+		animation: none;
+		display: none;
+	}
+
+	/* 言語フリップ無効化 */
+	.language-toggle.flipping {
+		animation: none;
+	}
+
+	/* ローディングSVGアニメーション即時表示 */
+	.loading-rays-line {
+		stroke-dashoffset: 0;
+		transition: none;
+	}
+
+	/* モーダルブラー無効化 */
+	body.no-scroll #canvas-container,
+	body.no-scroll .background-layer {
+		filter: none;
+		transition: none;
+	}
 }
 
 /* レスポンシブ */
@@ -1793,4 +1951,179 @@ body.hope-mode .image-slider-dot.active {
 
 .no-scroll {
 	overflow: hidden;
+}
+
+/* =====================================================
+   Scroll Progress Indicator
+   ===================================================== */
+.scroll-progress-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 2px;
+	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
+	z-index: calc(var(--z-nav) + 1);
+	transition: width 100ms linear;
+	pointer-events: none;
+}
+
+body.hope-mode .scroll-progress-bar {
+	background: linear-gradient(
+		90deg,
+		var(--color-accent-light-dim),
+		var(--color-accent-light-bright)
+	);
+}
+
+/* =====================================================
+   Custom Cursor Glow
+   ===================================================== */
+@media (hover: hover) and (pointer: fine) {
+	body.custom-cursor,
+	body.custom-cursor a,
+	body.custom-cursor button,
+	body.custom-cursor input,
+	body.custom-cursor select,
+	body.custom-cursor textarea,
+	body.custom-cursor [role="button"],
+	body.custom-cursor img {
+		cursor: none;
+	}
+}
+
+.cursor-glow-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 9999;
+}
+
+.cursor-glow-dot {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	will-change: transform;
+	backface-visibility: hidden;
+}
+
+.cursor-glow-main {
+	width: 12px;
+	height: 12px;
+	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+	box-shadow: 0 0 20px var(--color-accent-glow);
+}
+
+.cursor-glow-trail {
+	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+}
+
+body.hope-mode .cursor-glow-main {
+	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
+	box-shadow: 0 0 20px var(--color-accent-light-glow);
+}
+
+body.hope-mode .cursor-glow-trail {
+	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
+}
+
+/* =====================================================
+   Button Ripple Effect
+   ===================================================== */
+.hero-cta,
+.experience-btn {
+	position: relative;
+	overflow: hidden;
+}
+
+.ripple-effect {
+	position: absolute;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+	width: 200px;
+	height: 200px;
+	margin-left: -100px;
+	margin-top: -100px;
+	animation: rippleExpand 0.8s ease-out forwards;
+	pointer-events: none;
+}
+
+/* =====================================================
+   Hover Particles Canvas
+   ===================================================== */
+.hover-particles-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.image-slider-slide {
+	position: relative;
+}
+
+/* =====================================================
+   Language Toggle Flip Animation
+   ===================================================== */
+.language-toggle {
+	perspective: 400px;
+	transform-style: preserve-3d;
+}
+
+.language-toggle.flipping {
+	animation: languageFlip 0.4s ease forwards;
+}
+
+/* =====================================================
+   Loading Screen - SVG Light Rays
+   ===================================================== */
+.loading-rays {
+	width: 80px;
+	height: 80px;
+}
+
+.loading-rays-line {
+	stroke: var(--color-accent);
+	stroke-width: 2;
+	stroke-linecap: round;
+	fill: none;
+	stroke-dasharray: 40;
+	stroke-dashoffset: calc(40 - var(--progress-factor, 0) * 40);
+	transition: stroke-dashoffset 0.3s ease;
+	filter: drop-shadow(0 0 6px var(--color-accent-glow));
+}
+
+.loading-rays-center {
+	fill: var(--color-accent);
+	filter: drop-shadow(0 0 8px var(--color-accent-glow));
+}
+
+.loading-progress-bar {
+	box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+#loading.loading-exit {
+	transform: scale(1.05);
+	opacity: 0;
+	transition:
+		transform 0.5s ease,
+		opacity 0.5s ease;
+}
+
+/* =====================================================
+   Modal Background Blur Enhancement
+   ===================================================== */
+#canvas-container,
+.background-layer {
+	transition: filter 0.5s ease;
+}
+
+body.no-scroll #canvas-container,
+body.no-scroll .background-layer {
+	filter: blur(4px) saturate(0.7);
 }

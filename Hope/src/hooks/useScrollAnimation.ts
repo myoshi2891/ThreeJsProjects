@@ -83,6 +83,8 @@ export function useScrollAnimation() {
 
 		// Story section animations
 		const storyContents = document.querySelectorAll(".story-content")
+		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
 		for (const content of storyContents) {
 			ScrollTrigger.create({
 				trigger: content,
@@ -93,6 +95,37 @@ export function useScrollAnimation() {
 				onEnterBack: () => content.classList.add("visible"),
 				onLeaveBack: () => content.classList.remove("visible"),
 			})
+
+			// パララックス深度: テキストと画像が異なるスクロール速度で動く
+			if (!prefersReducedMotion) {
+				const description = content.querySelector(".story-description")
+				if (description) {
+					gsap.to(description, {
+						y: -15,
+						ease: "none",
+						scrollTrigger: {
+							trigger: content,
+							start: "top bottom",
+							end: "bottom top",
+							scrub: 2,
+						},
+					})
+				}
+
+				const thumbnail = content.querySelector(".story-thumbnail")
+				if (thumbnail) {
+					gsap.to(thumbnail, {
+						y: 10,
+						ease: "none",
+						scrollTrigger: {
+							trigger: content,
+							start: "top bottom",
+							end: "bottom top",
+							scrub: 3,
+						},
+					})
+				}
+			}
 		}
 
 		// Experience section animation

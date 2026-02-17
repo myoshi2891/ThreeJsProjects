@@ -11,9 +11,9 @@ describe("Loading", () => {
 		})
 	})
 
-	it("should render loading spinner", () => {
+	it("should render loading rays SVG", () => {
 		render(<Loading />)
-		expect(screen.getByTestId("loading-spinner")).toBeInTheDocument()
+		expect(screen.getByTestId("loading-rays")).toBeInTheDocument()
 	})
 
 	it("should render loading text", () => {

@@ -58,10 +58,10 @@ shell:
 # -----------------------------------------------------------------------------
 
 format:
-	docker compose -f docker-compose.dev.yml exec hope-dev npm run format
+	docker compose -f docker-compose.dev.yml exec hope-dev bun run format
 
 lint:
-	docker compose -f docker-compose.dev.yml exec hope-dev npm run lint
+	docker compose -f docker-compose.dev.yml exec hope-dev bun run lint
 
 # 再起動ショートカット (停止 → 起動)
 restart-dev: down dev
