@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const TRAIL_COUNT = 6
 const LERP_SPEED = 0.15
@@ -6,6 +6,19 @@ const LERP_SPEED = 0.15
 interface TrailDot {
 	x: number
 	y: number
+}
+
+/**
+ * メディアクエリの現在の状態を評価
+ */
+function evaluateCanShowCursor(): boolean {
+	if (typeof window === "undefined") return false
+	const hasHover = window.matchMedia("(hover: hover)").matches
+	const hasFinePointer = window.matchMedia("(pointer: fine)").matches
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)"
+	).matches
+	return hasHover && hasFinePointer && !prefersReducedMotion
 }
 
 /**
@@ -19,21 +32,38 @@ export function CursorGlow() {
 	const trailRefs = useRef<(HTMLDivElement | null)[]>([])
 	const mousePos = useRef<TrailDot>({ x: -100, y: -100 })
 	const trailPositions = useRef<TrailDot[]>(
-		Array.from({ length: TRAIL_COUNT }, () => ({ x: -100, y: -100 })),
+		Array.from({ length: TRAIL_COUNT }, () => ({ x: -100, y: -100 }))
 	)
 	const rafId = useRef<number>(0)
 	const isVisible = useRef(false)
 
-	const canShowCursor = useCallback(() => {
-		if (typeof window === "undefined") return false
-		const hasHover = window.matchMedia("(hover: hover)").matches
-		const hasFinePointer = window.matchMedia("(pointer: fine)").matches
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-		return hasHover && hasFinePointer && !prefersReducedMotion
+	const [showCursor, setShowCursor] = useState(evaluateCanShowCursor)
+
+	// メディアクエリの変化を監視して showCursor を更新
+	useEffect(() => {
+		if (typeof window === "undefined") return
+
+		const hoverMq = window.matchMedia("(hover: hover)")
+		const pointerMq = window.matchMedia("(pointer: fine)")
+		const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+		const handleChange = () => {
+			setShowCursor(evaluateCanShowCursor())
+		}
+
+		hoverMq.addEventListener("change", handleChange)
+		pointerMq.addEventListener("change", handleChange)
+		motionMq.addEventListener("change", handleChange)
+
+		return () => {
+			hoverMq.removeEventListener("change", handleChange)
+			pointerMq.removeEventListener("change", handleChange)
+			motionMq.removeEventListener("change", handleChange)
+		}
 	}, [])
 
 	useEffect(() => {
-		if (!canShowCursor()) return
+		if (!showCursor) return
 
 		isVisible.current = true
 		document.body.classList.add("custom-cursor")
@@ -52,7 +82,8 @@ export function CursorGlow() {
 
 			// トレイルをlerp補間で追従
 			for (let i = 0; i < TRAIL_COUNT; i++) {
-				const target = i === 0 ? mousePos.current : trailPositions.current[i - 1]
+				const target =
+					i === 0 ? mousePos.current : trailPositions.current[i - 1]
 				const current = trailPositions.current[i]
 				const speed = LERP_SPEED * (1 - i * 0.08)
 
@@ -82,12 +113,12 @@ export function CursorGlow() {
 			window.removeEventListener("mousemove", handleMouseMove)
 			cancelAnimationFrame(rafId.current)
 		}
-	}, [canShowCursor])
+	}, [showCursor])
 
 	// hopeFactor変化でCSS変数を更新してテーマ色を切り替え（CSSで制御）
 	// → body.hope-mode の切り替えで自動対応するため追加処理不要
 
-	if (!canShowCursor()) return null
+	if (!showCursor) return null
 
 	return (
 		<div className="cursor-glow-container" aria-hidden="true">
@@ -98,7 +129,7 @@ export function CursorGlow() {
 						// biome-ignore lint/suspicious/noArrayIndexKey: トレイルドットは固定数のため
 						i
 					}`}
-					ref={(el) => {
+					ref={el => {
 						trailRefs.current[i] = el
 					}}
 					className="cursor-glow-dot cursor-glow-trail"

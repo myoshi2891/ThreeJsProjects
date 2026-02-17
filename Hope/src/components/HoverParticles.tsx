@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useAppStore } from "../store"
 
 interface Particle {
@@ -14,6 +14,18 @@ const MAX_PARTICLES = 15
 const THROTTLE_MS = 50
 
 /**
+ * メディアクエリの現在の状態を評価
+ */
+function evaluateCanShow(): boolean {
+	if (typeof window === "undefined") return false
+	const hasHover = window.matchMedia("(hover: hover)").matches
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)"
+	).matches
+	return hasHover && !prefersReducedMotion
+}
+
+/**
  * 画像ホバー時に蛍のような発光パーティクルを表示するコンポーネント
  *
  * Canvas API で描画。マウス位置から小さな光の粒子が上方に漂い、
@@ -23,33 +35,101 @@ const THROTTLE_MS = 50
 export function HoverParticles() {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const particles = useRef<Particle[]>([])
-	const rafId = useRef<number>(0)
+	const rafId = useRef<number | null>(null)
 	const lastSpawn = useRef<number>(0)
 
-	const isHopeMode = useAppStore((state) => state.isHopeMode)
+	const isHopeMode = useAppStore(state => state.isHopeMode)
 
-	const canShow = useCallback(() => {
-		if (typeof window === "undefined") return false
-		const hasHover = window.matchMedia("(hover: hover)").matches
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-		return hasHover && !prefersReducedMotion
+	const [canShow, setCanShow] = useState(evaluateCanShow)
+
+	// メディアクエリの変化を監視して canShow を更新
+	useEffect(() => {
+		if (typeof window === "undefined") return
+
+		const hoverMq = window.matchMedia("(hover: hover)")
+		const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+		const handleChange = () => {
+			setCanShow(evaluateCanShow())
+		}
+
+		hoverMq.addEventListener("change", handleChange)
+		motionMq.addEventListener("change", handleChange)
+
+		return () => {
+			hoverMq.removeEventListener("change", handleChange)
+			motionMq.removeEventListener("change", handleChange)
+		}
 	}, [])
 
-	const spawnParticle = useCallback((x: number, y: number) => {
-		if (particles.current.length >= MAX_PARTICLES) return
+	const startAnimationLoop = useCallback(
+		(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+			if (rafId.current !== null) return // 既に実行中
 
-		particles.current.push({
-			x,
-			y,
-			vy: -(0.5 + Math.random() * 1.0),
-			opacity: 0.6 + Math.random() * 0.4,
-			size: 2 + Math.random() * 3,
-			life: 60 + Math.random() * 30,
-		})
-	}, [])
+			const animate = () => {
+				ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+				const color = isHopeMode ? "13, 148, 136" : "244, 162, 97"
+
+				particles.current = particles.current.filter(p => {
+					p.y += p.vy
+					p.x += (Math.random() - 0.5) * 0.3
+					p.life--
+					p.opacity *= 0.98
+
+					if (p.life <= 0 || p.opacity < 0.01) return false
+
+					ctx.beginPath()
+					ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+					ctx.fillStyle = `rgba(${color}, ${p.opacity})`
+					ctx.shadowColor = `rgba(${color}, ${p.opacity * 0.5})`
+					ctx.shadowBlur = p.size * 3
+					ctx.fill()
+					ctx.shadowBlur = 0
+
+					return true
+				})
+
+				// パーティクルが空ならRAFを停止
+				if (particles.current.length === 0) {
+					rafId.current = null
+					return
+				}
+
+				rafId.current = requestAnimationFrame(animate)
+			}
+
+			rafId.current = requestAnimationFrame(animate)
+		},
+		[isHopeMode]
+	)
+
+	const spawnParticle = useCallback(
+		(
+			x: number,
+			y: number,
+			ctx: CanvasRenderingContext2D,
+			canvas: HTMLCanvasElement
+		) => {
+			if (particles.current.length >= MAX_PARTICLES) return
+
+			particles.current.push({
+				x,
+				y,
+				vy: -(0.5 + Math.random() * 1.0),
+				opacity: 0.6 + Math.random() * 0.4,
+				size: 2 + Math.random() * 3,
+				life: 60 + Math.random() * 30,
+			})
+
+			// RAFが停止していれば再開
+			startAnimationLoop(ctx, canvas)
+		},
+		[startAnimationLoop]
+	)
 
 	useEffect(() => {
-		if (!canShow()) return
+		if (!canShow) return
 
 		const canvas = canvasRef.current
 		if (!canvas) return
@@ -78,48 +158,22 @@ export function HoverParticles() {
 			const rect = parent.getBoundingClientRect()
 			const x = e.clientX - rect.left
 			const y = e.clientY - rect.top
-			spawnParticle(x, y)
+			spawnParticle(x, y, ctx, canvas)
 		}
 
 		parent.addEventListener("mousemove", handleMouseMove)
 
-		const animate = () => {
-			ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-			const color = isHopeMode ? "13, 148, 136" : "244, 162, 97"
-
-			particles.current = particles.current.filter((p) => {
-				p.y += p.vy
-				p.x += (Math.random() - 0.5) * 0.3
-				p.life--
-				p.opacity *= 0.98
-
-				if (p.life <= 0 || p.opacity < 0.01) return false
-
-				ctx.beginPath()
-				ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-				ctx.fillStyle = `rgba(${color}, ${p.opacity})`
-				ctx.shadowColor = `rgba(${color}, ${p.opacity * 0.5})`
-				ctx.shadowBlur = p.size * 3
-				ctx.fill()
-				ctx.shadowBlur = 0
-
-				return true
-			})
-
-			rafId.current = requestAnimationFrame(animate)
-		}
-
-		rafId.current = requestAnimationFrame(animate)
-
 		return () => {
 			parent.removeEventListener("mousemove", handleMouseMove)
-			cancelAnimationFrame(rafId.current)
+			if (rafId.current !== null) {
+				cancelAnimationFrame(rafId.current)
+				rafId.current = null
+			}
 			observer.disconnect()
 		}
-	}, [canShow, isHopeMode, spawnParticle])
+	}, [canShow, spawnParticle])
 
-	if (!canShow()) return null
+	if (!canShow) return null
 
 	return <canvas ref={canvasRef} className="hover-particles-canvas" />
 }

@@ -81,6 +81,7 @@
 	--z-ui: 10;
 	--z-nav: 100;
 	--z-modal: 1000;
+	--z-cursor-glow: 9999;
 }
 
 /* =====================================================
@@ -159,7 +160,11 @@ body {
 	right: 0;
 	width: 80px;
 	height: 80px;
-	background: linear-gradient(135deg, transparent 0%, var(--color-bg-dark) 60%);
+	background: linear-gradient(
+		135deg,
+		transparent 0%,
+		var(--color-bg-dark) 60%
+	);
 	pointer-events: none;
 }
 
@@ -427,7 +432,9 @@ body.hope-mode .language-toggle:hover {
 	align-items: center;
 	text-align: center;
 	padding: var(--space-4xl) var(--space-xl);
-	padding-bottom: calc(var(--space-4xl) + 120px); /* Extra space for scroll indicator */
+	padding-bottom: calc(
+		var(--space-4xl) + 120px
+	); /* Extra space for scroll indicator */
 	z-index: var(--z-ui);
 }
 
@@ -487,7 +494,7 @@ body.hope-mode .language-toggle:hover {
 	letter-spacing: 0.1em;
 	margin-bottom: var(--space-3xl);
 	line-height: 1.8;
-	animation: breatheOpacity 8s ease-in-out 1s infinite;
+	animation: breathe-opacity 8s ease-in-out 1s infinite;
 	transition:
 		color 2s ease,
 		text-shadow 2s ease;
@@ -657,9 +664,14 @@ body.hope-mode .language-toggle:hover {
 
 .loading-progress-bar {
 	height: 100%;
-	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
+	background: linear-gradient(
+		90deg,
+		var(--color-accent-dim),
+		var(--color-accent-bright)
+	);
 	width: var(--progress-width, 0%);
 	transition: width var(--transition-slow);
+	box-shadow: 0 0 8px var(--color-accent-glow);
 }
 
 /* =====================================================
@@ -893,7 +905,11 @@ body.hope-mode .story-thumbnail-image:hover {
 
 .experience-btn {
 	padding: var(--space-xl) var(--space-3xl);
-	background: linear-gradient(135deg, rgba(10, 15, 26, 0.8) 0%, rgba(26, 37, 53, 0.9) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(10, 15, 26, 0.8) 0%,
+		rgba(26, 37, 53, 0.9) 100%
+	);
 	border: 2px solid var(--color-accent);
 	border-radius: var(--radius-xl);
 	font-family: var(--font-primary);
@@ -1143,7 +1159,7 @@ body.hope-mode .hero-badge {
 	}
 }
 
-@keyframes breatheOpacity {
+@keyframes breathe-opacity {
 	0%,
 	100% {
 		opacity: 1;
@@ -1153,7 +1169,7 @@ body.hope-mode .hero-badge {
 	}
 }
 
-@keyframes rippleExpand {
+@keyframes ripple-expand {
 	from {
 		transform: scale(0);
 		opacity: 1;
@@ -1164,7 +1180,7 @@ body.hope-mode .hero-badge {
 	}
 }
 
-@keyframes languageFlip {
+@keyframes language-flip {
 	0% {
 		transform: rotateX(0deg);
 	}
@@ -1173,15 +1189,6 @@ body.hope-mode .hero-badge {
 	}
 	100% {
 		transform: rotateX(0deg);
-	}
-}
-
-@keyframes rayGrow {
-	from {
-		stroke-dashoffset: 40;
-	}
-	to {
-		stroke-dashoffset: 0;
 	}
 }
 
@@ -1961,7 +1968,11 @@ body.hope-mode .image-slider-dot.active {
 	top: 0;
 	left: 0;
 	height: 2px;
-	background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent-bright));
+	background: linear-gradient(
+		90deg,
+		var(--color-accent-dim),
+		var(--color-accent-bright)
+	);
 	z-index: calc(var(--z-nav) + 1);
 	transition: width 100ms linear;
 	pointer-events: none;
@@ -1998,7 +2009,7 @@ body.hope-mode .scroll-progress-bar {
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
-	z-index: 9999;
+	z-index: var(--z-cursor-glow);
 }
 
 .cursor-glow-dot {
@@ -2012,21 +2023,37 @@ body.hope-mode .scroll-progress-bar {
 .cursor-glow-main {
 	width: 12px;
 	height: 12px;
-	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		var(--color-accent) 0%,
+		transparent 70%
+	);
 	box-shadow: 0 0 20px var(--color-accent-glow);
 }
 
 .cursor-glow-trail {
-	background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		var(--color-accent) 0%,
+		transparent 70%
+	);
 }
 
 body.hope-mode .cursor-glow-main {
-	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		var(--color-accent-light) 0%,
+		transparent 70%
+	);
 	box-shadow: 0 0 20px var(--color-accent-light-glow);
 }
 
 body.hope-mode .cursor-glow-trail {
-	background: radial-gradient(circle, var(--color-accent-light) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		var(--color-accent-light) 0%,
+		transparent 70%
+	);
 }
 
 /* =====================================================
@@ -2041,12 +2068,16 @@ body.hope-mode .cursor-glow-trail {
 .ripple-effect {
 	position: absolute;
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.4) 0%,
+		transparent 70%
+	);
 	width: 200px;
 	height: 200px;
 	margin-left: -100px;
 	margin-top: -100px;
-	animation: rippleExpand 0.8s ease-out forwards;
+	animation: ripple-expand 0.8s ease-out forwards;
 	pointer-events: none;
 }
 
@@ -2076,7 +2107,7 @@ body.hope-mode .cursor-glow-trail {
 }
 
 .language-toggle.flipping {
-	animation: languageFlip 0.4s ease forwards;
+	animation: language-flip 0.4s ease forwards;
 }
 
 /* =====================================================
@@ -2101,10 +2132,6 @@ body.hope-mode .cursor-glow-trail {
 .loading-rays-center {
 	fill: var(--color-accent);
 	filter: drop-shadow(0 0 8px var(--color-accent-glow));
-}
-
-.loading-progress-bar {
-	box-shadow: 0 0 8px var(--color-accent-glow);
 }
 
 #loading.loading-exit {

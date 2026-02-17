@@ -21,7 +21,6 @@ services:
             - ./vite.config.ts:/app/vite.config.ts:delegated
             - ./tsconfig.json:/app/tsconfig.json:delegated
             - ./biome.json:/app/biome.json:delegated
-            - ./.gitignore:/app/.gitignore:delegated
             # node_modulesはコンテナ内のものを使用（パフォーマンス向上）
             - node_modules:/app/node_modules
         environment:
