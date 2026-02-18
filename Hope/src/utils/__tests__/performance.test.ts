@@ -65,6 +65,33 @@ describe("isMobileDevice", () => {
 		;(window as unknown as Record<string, unknown>).ontouchstart = null
 		expect(isMobileDevice()).toBe(true)
 	})
+
+	describe("SSR environment (window unavailable)", () => {
+		afterEach(() => {
+			vi.unstubAllGlobals()
+			_resetMobileCache()
+		})
+
+		it("should return false when window is undefined", () => {
+			_resetMobileCache()
+			vi.stubGlobal("window", undefined)
+
+			expect(isMobileDevice()).toBe(false)
+		})
+
+		it("should cache false for SSR and retain cached value after window restoration", () => {
+			_resetMobileCache()
+			vi.stubGlobal("window", undefined)
+
+			// SSR パスで false をキャッシュ
+			expect(isMobileDevice()).toBe(false)
+
+			vi.unstubAllGlobals()
+
+			// window 復元後もキャッシュが返る（リセットなし）
+			expect(isMobileDevice()).toBe(false)
+		})
+	})
 })
 
 describe("calculateRainCount", () => {
