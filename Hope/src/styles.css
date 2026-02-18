@@ -10,6 +10,7 @@
 :root {
 	/* Colors - Storm (Dark) */
 	--color-bg-dark: #0a0f1a;
+	--color-bg-dark-rgb: 10, 15, 26;
 	--color-bg-mid: #1a2535;
 	--color-bg-light: #2a3a5a;
 
@@ -2128,13 +2129,13 @@ body.no-scroll .background-layer {
 	.nav.scrolled {
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
-		background-color: rgba(10, 10, 15, 0.92);
+		background-color: rgba(var(--color-bg-dark-rgb), 0.92);
 	}
 
 	.nav-menu {
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
-		background-color: rgba(10, 10, 15, 0.95);
+		background-color: rgba(var(--color-bg-dark-rgb), 0.95);
 	}
 
 	.experience-btn {
@@ -2145,7 +2146,7 @@ body.no-scroll .background-layer {
 	.image-slider-arrow {
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
-		background-color: rgba(10, 10, 15, 0.85);
+		background-color: rgba(var(--color-bg-dark-rgb), 0.85);
 	}
 
 	.image-slider-dot {
