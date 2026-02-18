@@ -1,9 +1,69 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { calculateRainCount, isMobileDevice } from "../performance"
+import { _resetMobileCache, calculateRainCount, isMobileDevice } from "../performance"
 
 describe("isMobileDevice", () => {
+	let originalMatchMedia: typeof window.matchMedia
+
+	beforeEach(() => {
+		_resetMobileCache()
+		originalMatchMedia = window.matchMedia
+	})
+
+	afterEach(() => {
+		// ontouchstart を削除（追加した場合のみ）
+		if ("ontouchstart" in window) {
+			delete (window as unknown as Record<string, unknown>).ontouchstart
+		}
+		Object.defineProperty(navigator, "maxTouchPoints", {
+			value: 0,
+			configurable: true,
+		})
+		window.matchMedia = originalMatchMedia
+		_resetMobileCache()
+	})
+
 	it("should return false in test environment (no touch support)", () => {
 		expect(isMobileDevice()).toBe(false)
+	})
+
+	it("should return true when ontouchstart is present", () => {
+		;(window as unknown as Record<string, unknown>).ontouchstart = null
+		expect(isMobileDevice()).toBe(true)
+	})
+
+	it("should return true when maxTouchPoints > 0", () => {
+		Object.defineProperty(navigator, "maxTouchPoints", {
+			value: 5,
+			configurable: true,
+		})
+		expect(isMobileDevice()).toBe(true)
+	})
+
+	it("should return true when pointer is coarse", () => {
+		window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+			matches: query === "(pointer: coarse)",
+			media: query,
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+		}))
+		expect(isMobileDevice()).toBe(true)
+	})
+
+	it("should cache result after first call", () => {
+		// 1回目: false（デスクトップ環境）
+		expect(isMobileDevice()).toBe(false)
+
+		// ontouchstart を追加してもキャッシュが返る
+		;(window as unknown as Record<string, unknown>).ontouchstart = null
+		expect(isMobileDevice()).toBe(false)
+	})
+
+	it("should re-evaluate after cache reset", () => {
+		expect(isMobileDevice()).toBe(false)
+
+		_resetMobileCache()
+		;(window as unknown as Record<string, unknown>).ontouchstart = null
+		expect(isMobileDevice()).toBe(true)
 	})
 })
 
@@ -12,6 +72,7 @@ describe("calculateRainCount", () => {
 	let originalCores: number | undefined
 
 	beforeEach(() => {
+		_resetMobileCache()
 		// 元の値を保存
 		originalDPR = globalThis.devicePixelRatio
 		originalCores = globalThis.navigator.hardwareConcurrency
@@ -28,6 +89,7 @@ describe("calculateRainCount", () => {
 			value: originalCores,
 			configurable: true,
 		})
+		_resetMobileCache()
 	})
 
 	describe("Performance tier: low (score < 0.75)", () => {
