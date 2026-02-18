@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef } from "react"
+import { useMediaCapability } from "../hooks/useMediaCapability"
 import { useAppStore } from "../store"
 
 interface Particle {
@@ -13,15 +14,11 @@ interface Particle {
 const MAX_PARTICLES = 10
 const THROTTLE_MS = 50
 
-/**
- * メディアクエリの現在の状態を評価
- */
-function evaluateCanShow(): boolean {
-	if (typeof window === "undefined") return false
-	const hasHover = window.matchMedia("(hover: hover)").matches
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-	return hasHover && !prefersReducedMotion
-}
+/** HoverParticles の表示条件: ホバー可能 + モーション制限なし */
+const PARTICLES_MEDIA_QUERIES = [
+	{ query: "(hover: hover)", mustMatch: true },
+	{ query: "(prefers-reduced-motion: reduce)", mustMatch: false },
+]
 
 /**
  * 画像ホバー時に蛍のような発光パーティクルを表示するコンポーネント
@@ -37,28 +34,14 @@ export function HoverParticles() {
 	const lastSpawn = useRef<number>(0)
 
 	const isHopeMode = useAppStore((state) => state.isHopeMode)
-
-	const [canShow, setCanShow] = useState(evaluateCanShow)
-
-	// メディアクエリの変化を監視して canShow を更新
+	// isHopeMode を ref で保持し、animate ループ内で最新値を参照
+	// → useCallback の依存配列から除外でき、不要なエフェクト再実行を防止
+	const isHopeModeRef = useRef(isHopeMode)
 	useEffect(() => {
-		if (typeof window === "undefined") return
+		isHopeModeRef.current = isHopeMode
+	}, [isHopeMode])
 
-		const hoverMq = window.matchMedia("(hover: hover)")
-		const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)")
-
-		const handleChange = () => {
-			setCanShow(evaluateCanShow())
-		}
-
-		hoverMq.addEventListener("change", handleChange)
-		motionMq.addEventListener("change", handleChange)
-
-		return () => {
-			hoverMq.removeEventListener("change", handleChange)
-			motionMq.removeEventListener("change", handleChange)
-		}
-	}, [])
+	const canShow = useMediaCapability(PARTICLES_MEDIA_QUERIES)
 
 	const startAnimationLoop = useCallback(
 		(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
@@ -67,8 +50,10 @@ export function HoverParticles() {
 			const animate = () => {
 				ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-				const color = isHopeMode ? "13, 148, 136" : "244, 162, 97"
+				const color = isHopeModeRef.current ? "13, 148, 136" : "244, 162, 97"
 
+				// パフォーマンス最適化: filter コールバック内でパーティクル更新と描画を同時実行。
+				// 別ループに分離すると配列を2回走査することになり、毎フレームのGCプレッシャーが増加する。
 				particles.current = particles.current.filter((p) => {
 					p.y += p.vy
 					p.x += (Math.random() - 0.5) * 0.3
@@ -101,7 +86,7 @@ export function HoverParticles() {
 
 			rafId.current = requestAnimationFrame(animate)
 		},
-		[isHopeMode],
+		[],
 	)
 
 	const spawnParticle = useCallback(

@@ -13,16 +13,40 @@ const RAIN_COUNT_MAP: Record<PerformanceTier, number> = {
 
 const DEFAULT_RAIN_COUNT = 2000
 
+/** キャッシュ: デバイス種別はセッション中不変のため初回計算結果を保持 */
+let cachedIsMobile: boolean | null = null
+
 /**
  * タッチデバイス（モバイル）かどうかを判定
  *
+ * 判定結果はモジュールレベルでキャッシュされ、2回目以降の呼び出しは即座に返す。
+ *
  * @returns タッチデバイスの場合 true
+ *
+ * @remarks
+ * 既知の制約: Surface Pro 等のタッチ対応デスクトップは true を返す（false positive）。
+ * ただし low tier へのフォールバックなので安全側に倒れる。
  */
 export function isMobileDevice(): boolean {
-	if (typeof window === "undefined") return false
+	if (cachedIsMobile !== null) return cachedIsMobile
+
+	if (typeof window === "undefined") {
+		cachedIsMobile = false
+		return false
+	}
+
 	const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0
 	const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches
-	return hasTouch || hasCoarsePointer
+	cachedIsMobile = hasTouch || hasCoarsePointer
+	return cachedIsMobile
+}
+
+/**
+ * テスト用: isMobileDevice のキャッシュをリセット
+ * @internal
+ */
+export function _resetMobileCache(): void {
+	cachedIsMobile = null
 }
 
 /**

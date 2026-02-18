@@ -1,23 +1,31 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import { useMediaCapability } from "../hooks/useMediaCapability"
 
 const TRAIL_COUNT = 6
 const LERP_SPEED = 0.15
+
+/** メインカーソルドットの半径 (px) — transform translate のオフセットに使用 */
+const MAIN_DOT_RADIUS = 6
+/** トレイルドットの最大サイズ (px) — 先頭のドットサイズ */
+const TRAIL_MAX_SIZE = 8
+/** トレイルドットの1つごとのサイズ減衰 (px) — 後方ほど小さくなる */
+const TRAIL_SIZE_DECAY = 0.8
+/** トレイルドットの先頭の不透明度 */
+const TRAIL_BASE_OPACITY = 0.4
+/** トレイルドットの1つごとの不透明度減衰 */
+const TRAIL_OPACITY_DECAY = 0.05
 
 interface TrailDot {
 	x: number
 	y: number
 }
 
-/**
- * メディアクエリの現在の状態を評価
- */
-function evaluateCanShowCursor(): boolean {
-	if (typeof window === "undefined") return false
-	const hasHover = window.matchMedia("(hover: hover)").matches
-	const hasFinePointer = window.matchMedia("(pointer: fine)").matches
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-	return hasHover && hasFinePointer && !prefersReducedMotion
-}
+/** CursorGlow の表示条件: ホバー可能 + ファインポインター + モーション制限なし */
+const CURSOR_MEDIA_QUERIES = [
+	{ query: "(hover: hover)", mustMatch: true },
+	{ query: "(pointer: fine)", mustMatch: true },
+	{ query: "(prefers-reduced-motion: reduce)", mustMatch: false },
+]
 
 /**
  * デスクトップ向けカスタムカーソル + グロートレイル
@@ -35,30 +43,7 @@ export function CursorGlow() {
 	const rafId = useRef<number>(0)
 	const isVisible = useRef(false)
 
-	const [showCursor, setShowCursor] = useState(evaluateCanShowCursor)
-
-	// メディアクエリの変化を監視して showCursor を更新
-	useEffect(() => {
-		if (typeof window === "undefined") return
-
-		const hoverMq = window.matchMedia("(hover: hover)")
-		const pointerMq = window.matchMedia("(pointer: fine)")
-		const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)")
-
-		const handleChange = () => {
-			setShowCursor(evaluateCanShowCursor())
-		}
-
-		hoverMq.addEventListener("change", handleChange)
-		pointerMq.addEventListener("change", handleChange)
-		motionMq.addEventListener("change", handleChange)
-
-		return () => {
-			hoverMq.removeEventListener("change", handleChange)
-			pointerMq.removeEventListener("change", handleChange)
-			motionMq.removeEventListener("change", handleChange)
-		}
-	}, [])
+	const showCursor = useMediaCapability(CURSOR_MEDIA_QUERIES)
 
 	useEffect(() => {
 		if (!showCursor) return
@@ -75,7 +60,7 @@ export function CursorGlow() {
 
 			// メインカーソルを即座に更新
 			if (mainRef.current) {
-				mainRef.current.style.transform = `translate(${mousePos.current.x - 6}px, ${mousePos.current.y - 6}px)`
+				mainRef.current.style.transform = `translate(${mousePos.current.x - MAIN_DOT_RADIUS}px, ${mousePos.current.y - MAIN_DOT_RADIUS}px)`
 			}
 
 			// トレイルをlerp補間で追従
@@ -89,8 +74,8 @@ export function CursorGlow() {
 
 				const el = trailRefs.current[i]
 				if (el) {
-					const size = Math.max(3, 8 - i * 0.8)
-					const opacity = Math.max(0.1, 0.4 - i * 0.05)
+					const size = Math.max(3, TRAIL_MAX_SIZE - i * TRAIL_SIZE_DECAY)
+					const opacity = Math.max(0.1, TRAIL_BASE_OPACITY - i * TRAIL_OPACITY_DECAY)
 					el.style.transform = `translate(${current.x - size / 2}px, ${current.y - size / 2}px)`
 					el.style.width = `${size}px`
 					el.style.height = `${size}px`

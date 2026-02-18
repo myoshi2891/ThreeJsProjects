@@ -5,6 +5,11 @@ import { useSceneStore } from "../store"
 
 gsap.registerPlugin(ScrollTrigger)
 
+/** テキスト要素のパララックス移動量（負値 = 上方向 → 手前に浮く印象） */
+const PARALLAX_DESCRIPTION_Y = -15
+/** サムネイル要素のパララックス移動量（正値 = 下方向 → 奥にある印象） */
+const PARALLAX_THUMBNAIL_Y = 10
+
 /**
  * Initializes GSAP ScrollTrigger-based scroll interactions and visual updates for the page.
  *
@@ -109,7 +114,7 @@ export function useScrollAnimation() {
 				const description = content.querySelector(".story-description")
 				if (description) {
 					gsap.to(description, {
-						y: -15,
+						y: PARALLAX_DESCRIPTION_Y,
 						ease: "none",
 						scrollTrigger: {
 							trigger: content,
@@ -123,7 +128,7 @@ export function useScrollAnimation() {
 				const thumbnail = content.querySelector(".story-thumbnail")
 				if (thumbnail) {
 					gsap.to(thumbnail, {
-						y: 10,
+						y: PARALLAX_THUMBNAIL_Y,
 						ease: "none",
 						scrollTrigger: {
 							trigger: content,
