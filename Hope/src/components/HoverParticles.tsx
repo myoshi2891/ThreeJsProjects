@@ -52,6 +52,8 @@ export function HoverParticles() {
 
 				const color = isHopeModeRef.current ? "13, 148, 136" : "244, 162, 97"
 
+				// パフォーマンス最適化: filter コールバック内でパーティクル更新と描画を同時実行。
+				// 別ループに分離すると配列を2回走査することになり、毎フレームのGCプレッシャーが増加する。
 				particles.current = particles.current.filter((p) => {
 					p.y += p.vy
 					p.x += (Math.random() - 0.5) * 0.3

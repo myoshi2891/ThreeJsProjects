@@ -4,6 +4,17 @@ import { useMediaCapability } from "../hooks/useMediaCapability"
 const TRAIL_COUNT = 6
 const LERP_SPEED = 0.15
 
+/** メインカーソルドットの半径 (px) — transform translate のオフセットに使用 */
+const MAIN_DOT_RADIUS = 6
+/** トレイルドットの最大サイズ (px) — 先頭のドットサイズ */
+const TRAIL_MAX_SIZE = 8
+/** トレイルドットの1つごとのサイズ減衰 (px) — 後方ほど小さくなる */
+const TRAIL_SIZE_DECAY = 0.8
+/** トレイルドットの先頭の不透明度 */
+const TRAIL_BASE_OPACITY = 0.4
+/** トレイルドットの1つごとの不透明度減衰 */
+const TRAIL_OPACITY_DECAY = 0.05
+
 interface TrailDot {
 	x: number
 	y: number
@@ -49,7 +60,7 @@ export function CursorGlow() {
 
 			// メインカーソルを即座に更新
 			if (mainRef.current) {
-				mainRef.current.style.transform = `translate(${mousePos.current.x - 6}px, ${mousePos.current.y - 6}px)`
+				mainRef.current.style.transform = `translate(${mousePos.current.x - MAIN_DOT_RADIUS}px, ${mousePos.current.y - MAIN_DOT_RADIUS}px)`
 			}
 
 			// トレイルをlerp補間で追従
@@ -63,8 +74,8 @@ export function CursorGlow() {
 
 				const el = trailRefs.current[i]
 				if (el) {
-					const size = Math.max(3, 8 - i * 0.8)
-					const opacity = Math.max(0.1, 0.4 - i * 0.05)
+					const size = Math.max(3, TRAIL_MAX_SIZE - i * TRAIL_SIZE_DECAY)
+					const opacity = Math.max(0.1, TRAIL_BASE_OPACITY - i * TRAIL_OPACITY_DECAY)
 					el.style.transform = `translate(${current.x - size / 2}px, ${current.y - size / 2}px)`
 					el.style.width = `${size}px`
 					el.style.height = `${size}px`

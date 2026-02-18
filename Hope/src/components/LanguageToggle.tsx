@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "../hooks"
 
+/** フリップアニメーションの総時間 (ms) — CSS の .language-toggle.flipping transition と一致 */
+const FLIP_DURATION_MS = 400
+/** フリップの50%地点 — テキスト切り替えタイミング */
+const FLIP_MIDPOINT_MS = FLIP_DURATION_MS / 2
+
 /**
  * 言語切り替えボタン（日英トグル）
  *
@@ -35,16 +40,16 @@ export function LanguageToggle() {
 		isFlippingRef.current = true
 		setIsFlipping(true)
 
-		// フリップの50%地点（0.2s）でlocaleを切り替え
+		// フリップの50%地点でlocaleを切り替え
 		const localeTimer = setTimeout(() => {
 			toggleLocale()
-		}, 200)
+		}, FLIP_MIDPOINT_MS)
 
-		// フリップ完了（0.4s）で状態リセット
+		// フリップ完了で状態リセット
 		const flipTimer = setTimeout(() => {
 			isFlippingRef.current = false
 			setIsFlipping(false)
-		}, 400)
+		}, FLIP_DURATION_MS)
 
 		flipTimersRef.current = [localeTimer, flipTimer]
 	}, [toggleLocale])
