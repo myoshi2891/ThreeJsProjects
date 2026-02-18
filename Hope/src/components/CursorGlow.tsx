@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { useMediaCapability } from "../hooks/useMediaCapability"
+import { useMediaCapability } from "../hooks"
 
 const TRAIL_COUNT = 6
 const LERP_SPEED = 0.15

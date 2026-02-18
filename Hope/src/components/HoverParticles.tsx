@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react"
-import { useMediaCapability } from "../hooks/useMediaCapability"
+import { useMediaCapability } from "../hooks"
 import { useAppStore } from "../store"
 
 interface Particle {
