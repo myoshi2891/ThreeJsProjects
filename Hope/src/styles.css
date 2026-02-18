@@ -628,7 +628,7 @@ body.hope-mode .language-toggle:hover {
 	gap: var(--space-xl);
 	background: var(--color-bg-dark);
 	z-index: var(--z-modal);
-	transition: opacity 0.5s ease;
+	transition: opacity var(--transition-slow);
 }
 
 .loading-spinner {
@@ -2039,6 +2039,7 @@ body.hope-mode .cursor-glow-trail {
 	height: 200px;
 	margin-left: -100px;
 	margin-top: -100px;
+	/* ease-out（減速のみ）が拡散アニメーションに適切。--transition-slower は ease なので不使用 */
 	animation: ripple-expand 0.8s ease-out forwards;
 	pointer-events: none;
 }
@@ -2087,7 +2088,7 @@ body.hope-mode .cursor-glow-trail {
 	fill: none;
 	stroke-dasharray: 40;
 	stroke-dashoffset: calc(40 - var(--progress-factor, 0) * 40);
-	transition: stroke-dashoffset 0.3s ease;
+	transition: stroke-dashoffset var(--transition-base);
 	filter: drop-shadow(0 0 6px var(--color-accent-glow));
 }
 
@@ -2100,8 +2101,8 @@ body.hope-mode .cursor-glow-trail {
 	transform: scale(1.05);
 	opacity: 0;
 	transition:
-		transform 0.5s ease,
-		opacity 0.5s ease;
+		transform var(--transition-slow),
+		opacity var(--transition-slow);
 }
 
 /* =====================================================
@@ -2109,7 +2110,7 @@ body.hope-mode .cursor-glow-trail {
    ===================================================== */
 #canvas-container,
 .background-layer {
-	transition: filter 0.5s ease;
+	transition: filter var(--transition-slow);
 }
 
 body.no-scroll #canvas-container,
