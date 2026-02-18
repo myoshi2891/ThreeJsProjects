@@ -340,11 +340,10 @@ body {
 		gap: var(--space-2xl);
 	}
 
-	.nav-link {
-		font-size: 2rem;
+	.nav-menu .nav-link {
+		font-size: 1.5rem;
 		letter-spacing: 0.1em;
 	}
-
 	/* Hamburger Animation when Active */
 	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
 		transform: translateY(9px) rotate(45deg);
