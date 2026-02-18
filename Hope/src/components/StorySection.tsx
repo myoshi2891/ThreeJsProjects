@@ -85,7 +85,8 @@ export function StorySection({ type }: StorySectionProps) {
 		const description = t(`story.${type}.description`)
 		const lines = description.split("\n")
 		return lines.map((line, index) => (
-			<Fragment key={line}>
+			// biome-ignore lint/suspicious/noArrayIndexKey: 翻訳テキストの静的分割。同一行の存在可能性があるためインデックスが安全
+			<Fragment key={index}>
 				{index > 0 && <br />}
 				{line}
 			</Fragment>
