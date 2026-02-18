@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useI18nStore } from "../store"
+import { useTranslation } from "../hooks"
 
 /**
  * 言語切り替えボタン（日英トグル）
@@ -8,8 +8,10 @@ import { useI18nStore } from "../store"
  * フリップの50%地点でテキストが切り替わる。
  */
 export function LanguageToggle() {
-	const { locale, toggleLocale } = useI18nStore()
+	const { locale, toggleLocale } = useTranslation()
 	const [isFlipping, setIsFlipping] = useState(false)
+	// isFlipping を ref でも保持し、handleClick 内のガード条件を安定化
+	const isFlippingRef = useRef(false)
 	const flipTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
 	// アンマウント時にタイマーをクリーンアップ
@@ -22,7 +24,7 @@ export function LanguageToggle() {
 	}, [])
 
 	const handleClick = useCallback(() => {
-		if (isFlipping) return
+		if (isFlippingRef.current) return
 
 		// 既存のタイマーをクリア（重複防止）
 		for (const id of flipTimersRef.current) {
@@ -30,6 +32,7 @@ export function LanguageToggle() {
 		}
 		flipTimersRef.current = []
 
+		isFlippingRef.current = true
 		setIsFlipping(true)
 
 		// フリップの50%地点（0.2s）でlocaleを切り替え
@@ -39,11 +42,12 @@ export function LanguageToggle() {
 
 		// フリップ完了（0.4s）で状態リセット
 		const flipTimer = setTimeout(() => {
+			isFlippingRef.current = false
 			setIsFlipping(false)
 		}, 400)
 
 		flipTimersRef.current = [localeTimer, flipTimer]
-	}, [isFlipping, toggleLocale])
+	}, [toggleLocale])
 
 	return (
 		<button

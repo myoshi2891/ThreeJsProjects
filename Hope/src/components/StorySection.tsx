@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { useTranslation } from "../hooks"
 import { ImageModal } from "./ImageModal"
 import { ImageSlider } from "./ImageSlider"
@@ -79,24 +79,17 @@ export function StorySection({ type }: StorySectionProps) {
 	const number = t(`story.${type}.number`)
 	const title = t(`story.${type}.title`)
 
-	// タイプに基づいて説明を構築
+	// 翻訳ファイルの description キーから改行付き説明を構築
+	// \n を <br /> に変換し、改行位置を翻訳ファイル側で制御可能にする
 	const renderDescription = () => {
-		if (type === "life") {
-			return (
-				<>
-					{t(`story.${type}.quote1`)}
-					<br />
-					{t(`story.${type}.quote2`)}
-					<br />- {t(`story.${type}.author`)}
-				</>
-			)
-		}
-		return (
-			<>
-				{t(`story.${type}.quote`)}
-				<br />- {t(`story.${type}.author`)}
-			</>
-		)
+		const description = t(`story.${type}.description`)
+		const lines = description.split("\n")
+		return lines.map((line, index) => (
+			<Fragment key={line}>
+				{index > 0 && <br />}
+				{line}
+			</Fragment>
+		))
 	}
 
 	const handleImageClick = (index: number) => {

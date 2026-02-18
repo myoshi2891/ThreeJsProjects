@@ -1,4 +1,5 @@
 export { useHopeAnimation } from "./useHopeAnimation"
+export { useMediaCapability } from "./useMediaCapability"
 export { useRipple } from "./useRipple"
 export { useScrollAnimation } from "./useScrollAnimation"
 export { useSlider } from "./useSlider"

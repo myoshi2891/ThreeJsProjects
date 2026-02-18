@@ -17,27 +17,22 @@
 		"hope": {
 			"number": "01",
 			"title": "Hope",
-			"quote": "Hope is the pillar that holds up the world.",
-			"author": "Pliny the Elder (Roman Author)"
+			"description": "Hope is the pillar that holds up the world.\n- Pliny the Elder (Roman Author)"
 		},
 		"life": {
 			"number": "02",
 			"title": "Life",
-			"quote1": "Live as if you were to die tomorrow.",
-			"quote2": "Learn as if you were to live forever.",
-			"author": "Mahatma Gandhi (Indian Lawyer & Ethicist)"
+			"description": "Live as if you were to die tomorrow.\nLearn as if you were to live forever.\n- Mahatma Gandhi (Indian Lawyer & Ethicist)"
 		},
 		"possibility": {
 			"number": "03",
 			"title": "Possibility",
-			"quote": "It is never too late to be what you might have been.",
-			"author": "George Eliot (English Novelist)"
+			"description": "It is never too late to be what you might have been.\n- George Eliot (English Novelist)"
 		},
 		"light": {
 			"number": "∞",
 			"title": "Light",
-			"quote": "Better to light a candle than to curse the darkness.",
-			"author": "Chinese Proverb (Asian Wisdom)"
+			"description": "Better to light a candle than to curse the darkness.\n- Chinese Proverb (Asian Wisdom)"
 		}
 	},
 	"experience": {

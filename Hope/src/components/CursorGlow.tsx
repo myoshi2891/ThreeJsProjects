@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import { useMediaCapability } from "../hooks/useMediaCapability"
 
 const TRAIL_COUNT = 6
 const LERP_SPEED = 0.15
@@ -8,16 +9,12 @@ interface TrailDot {
 	y: number
 }
 
-/**
- * メディアクエリの現在の状態を評価
- */
-function evaluateCanShowCursor(): boolean {
-	if (typeof window === "undefined") return false
-	const hasHover = window.matchMedia("(hover: hover)").matches
-	const hasFinePointer = window.matchMedia("(pointer: fine)").matches
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-	return hasHover && hasFinePointer && !prefersReducedMotion
-}
+/** CursorGlow の表示条件: ホバー可能 + ファインポインター + モーション制限なし */
+const CURSOR_MEDIA_QUERIES = [
+	{ query: "(hover: hover)", mustMatch: true },
+	{ query: "(pointer: fine)", mustMatch: true },
+	{ query: "(prefers-reduced-motion: reduce)", mustMatch: false },
+]
 
 /**
  * デスクトップ向けカスタムカーソル + グロートレイル
@@ -35,30 +32,7 @@ export function CursorGlow() {
 	const rafId = useRef<number>(0)
 	const isVisible = useRef(false)
 
-	const [showCursor, setShowCursor] = useState(evaluateCanShowCursor)
-
-	// メディアクエリの変化を監視して showCursor を更新
-	useEffect(() => {
-		if (typeof window === "undefined") return
-
-		const hoverMq = window.matchMedia("(hover: hover)")
-		const pointerMq = window.matchMedia("(pointer: fine)")
-		const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)")
-
-		const handleChange = () => {
-			setShowCursor(evaluateCanShowCursor())
-		}
-
-		hoverMq.addEventListener("change", handleChange)
-		pointerMq.addEventListener("change", handleChange)
-		motionMq.addEventListener("change", handleChange)
-
-		return () => {
-			hoverMq.removeEventListener("change", handleChange)
-			pointerMq.removeEventListener("change", handleChange)
-			motionMq.removeEventListener("change", handleChange)
-		}
-	}, [])
+	const showCursor = useMediaCapability(CURSOR_MEDIA_QUERIES)
 
 	useEffect(() => {
 		if (!showCursor) return

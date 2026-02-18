@@ -25,13 +25,17 @@ export function useRipple() {
 		ripple.style.top = `${y}px`
 		button.appendChild(ripple)
 
-		// animationend が発火しない場合のフォールバック削除
-		const fallbackTimer = setTimeout(() => ripple.remove(), 400)
+		// animationend が発火しない場合のフォールバック削除（CSSアニメーション800ms + 余裕200ms）
+		const fallbackTimer = setTimeout(() => ripple.remove(), 1000)
 
-		ripple.addEventListener("animationend", () => {
-			clearTimeout(fallbackTimer)
-			ripple.remove()
-		})
+		ripple.addEventListener(
+			"animationend",
+			() => {
+				clearTimeout(fallbackTimer)
+				ripple.remove()
+			},
+			{ once: true },
+		)
 	}, [])
 
 	return { createRipple }
