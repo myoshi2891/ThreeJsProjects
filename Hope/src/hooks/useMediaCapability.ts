@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-interface MediaQuery {
+export interface MediaQuery {
 	/** メディアクエリ文字列 (例: "(hover: hover)") */
 	query: string
 	/** true なら matches が true のとき有効、false なら matches が false のとき有効 */

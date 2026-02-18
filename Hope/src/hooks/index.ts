@@ -1,4 +1,5 @@
 export { useHopeAnimation } from "./useHopeAnimation"
+export type { MediaQuery } from "./useMediaCapability"
 export { useMediaCapability } from "./useMediaCapability"
 export { useRipple } from "./useRipple"
 export { useScrollAnimation } from "./useScrollAnimation"
