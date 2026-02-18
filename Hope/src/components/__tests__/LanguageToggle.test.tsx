@@ -11,8 +11,7 @@ describe("LanguageToggle", () => {
 	})
 
 	// user-event セットアップ（PointerEventsCheckLevel.Never: happy-dom 互換性のため無効化）
-	const setupUser = () =>
-		userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never })
+	const setupUser = () => userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never })
 
 	it("should render button with correct aria-label when locale is 'en'", () => {
 		render(<LanguageToggle />)
